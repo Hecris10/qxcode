@@ -1,5 +1,6 @@
 import * as bcrypt from "bcrypt";
 import { NextRequest } from "next/server";
+import { signJWTToken } from "~/app/lib/jwt";
 import { prisma } from "~/app/lib/prisma";
 
 interface RequestBody {
@@ -11,6 +12,7 @@ interface UserClient {
   id: string;
   email: string;
   name: string;
+  token: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -28,17 +30,29 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name + "",
+        token: "",
       };
 
-      return new Response(JSON.stringify(userClient), {
+      const decodedUser = signJWTToken(userClient);
+
+      if (!decodedUser) {
+        return new Response(JSON.stringify(null), {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+
+      const result = { ...userClient, token: decodedUser };
+
+      return new Response(JSON.stringify(result), {
         status: 200,
         headers: {
           "Content-Type": "application/json",
         },
       });
     } else {
-      console.log("NOT FOUND");
-
       return new Response(JSON.stringify(null), {
         status: 401,
         headers: {
