@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
         },
       });
     } else {
+      console.log("NOT FOUND");
+
       return new Response(JSON.stringify(null), {
         status: 401,
         headers: {
@@ -45,6 +47,7 @@ export async function POST(request: NextRequest) {
       });
     }
   } catch (e: any) {
+    console.log("ERROR", e);
     return new Response(JSON.stringify(null), {
       status: 401,
       headers: {
