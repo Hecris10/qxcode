@@ -2,11 +2,13 @@
   "name": "qxcode",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.6.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@ark-ui/react": "^3.6.2",
