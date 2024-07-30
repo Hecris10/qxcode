@@ -87,7 +87,7 @@
 }
 
 body {
-  @apply bg-blue3;
+  @apply bg-blue3 text-white;
 }
 
 .collapseItem {

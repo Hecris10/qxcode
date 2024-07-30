@@ -1,17 +1,16 @@
 import NextAuth from "next-auth";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { UserClient } from "~/app/lib/globals.types";
+import GoogleProvider from "next-auth/providers/google";
+import { UserClient } from "~/lib/globals.types";
+import { signJWTToken } from "~/lib/jwt";
+import { prisma } from "~/lib/prisma";
 
 import { apiUrl } from "~/service/api";
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. "Sign in with...")
       name: "Credentials",
-      // `credentials` is used to generate a form on the sign in page.
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
@@ -19,7 +18,7 @@ const handler = NextAuth({
 
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        console.log("credentials", JSON.stringify(credentials));
+
         const res = await fetch(apiUrl + "login", {
           method: "POST",
           headers: {
@@ -41,22 +40,79 @@ const handler = NextAuth({
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    //let's save the user in the db if it doesn't exist
+    async jwt({ token, user, account }) {
+      if (account?.provider === "credentials" && user) {
+        const userBody = {
+          name: token.name,
+          email: token.email,
+          image: user.image,
+          id: user.id,
+          provider: "credentials",
+          accessToken: "",
+        };
+
+        const newToken = signJWTToken(user);
+        userBody.accessToken = newToken;
+        token.accessToken = newToken;
+        token.id = user.id;
+
+        const newTokenBody: JWT = {
+          name: token.name,
+          email: token.email,
+          picture: user.image,
+          sub: user.id,
+          accessToken: newToken,
+          provider: "credentials",
+        };
+
+        return { ...newTokenBody, ...userBody };
+      }
+
+      if (account?.provider === "google" && user?.email) {
+        const exixtingUser = await prisma.user.findUnique({
+          where: {
+            email: user?.email,
+          },
+        });
+        if (!exixtingUser) {
+          const newUser = await prisma.user.create({
+            data: {
+              name: user.name + "",
+              email: user.email + "",
+              imageUrl: user.image + "",
+              provider: "google",
+              providerId: user.id + "",
+              password: "",
+            },
+          });
+          token.id = newUser.id;
+          user.id = newUser.id;
+        } else {
+          token.id = exixtingUser.id;
+          user.id = exixtingUser.id;
+        }
+      }
+
       return { ...token, ...user };
     },
 
-    async session({ session, token }) {
+    async session({ session, token, user }) {
       return { ...session, ...token };
     },
   },
 
   pages: {
     signIn: "/",
-    signOut: "",
-    // verifyRequest: "/",
+    signOut: "/",
+    verifyRequest: "/",
     newUser: "/",
   },
 });

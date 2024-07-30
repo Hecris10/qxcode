@@ -1,7 +1,7 @@
 import * as bcrypt from "bcrypt";
 import { NextRequest } from "next/server";
-import { signJWTToken } from "~/app/lib/jwt";
-import { prisma } from "~/app/lib/prisma";
+import { signJWTToken } from "~/lib/jwt";
+import { prisma } from "~/lib/prisma";
 
 interface RequestBody {
   email: string;

@@ -6,12 +6,11 @@ interface SignOption {
 
 export const signJWTToken = (
   payload: JwtPayload,
-  options: SignOption = { experiesIn: "1H" }
+  options: SignOption = { experiesIn: "1W" }
 ) => {
   const key = process.env.JWT_SECRET;
   //   @ts-ignore
   const token = jwt.sign(payload, key!, { expiresIn: options.experiesIn });
-  console.log(token);
   return token;
 };
 
