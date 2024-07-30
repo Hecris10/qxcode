@@ -27,7 +27,8 @@
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "turbo": "^2.0.9"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
