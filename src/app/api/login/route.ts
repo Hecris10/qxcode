@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (user && (await bcrypt.compare(body.password, user.password))) {
+    if (user && (await bcrypt.compare(body.password, user.password + ""))) {
       const userClient: UserClient = {
         id: user.id,
         email: user.email,
