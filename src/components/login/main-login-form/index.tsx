@@ -3,9 +3,9 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { LoginButton } from "./login-button";
 
 export const MainLoginForm = () => {
   const router = useRouter();
@@ -45,20 +45,24 @@ export const MainLoginForm = () => {
         <Label className="text-white ml-2" htmlFor="email">
           Email
         </Label>
-        <Input name="email" placeholder="Your email address" />
+        <Input
+          autoComplete="current-email"
+          name="email"
+          placeholder="Your email address"
+        />
       </div>
       <div>
         <Label className="text-white ml-2" htmlFor="password">
           Password
         </Label>
-        <Input name="password" placeholder="Your password" type="password" />
+        <Input
+          autoComplete="current-password"
+          name="password"
+          placeholder="Your password"
+          type="password"
+        />
       </div>
-      <Button
-        type="submit"
-        className="bg-transparent border border-slate-700 shadow-lg text-white rounded-2xl py-2"
-      >
-        Sign in
-      </Button>
+      <LoginButton />
     </form>
   );
 };

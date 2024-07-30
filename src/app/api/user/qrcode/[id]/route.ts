@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
-import { verifyJWTToken } from "~/app/lib/jwt";
-import { prisma } from "~/app/lib/prisma";
+import { verifyJWTToken } from "~/lib/jwt";
+import { prisma } from "~/lib/prisma";
 
 interface RequestParams {
   params: {

@@ -1,6 +1,6 @@
 import * as bcrypt from "bcrypt";
 import { NextRequest } from "next/server";
-import { prisma } from "~/app/lib/prisma";
+import { prisma } from "~/lib/prisma";
 interface RequestBody {
   name: string;
   email: string;
