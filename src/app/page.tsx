@@ -1,12 +1,9 @@
-import { useSession } from "next-auth/react";
 import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa";
 import { MdQrCodeScanner } from "react-icons/md";
 import { MainLoginForm } from "~/components/login/main-login-form";
 import { Button } from "~/components/ui/button";
 
 export default function Home() {
-  const { data: session } = useSession();
-
   return (
     <section className="w-full max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] md:my-auto border border-blue1 shadow-lg">
       <MdQrCodeScanner className="mx-auto w-24 h-24 text-slate-600" />
