@@ -23,7 +23,10 @@ export const MainLoginForm = () => {
       callbackUrl: "/",
     });
 
-    if (result?.ok) router.push("/");
+    if (result?.ok) {
+      console.log("success", result.ok);
+      router.refresh();
+    }
 
     if (result?.error && result?.status === 401) {
       console.log("error", result.error);
