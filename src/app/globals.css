@@ -86,6 +86,14 @@
   }
 }
 
+[data-scope="collapsible"][data-part="content"][data-state="open"] {
+  animation: slideDown 250ms;
+}
+
+[data-scope="collapsible"][data-part="content"][data-state="closed"] {
+  animation: slideUp 200ms;
+}
+
 body {
   @apply bg-blue3 text-white;
 }

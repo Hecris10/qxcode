@@ -1,7 +1,8 @@
 import * as bcrypt from "bcrypt";
 import { NextRequest } from "next/server";
+import { ApiHandlerError } from "~/lib/globals.types";
 import { prisma } from "~/lib/prisma";
-interface RequestBody {
+export interface RequestBody {
   name: string;
   email: string;
   password: string;
@@ -9,6 +10,32 @@ interface RequestBody {
 
 export async function POST(request: NextRequest) {
   const body: RequestBody = await request.json();
+
+  const errors: string[] = [];
+
+  if (!body.name) {
+    errors.push("name");
+  }
+  if (!body.email) {
+    errors.push("email");
+  }
+  if (!body.password) {
+    errors.push("password");
+  }
+
+  if (errors.length > 0) {
+    const errorBody: ApiHandlerError = {
+      status: 400,
+      message: `This field is required: ${errors.join(", ")}`,
+    };
+
+    return new Response(JSON.stringify(errorBody), {
+      status: 400,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 
   try {
     const existingUser = await prisma.user.findUnique({
@@ -44,7 +71,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (e: any) {
     return new Response(JSON.stringify(e), {
-      status: 401,
+      status: 400,
       headers: {
         "Content-Type": "application/json",
       },

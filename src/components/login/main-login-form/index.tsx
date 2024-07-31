@@ -3,9 +3,9 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import { FormButton } from "~/components/form-button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { LoginButton } from "./login-button";
 
 export const MainLoginForm = () => {
   const router = useRouter();
@@ -67,7 +67,7 @@ export const MainLoginForm = () => {
           type="password"
         />
       </div>
-      <LoginButton />
+      <FormButton buttonLabel="Sign in" loadingLabelText="Signing in" />
     </form>
   );
 };

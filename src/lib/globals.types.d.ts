@@ -11,3 +11,8 @@ declare module "next-auth" {
     user: UserClient & { accessToken: string };
   }
 }
+
+export interface ApiHandlerError {
+  status: number;
+  message: string;
+}
