@@ -35,10 +35,12 @@ export const MainLoginForm = () => {
     <form action={onSubmit} className="flex flex-col w-full mt-4 gap-4">
       <div
         ref={errorDivRef}
-        className="duration-300 my-2 ease-in-out transition-all collapseItem w-full relative"
+        className="duration-300 bg-yellow-300 my-2 ease-in-out transition-all collapseItem w-full relative"
       >
-        <div className="relative w-full text-center">
-          <p className="text-red-500 absolute">Invalid email or password</p>
+        <div className="relative w-full text-center mx-auto bg-red-400">
+          <p className="text-red-500 text-center absolute w-full">
+            Invalid email or password
+          </p>
         </div>
       </div>
       <div>
