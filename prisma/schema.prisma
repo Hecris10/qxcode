@@ -16,8 +16,8 @@ datasource db {
 model User {
   id         String    @id @default(cuid())
   email      String    @unique
-  name       String
-  phone      String
+  name       String    @default("")
+  phone      String?
   birthDate  DateTime?
   qrCodes    QRCode[]
   createdAt  DateTime  @default(now())
