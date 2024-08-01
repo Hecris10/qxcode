@@ -104,6 +104,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (e: any) {
+    console.error(JSON.stringify(e));
     return new Response(JSON.stringify(e), {
       status: 400,
       headers: {
