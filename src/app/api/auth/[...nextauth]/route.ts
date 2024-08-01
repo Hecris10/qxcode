@@ -91,6 +91,7 @@ const handler = NextAuth({
               provider: "google",
               providerId: user.id + "",
               password: "",
+              phone: "",
             },
           });
           token.id = newUser.id;

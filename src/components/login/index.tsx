@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MdQrCodeScanner } from "react-icons/md";
 import { GoogleLoginButton } from "./google-login-button";
 import { MainLoginForm } from "./main-login-form";
@@ -21,6 +22,14 @@ export const Login = () => {
         <Button className="bg-white border hover:bg-zinc-400 border-slate-700 shadow-lg text-black text-center rounded-2xl w-full">
           <FaApple className="mx-2 w-6 h-6" /> Sign in with Apple
         </Button> */}
+      </div>
+      <div className="mx-auto mt-10">
+        <p className="text-center text-slate-500 mx-auto">
+          {`Don't have an account?`}{" "}
+          <Link href={"/register"} className="font-bold text-slate-400">
+            Sign up
+          </Link>
+        </p>
       </div>
     </section>
   );
