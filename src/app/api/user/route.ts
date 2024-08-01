@@ -5,6 +5,8 @@ import { prisma } from "~/lib/prisma";
 export interface RequestBody {
   name: string;
   email: string;
+  phone: string;
+  birthdate: string;
   password: string;
 }
 
@@ -19,9 +21,17 @@ export async function POST(request: NextRequest) {
   if (!body.email) {
     errors.push("email");
   }
+  if (!body.phone) {
+    errors.push("phone");
+  }
+  if (!body.birthdate) {
+    errors.push("birthdate");
+  }
   if (!body.password) {
     errors.push("password");
   }
+
+  body.phone = body.phone.replace(/\D/g, "");
 
   if (errors.length > 0) {
     const errorBody: ApiHandlerError = {
@@ -38,19 +48,40 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const existingUser = await prisma.user.findUnique({
+    const existingUserEmail = await prisma.user.findUnique({
       where: {
         email: body.email,
       },
     });
 
-    if (existingUser) {
-      return new Response(JSON.stringify({ message: "User already exists" }), {
-        status: 409,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    if (existingUserEmail) {
+      return new Response(
+        JSON.stringify({ message: "Email already registered" }),
+        {
+          status: 409,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const existingUserPhone = await prisma.user.findFirst({
+      where: {
+        phone: body.phone,
+      },
+    });
+
+    if (existingUserPhone) {
+      return new Response(
+        JSON.stringify({ message: "Phone number already registered" }),
+        {
+          status: 409,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
 
     const user = await prisma.user.create({
@@ -58,6 +89,8 @@ export async function POST(request: NextRequest) {
         name: body.name,
         email: body.email,
         password: await bcrypt.hash(body.password, 10),
+        birthDate: new Date(body.birthdate),
+        phone: body.phone,
       },
     });
 

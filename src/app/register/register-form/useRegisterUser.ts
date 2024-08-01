@@ -28,10 +28,16 @@ export const useRegisterUser = () => {
       console.log("User registered successfully");
     },
     onError: (error) => {
-      if (error.message === "User already exists") {
+      console.log(error);
+      if (error.message === "Email already registered") {
         setError("email", {
           type: "validate",
           message: "Email already registered",
+        });
+      } else if (error.message === "Phone number already registered") {
+        setError("phone", {
+          type: "validate",
+          message: "Phone number already registered",
         });
       }
     },
@@ -42,6 +48,7 @@ export const useRegisterUser = () => {
   };
 
   const onSubmitForm = handleSubmit(onSubmit);
+  // const onSubmitForm = handleSubmit((e) => console.log(e));
 
   return { onSubmitForm, errors, register, passwordRef, setValue, isPending };
 };

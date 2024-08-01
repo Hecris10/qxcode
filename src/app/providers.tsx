@@ -4,7 +4,7 @@ import { ClientProviders } from "~/components/client-providers";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
   return (
-    <ThemeProvider defaultTheme="system" enableSystem attribute="class">
+    <ThemeProvider defaultTheme="dark" enableSystem attribute="class">
       <ClientProviders>{children}</ClientProviders>
     </ThemeProvider>
   );
