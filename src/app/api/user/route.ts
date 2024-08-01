@@ -31,8 +31,6 @@ export async function POST(request: NextRequest) {
     errors.push("password");
   }
 
-  body.phone = body.phone.replace(/\D/g, "");
-
   if (errors.length > 0) {
     const errorBody: ApiHandlerError = {
       status: 400,

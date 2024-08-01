@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ark-ui/react": "^3.6.2",
-    "@prisma/client": "5.1.1",
+    "@prisma/client": "^5.17.0",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@tanstack/react-query": "^5.51.15",
@@ -24,6 +24,7 @@
     "next": "14.2.5",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
+    "prisma": "^5.17.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.1",
@@ -42,7 +43,6 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
-    "prisma": "^5.17.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
