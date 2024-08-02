@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { registerUser } from "~/services/user";
 import { RegisterForm } from "./register-form-types";
 
@@ -26,6 +27,11 @@ export const useRegisterUser = () => {
     },
     onSuccess: () => {
       console.log("User registered successfully");
+      toast("", {
+        description: "Your account has been created successfully",
+        type: "success",
+      });
+      router.push("/");
     },
     onError: (error) => {
       console.log(error);
