@@ -31,7 +31,7 @@ export const UserInfo = () => {
         <div className="w-full flex align-middle border border-transparent  hover:border-slate-700 active:border-slate-700 p-2 rounded-full duration-300 ease-in-out hover:bg-slate-800">
           <Avatar className="w-14 h-14">
             <AvatarImage src={userImage} alt="User image" />
-            <AvatarFallback className="text-black font-bold text-xl">
+            <AvatarFallback className="text-white font-bold text-xl">
               {userInitials}
             </AvatarFallback>
           </Avatar>

@@ -5,7 +5,7 @@ import { MainLoginForm } from "./main-login-form";
 
 export const Login = () => {
   return (
-    <section className="w-full max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] md:my-auto border border-blue1 shadow-lg">
+    <section className="w-full max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] my-auto border border-blue1 shadow-lg">
       <Logo />
       <h2 className="text-center">Sign in to QxCode</h2>
       <MainLoginForm />
