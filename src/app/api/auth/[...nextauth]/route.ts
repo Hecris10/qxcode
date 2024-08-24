@@ -67,7 +67,7 @@ const handler = NextAuth({
         const newTokenBody: JWT = {
           name: token.name,
           email: token.email,
-          picture: user.image,
+          image: user.image,
           sub: user.id,
           accessToken: newToken,
           provider: "credentials",
@@ -99,7 +99,9 @@ const handler = NextAuth({
         } else {
           token.id = exixtingUser.id;
           user.id = exixtingUser.id;
+          user.image = exixtingUser.imageUrl;
         }
+        token.provider = "google";
       }
 
       return { ...token, ...user };

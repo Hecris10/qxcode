@@ -4,6 +4,7 @@ interface UserClient {
   email: string;
   name: string;
   imageUrl?: string;
+  image?: string;
 }
 
 declare module "next-auth" {

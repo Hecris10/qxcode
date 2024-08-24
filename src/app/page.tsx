@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { Login } from "~/components/login";
 
 export const metadata: Metadata = {
@@ -7,16 +8,16 @@ export const metadata: Metadata = {
   description: "Your codes last forever",
 };
 
-export default function Home() {
+export default function Index() {
   const cookieStore = cookies();
   const tokenDev = cookieStore.get("next-auth.session-token")?.value;
   const tokenPrd = cookieStore.get("__Secure-next-auth.session-token")?.value;
 
   const auth = tokenDev || tokenPrd;
 
-  if (!auth) {
-    return <Login />;
+  if (auth) {
+    redirect("/home");
   }
 
-  return <>Dashboard</>;
+  return <Login />;
 }
