@@ -59,6 +59,10 @@
   }
 }
 
+.main-layout {
+  height: calc(100vh - 500px);
+}
+
 @layer base {
   * {
     @apply border-border;

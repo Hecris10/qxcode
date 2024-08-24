@@ -29,9 +29,8 @@ export const useRegisterUser = () => {
       console.log("User registered successfully");
       toast("", {
         description: "Your account has been created successfully",
-        type: "success",
       });
-      router.push("/");
+      router.push("/login");
     },
     onError: (error) => {
       console.log(error);

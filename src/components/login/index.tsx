@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { MdQrCodeScanner } from "react-icons/md";
+import { Logo } from "../logo";
 import { GoogleLoginButton } from "./google-login-button";
 import { MainLoginForm } from "./main-login-form";
 
 export const Login = () => {
   return (
-    <section className="w-full max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] md:my-auto border border-blue1 shadow-lg">
-      <MdQrCodeScanner className="mx-auto w-24 h-24 text-slate-600" />
+    <section className="w-full max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] my-auto border border-blue1 shadow-lg">
+      <Logo />
       <h2 className="text-center">Sign in to QxCode</h2>
       <MainLoginForm />
       <div className="flex w-[80%] mx-auto my-8">

@@ -10,18 +10,20 @@ export const metadata: Metadata = {
 
 export default async function Register() {
   return (
-    <section className="w-full h-full max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] md:my-auto border border-blue1 shadow-lg">
-      <MdQrCodeScanner className="mx-auto w-24 h-24 text-slate-600" />
-      <h2 className="text-center">Register your account</h2>
-      <RegisterForm />
-      <div className="mx-auto mt-10">
-        <p className="text-center text-slate-500 mx-auto">
-          {`Already have an account?`}
-          <Link href={"/"} className="font-bold text-slate-400">
-            Sign in
-          </Link>
-        </p>
-      </div>
-    </section>
+    <div className="py-8 w-full h-full">
+      <section className="w-full h-full my-auto mx-auto max-w-[650px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] md:my-auto border border-blue1 shadow-lg">
+        <MdQrCodeScanner className="mx-auto w-24 h-24 text-slate-600" />
+        <h2 className="text-center">Register your account</h2>
+        <RegisterForm />
+        <div className="mx-auto mt-10">
+          <p className="text-center text-slate-500 mx-auto">
+            {`Already have an account?  `}
+            <Link href={"/"} className="font-bold text-slate-400">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </section>
+    </div>
   );
 }
