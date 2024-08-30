@@ -6,7 +6,7 @@ import { HomeLayout } from "../home-layout";
 export const LayoutWrapper = ({ children }: { children: ReactNode }) => {
   const pathName = usePathname();
 
-  if (pathName === "/home") {
+  if (pathName.includes("home")) {
     return <HomeLayout>{children}</HomeLayout>;
   }
 

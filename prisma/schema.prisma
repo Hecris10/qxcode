@@ -30,10 +30,14 @@ model User {
 }
 
 model QRCode {
-  id        String   @id @default(cuid())
-  code      String   @default("")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  name         String   @default("")
+  code         String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       String
+  type         String   @default("Text")
+  wifiSsId     String?
+  wifiPassword String?
+  user         User     @relation(fields: [userId], references: [id])
 }
