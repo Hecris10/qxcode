@@ -6,7 +6,7 @@ import { UserClient } from "~/lib/globals.types";
 import { signJWTToken } from "~/lib/jwt";
 import { prisma } from "~/lib/prisma";
 
-import { apiUrl } from "~/service/api";
+import { apiUrl } from "~/services/api";
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
