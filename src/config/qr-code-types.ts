@@ -15,7 +15,6 @@ export type QrCodeTypeName = QrCodeType["name"];
 export type QrCodeTypeWithNoWifi = Exclude<QrCodeTypeName, 'Wifi'>;
 
 
-
 export interface NewQrCodeForm {
   name: string;
   type: QrCodeTypeWithNoWifi;
@@ -36,3 +35,5 @@ export type NewQrCodeFormProps = {
 }
 
 export type NewQrdCode = NewQrCodeForm | NewQrCodeFromWifi;
+
+export type QrCode = NewQrdCode & { id: string, type: QrCodeTypeName }

@@ -24,11 +24,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>
-          <main className="flex h-full flex-col items-center justify-between my-auto px-6">
-            {children}
-          </main>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
