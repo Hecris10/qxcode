@@ -1,6 +1,5 @@
 import { QrCodeContainer } from "~/components/qr-code";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -10,14 +9,14 @@ import { QrCode } from "~/config/qr-code-types";
 
 export const QrCodeCard = ({ qrCode }: { qrCode: QrCode }) => {
   return (
-    <Card className="w-full m-auto h-full rounded-2xl">
+    <section className="w-full bg-card flex-col rounded-2xl">
       <CardHeader>
         <CardTitle>{qrCode.name}</CardTitle>
         <CardDescription>{qrCode.type}</CardDescription>
       </CardHeader>
-      <CardContent className="h-full w-full ">
+      <CardContent>
         <QrCodeContainer code={qrCode.code} />
       </CardContent>
-    </Card>
+    </section>
   );
 };
