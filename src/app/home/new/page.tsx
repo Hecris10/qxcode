@@ -1,4 +1,4 @@
-import { NewQrCodeForm } from "~/app/home/components/new-qr-code-form";
+import { NewQrCodeForm } from "~/app/home/new/components/new-qr-code-form";
 
 export default function NewQrCode() {
   return (

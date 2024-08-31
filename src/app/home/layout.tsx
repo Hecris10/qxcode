@@ -1,5 +1,5 @@
 import { mainNavigation } from "~/config/navigation";
-import { NavigationLink } from "./components/navigation-link";
+import { NavigationLink } from "./new/components/navigation-link";
 
 export default function HomeLayout({
   children,
