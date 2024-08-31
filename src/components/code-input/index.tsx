@@ -52,7 +52,9 @@ export const getInputCodeType = (codeType: QrCodeTypeName) => {
       return "tel";
     case "Wifi":
       return "text";
-    case "Location":
+    // case "Location":
+    //   return "text";
+    default:
       return "text";
   }
 };
