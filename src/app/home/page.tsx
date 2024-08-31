@@ -1,15 +1,16 @@
-import { QrCode } from "@ark-ui/react";
-import { PageProps } from "../../../.next/types/app/layout";
+import { authOptions } from "~/config/auth";
+import { useUserServerSession } from "~/hooks/useUserSession";
+import { getUserQrCode } from "~/services/actions/qrcode";
+import { QrList } from "./components/qrcode-list";
 
-export default function Home({ searchParams }: PageProps) {
+export default async function Home() {
+  const session = await useUserServerSession(authOptions);
+
+  const qrCodes = await getUserQrCode(session.sub);
+
   return (
-    <div className="w-full ml-4">
-      {" "}
-      <QrCode.Root value="https://helamanewerton.vercel.app/">
-        <QrCode.Frame>
-          <QrCode.Pattern />
-        </QrCode.Frame>
-      </QrCode.Root>
+    <div>
+      <QrList qrCodes={qrCodes} />
     </div>
   );
 }
