@@ -69,7 +69,7 @@ export const RegisterForm = () => {
         />
         <ErrorAlert
           className="mx-1"
-          message={errors.email?.message || ""}
+          message={errors.email?.message?.toString() || ""}
           inError={errors.email?.type === "validate"}
         />
         <ErrorAlert
@@ -132,7 +132,7 @@ export const RegisterForm = () => {
         />
         <ErrorAlert
           className="mx-1"
-          message={errors.phone?.message || ""}
+          message={errors.phone?.message?.toString() || ""}
           inError={errors.phone?.type === "validate"}
         />
         <ErrorAlert

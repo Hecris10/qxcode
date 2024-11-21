@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Login } from "~/components/login";
 
@@ -9,11 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function Index() {
-  const cookieStore = cookies();
-  const tokenDev = cookieStore.get("next-auth.session-token")?.value;
-  const tokenPrd = cookieStore.get("__Secure-next-auth.session-token")?.value;
-
-  const auth = tokenDev || tokenPrd;
+  const auth = false;
 
   if (auth) {
     redirect("/home");

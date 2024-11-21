@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
 import { MdLogout } from "react-icons/md";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -12,17 +11,8 @@ import {
 import { getNameInitials } from "~/utils/strings";
 
 export const UserInfo = () => {
-  const { data: session, status } = useSession();
-
-  const onSignOut = async () =>
-    signOut({
-      callbackUrl: "/",
-    });
-
-  if (!session || status !== "authenticated") return null;
-
-  const userImage = session.user.image || session.user.imageUrl;
-  const userInitials = getNameInitials(session.user.name);
+  const userImage = "";
+  const userInitials = getNameInitials("");
 
   return (
     <DropdownMenu>
@@ -42,7 +32,7 @@ export const UserInfo = () => {
         <DropdownMenuSeparator /> */}
         <DropdownMenuItem className="hover:bg-slate-700">
           <button
-            onClick={onSignOut}
+            onClick={() => {}}
             className="gap-4 flex my-auto align-middle "
           >
             <MdLogout className="w-6 h-6 font-bold my-auto" /> Log out

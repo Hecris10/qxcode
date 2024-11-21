@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { registerUser } from "~/services/user";
-import { RegisterForm } from "./register-form-types";
 
 export const useRegisterUser = () => {
   const {
@@ -13,12 +12,12 @@ export const useRegisterUser = () => {
     register,
     setError,
     setValue,
-  } = useForm<RegisterForm>();
+  } = useForm<any>();
   const router = useRouter();
   const passwordRef = useRef<string>("");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: RegisterForm) => {
+    mutationFn: async (data: any) => {
       const res = await registerUser(data);
       if (!res.ok) {
         const error = await res.json();
@@ -48,7 +47,7 @@ export const useRegisterUser = () => {
     },
   });
 
-  const onSubmit = async (data: RegisterForm) => {
+  const onSubmit = async (data: any) => {
     mutate(data);
   };
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { FormButton } from "~/components/form-button";
@@ -16,12 +15,7 @@ export const MainLoginForm = () => {
     const email = e.get("email") as string;
 
     const password = e.get("password") as string;
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: "/",
-    });
+    const result = {} as any;
 
     if (result?.ok) {
       console.log("success", result.ok);
