@@ -18,3 +18,8 @@ export function validateDate(dateString: string): boolean {
     date.getDate() === day
   );
 }
+
+export function formatInputDateToIso(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toISOString();
+}

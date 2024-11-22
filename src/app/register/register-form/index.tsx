@@ -1,144 +1,102 @@
 "use client";
 import { Label } from "@radix-ui/react-label";
-import { PhoneInput } from "react-international-phone";
+import { useActionState } from "react";
 import { FormButton } from "~/components/form-button";
 import { ErrorAlert } from "~/components/ui/error-alert";
 import { Input } from "~/components/ui/input";
+import { PhoneNumberInput } from "~/components/ui/phone-number-input/phone-number-input";
 import { SingleDatePicker } from "~/components/ui/single-date-picker";
-import { cn } from "~/lib/utils";
-import { validateDate } from "~/utils/dates";
-import { useRegisterUser } from "./useRegisterUser";
+import { useFormValues } from "~/hooks/useFormValues";
+import { ServerRequest } from "~/services/api";
+import { signupUser } from "~/services/user/actions";
+import { RegisterUserValidation } from "~/services/user/users";
 
 const today = new Date();
 
 export const RegisterForm = () => {
-  const { onSubmitForm, register, errors, passwordRef, setValue, isPending } =
-    useRegisterUser();
+  const [errors, formAction, isPending] = useActionState(
+    signupUser,
+    {} as ServerRequest<RegisterUserValidation>
+  );
+
+  const { handleChange, getValue } = useFormValues<RegisterUserValidation>();
+
+  const getInputError = (field: keyof RegisterUserValidation) => {
+    return errors[field] as string;
+  };
+
+  const getInputValue = (key: keyof RegisterUserValidation) =>
+    getValue(key) as string;
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange(e.target.name as keyof RegisterUserValidation, e.target.value);
+  };
 
   return (
-    <form
-      onSubmit={onSubmitForm}
-      className="flex flex-col w-full my-auto gap-3"
-    >
+    <form action={formAction} className="flex flex-col w-full my-auto gap-3">
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Nome
         </Label>
         <Input
-          {...register("name", { required: true })}
+          name="name"
           placeholder="Your complete name"
+          defaultValue={getInputValue("name")}
+          onChange={onInputChange}
         />
         <ErrorAlert
           className="mx-1"
           message={"Name is required"}
-          inError={errors.name?.type === "required"}
+          inError={getInputError("name") === "required"}
         />
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Birthdate
         </Label>
-        <SingleDatePicker
-          {...register("birthdate", {
-            required: true,
-            validate: (e) => validateDate(e),
-          })}
-          defaultValue={today}
-          onDateChange={(e) => setValue("birthdate", e)}
-        />
+        <SingleDatePicker name="dateOfBirth" defaultValue={today} />
         <ErrorAlert
           className="mx-1"
           message={"Birthdate is required"}
-          inError={errors.birthdate?.type === "required"}
+          inError={getInputError("dateOfBirth") == "required"}
         />
-        <ErrorAlert
+        {/* <ErrorAlert
           className="mx-1"
           message={"Birthdate should be is in wrong format"}
-          inError={errors.birthdate?.type === "validate"}
-        />
+          inError={errors.dateOfBirth = "required"}
+        /> */}
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Email
         </Label>
         <Input
-          {...register("email", { required: true })}
-          type="email"
+          name="email"
           autoComplete="current-email"
           placeholder="Your email address"
+          defaultValue={getInputValue("email")}
+          onChange={onInputChange}
         />
         <ErrorAlert
           className="mx-1"
-          message={errors.email?.message?.toString() || ""}
-          inError={errors.email?.type === "validate"}
+          message={"Invalid format"}
+          inError={getInputError("email") === "invalid"}
         />
         <ErrorAlert
           className="mx-1"
           message={"Email is required"}
-          inError={errors.email?.type === "required"}
+          inError={getInputError("email") === "required"}
         />
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Phone number
         </Label>
-        <PhoneInput
-          {...register("phone", {
-            required: true,
-          })}
-          onChange={(phone) => setValue("phone", phone)}
-          style={{
-            padding: "2px",
-            color: "darkgray",
-          }}
-          dialCodePreviewStyleProps={{
-            className: "h-[40px] my-auto py-1 px-2",
-          }}
-          countrySelectorStyleProps={{
-            dropdownStyleProps: {
-              style: {
-                background: "#19212b",
-                color: "white",
-              },
-              listItemClassName: "hover:bg-red-500",
-            },
-            buttonClassName: cn(
-              "bg-grey30",
-              "w-full px-2 py-2 rounded-xl shadow-lg "
-            ),
-            buttonStyle: {
-              backgroundColor: "#334155",
-              color: "darkgray",
-              borderColor: "transparent",
-              fontSize: "1rem",
-              padding: "1rem",
-              height: "40px",
-              borderRadius: "0.75rem",
-            },
-          }}
-          inputStyle={{
-            backgroundColor: "#334155",
-            color: "white",
-            borderColor: "transparent",
-            fontSize: "1rem",
-            padding: "1rem",
-            height: "40px",
-            borderRadius: "0.75rem",
-            marginLeft: "0.5rem",
-          }}
-          inputClassName={cn(
-            "w-full px-2 py-2 phone-input rounded-lg shadow-lg"
-          )}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={errors.phone?.message?.toString() || ""}
-          inError={errors.phone?.type === "validate"}
-        />
+        <PhoneNumberInput name="phoneNumber" />
         <ErrorAlert
           className="mx-1"
           message={"Phone number is required"}
-          inError={errors.phone?.type === "required"}
+          inError={getInputError("phoneNumber") === "required"}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -146,19 +104,17 @@ export const RegisterForm = () => {
           Password
         </Label>
         <Input
-          {...register("password", { required: true })}
-          onChange={(e) => {
-            setValue("password", e.target.value);
-            passwordRef.current = e.target.value;
-          }}
+          name="password"
           autoComplete="current-password"
           placeholder="Your password"
           type="password"
+          defaultValue={getInputValue("password")}
+          onChange={onInputChange}
         />
         <ErrorAlert
           className="mx-1"
           message={"Password is required"}
-          inError={errors.password?.type === "required"}
+          inError={getInputError("password") === "required"}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -166,17 +122,22 @@ export const RegisterForm = () => {
           Repat password
         </Label>
         <Input
-          {...register("repeatPassword", {
-            validate: (value) => value === passwordRef.current,
-          })}
+          name="repeatPassword"
           autoComplete="current-password"
           placeholder="Your password"
           type="password"
+          defaultValue={getInputValue("repeatPassword")}
+          onChange={onInputChange}
         />
         <ErrorAlert
           className="mx-1"
           message={"Password is required"}
-          inError={errors.repeatPassword?.type === "validate"}
+          inError={getInputError("repeatPassword") === "required"}
+        />
+        <ErrorAlert
+          className="mx-1"
+          message={"Passwords don't match"}
+          inError={getInputError("repeatPassword") === "NoMatch"}
         />
       </div>
       <FormButton
