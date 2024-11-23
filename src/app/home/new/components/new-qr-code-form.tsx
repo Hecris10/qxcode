@@ -38,8 +38,6 @@ export const NewQrCodeForm = () => {
     console.log(data);
   });
 
-  console.log(user);
-
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={onSubmit} className="max-w-2xl w-full mx-auto mt-8">

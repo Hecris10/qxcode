@@ -12,8 +12,6 @@ export async function middleware(request: Request) {
 
   if (accessToken) isAuth = true;
 
-  console.log({ accessToken, isAuth, url: request.url });
-
   if (isAuth) {
     if (request.url.includes("/register")) {
       return NextResponse.redirect(new URL("/home", request.url));
