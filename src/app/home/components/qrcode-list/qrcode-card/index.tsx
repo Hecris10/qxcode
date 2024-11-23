@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { QrCode } from "~/config/qr-code-types";
+import { QrCode } from "~/services/qrcodes/qrcodes.type";
 
 export const QrCodeCard = ({ qrCode }: { qrCode: QrCode }) => {
   return (
@@ -15,7 +15,7 @@ export const QrCodeCard = ({ qrCode }: { qrCode: QrCode }) => {
         <CardDescription>{qrCode.type}</CardDescription>
       </CardHeader>
       <CardContent>
-        <QrCodeContainer code={qrCode.code} />
+        <QrCodeContainer code={qrCode.content} />
       </CardContent>
     </section>
   );
