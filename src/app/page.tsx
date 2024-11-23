@@ -1,21 +1,17 @@
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Login } from "~/components/login";
+import { isUserLoggedIn } from "~/services/auth/auth-actions";
 
 export const metadata: Metadata = {
   title: "Qxcode | Login",
   description: "Your codes last forever",
 };
 
-export default function Index() {
-  const cookieStore = cookies();
-  const tokenDev = cookieStore.get("next-auth.session-token")?.value;
-  const tokenPrd = cookieStore.get("__Secure-next-auth.session-token")?.value;
+export default async function Index() {
+  const auth = await isUserLoggedIn();
 
-  const auth = tokenDev || tokenPrd;
-
-  if (auth) {
+  if (auth.isAuth) {
     redirect("/home");
   }
 

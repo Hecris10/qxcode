@@ -1,6 +1,5 @@
 "use client";
 import { Collapsible } from "@ark-ui/react";
-import { useSession } from "next-auth/react";
 import { FormProvider, useForm } from "react-hook-form";
 import { BsQrCodeScan } from "react-icons/bs";
 import { CodeInput } from "~/components/code-input";
@@ -22,11 +21,10 @@ import {
   QrCodeTypeName,
   qrCodeTypes,
 } from "~/config/qr-code-types";
-import { newQrCodeAction } from "~/services/actions/newQrCodeAction";
 
 export const NewQrCodeForm = () => {
   const formMethods = useForm<NewQrdCode>();
-  const user = useSession();
+  const user = {};
   const {
     register,
     watch,
@@ -38,11 +36,7 @@ export const NewQrCodeForm = () => {
 
   const onSubmit = handleSubmit(async (data: NewQrdCode) => {
     console.log(data);
-    // @ts-expect-error fix this
-    await newQrCodeAction({ qrCodeData: data, userId: user.data.id });
   });
-
-  console.log(user);
 
   return (
     <FormProvider {...formMethods}>

@@ -1,13 +1,10 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { FaGoogle } from "react-icons/fa";
 import { Button } from "~/components/ui/button";
 
 export const GoogleLoginButton = () => {
-  const onClick = () => {
-    const result = signIn("google", { callbackUrl: "/", redirect: false });
-  };
+  const onClick = () => {};
 
   return (
     <Button

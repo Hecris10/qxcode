@@ -22,6 +22,7 @@ export const FormButton = ({
 
   return (
     <Button
+      disabled={isLoadingFromForm}
       type="submit"
       className={cn(
         "bg-transparent border border-slate-700 shadow-lg text-white rounded-2xl py-2 hover:bg-slate-800",

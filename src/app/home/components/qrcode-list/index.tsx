@@ -1,4 +1,4 @@
-import { QrCode } from "~/config/qr-code-types";
+import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { QrCodeCard } from "./qrcode-card";
 
 export const QrList = ({ qrCodes }: { qrCodes: QrCode[] }) => {

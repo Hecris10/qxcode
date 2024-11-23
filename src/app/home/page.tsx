@@ -1,12 +1,8 @@
-import { authOptions } from "~/config/auth";
-import { useUserServerSession } from "~/hooks/useUserSession";
-import { getUserQrCode } from "~/services/actions/qrcode";
+import { getUserQrCodes } from "~/services/qrcodes/qrcodes";
 import { QrList } from "./components/qrcode-list";
 
 export default async function Home() {
-  const session = await useUserServerSession(authOptions);
-
-  const qrCodes = await getUserQrCode(session.sub);
+  const qrCodes = await (await getUserQrCodes({ page: 1, limit: 10 })).data;
 
   return (
     <div>
