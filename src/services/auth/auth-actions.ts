@@ -1,4 +1,6 @@
 "use server";
+
+import * as jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ValidationConfig } from "~/utils/server/validate-url-form-server";
@@ -6,7 +8,7 @@ import { getFormDataObject } from "~/utils/validation/get-form-data-object";
 import { validateEmail } from "~/utils/validation/validate-email";
 import { validateFormData } from "~/utils/validation/validate-form-data";
 import { apiUrl } from "../api";
-import { ILoginRequest, ILoginUser } from "./auth";
+import { ILoginRequest, ILoginUser, IsUserAuth, UserAuth } from "./auth";
 
 const loginUserValidationConfig: ValidationConfig<ILoginUser> = {
   requiredFields: ["email", "password"],
@@ -52,7 +54,7 @@ export const loginUserAction = async (
     const data = (await response.json()) as ILoginRequest;
     cookieStore.set({
       name: `${process.env.AUTH_TOKEN_NAME}`,
-      value: data.accessToken,
+      value: `${data.accessToken}`,
       httpOnly: true,
       path: "/",
     });
@@ -66,3 +68,51 @@ export const loginUserAction = async (
 
   return validationErrors;
 };
+
+export async function logOutUserAction() {
+  const cookiesStore = await cookies();
+  try {
+    await fetch(`${apiUrl}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (e) {
+    console.error(e);
+  }
+  cookiesStore.set({
+    name: `${process.env.AUTH_TOKEN_NAME}`,
+    value: "",
+    httpOnly: true,
+    path: "/",
+  });
+  cookiesStore.delete(`${process.env.AUTH_TOKEN_NAME}`);
+  redirect("/");
+}
+
+export async function isUserLoggedIn(): Promise<IsUserAuth> {
+  const cookiesStore = await cookies();
+  const authCookie = cookiesStore.get(`${process.env.AUTH_TOKEN_NAME}`);
+  const accessToken = authCookie?.value;
+
+  if (!accessToken || accessToken === "") return { isAuth: false };
+  const secretToken = `${process.env.JWT_SECRET}`;
+
+  try {
+    const decodeUser = jwt.verify(
+      accessToken,
+      secretToken
+    ) as unknown as UserAuth;
+    if (decodeUser)
+      return {
+        isAuth: true,
+        user: decodeUser,
+      };
+
+    return { isAuth: false };
+  } catch (err) {
+    console.error(err);
+    return { isAuth: false };
+  }
+}

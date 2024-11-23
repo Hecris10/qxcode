@@ -20,9 +20,12 @@ export const MainLoginForm = () => {
     startTransition(async () => {
       handleChange("email", e.get("email") as string);
       handleChange("password", e.get("password") as string);
+
       setResponse({} as ServerRequest<ILoginUser>);
+
       const res = await loginUserAction(e);
       setResponse(res);
+
       if (res.serverError)
         toast.error("", {
           description: "Something went wrong, please try again",

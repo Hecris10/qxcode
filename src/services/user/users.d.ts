@@ -3,7 +3,7 @@ export interface ISignUpUser {
   email: string;
   password: string;
   dateOfBirth: string;
-  phoneNumber?: string;
+  phoneNumber: string;
 }
 
 export type SignUpUserValidation = ISignUpUser & { repeatPassword };

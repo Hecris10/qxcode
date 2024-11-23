@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { logOutUserAction } from "~/services/auth/auth-actions";
 import { getNameInitials } from "~/utils/strings";
 
 export const UserInfo = () => {
@@ -31,12 +32,14 @@ export const UserInfo = () => {
         {/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator /> */}
         <DropdownMenuItem className="hover:bg-slate-700">
-          <button
-            onClick={() => {}}
-            className="gap-4 flex my-auto align-middle "
-          >
-            <MdLogout className="w-6 h-6 font-bold my-auto" /> Log out
-          </button>
+          <form action={logOutUserAction}>
+            <button
+              onClick={() => {}}
+              className="gap-4 flex my-auto align-middle "
+            >
+              <MdLogout className="w-6 h-6 font-bold my-auto" /> Log out
+            </button>
+          </form>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
