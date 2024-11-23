@@ -6,18 +6,9 @@ import { getFormDataObject } from "~/utils/validation/get-form-data-object";
 import { validateEmail } from "~/utils/validation/validate-email";
 import { validateFormData } from "~/utils/validation/validate-form-data";
 import { apiUrl, ServerRequest } from "../api";
-import { IRegisterUser, RegisterUserValidation } from "./users";
+import { ISignUpUser, SignUpUserValidation } from "./users";
 
-// export const signupUser = (data: IRegisterUser) =>
-//   fetch(`${apiUrl}/signup`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   });
-
-const signUpUserValidationConfig: ValidationConfig<RegisterUserValidation> = {
+const signUpUserValidationConfig: ValidationConfig<SignUpUserValidation> = {
   requiredFields: [
     "name",
     "email",
@@ -33,12 +24,9 @@ const signUpUserValidationConfig: ValidationConfig<RegisterUserValidation> = {
   },
 };
 
-export const signupUser = async (
-  initialState: ServerRequest<RegisterUserValidation>,
-  e: FormData
-) => {
+export const signupUser = async (e: FormData) => {
   const { validationErrors, hasErrors } =
-    validateFormData<RegisterUserValidation>({
+    validateFormData<SignUpUserValidation>({
       formData: e,
       validationConfig: signUpUserValidationConfig,
     });
@@ -47,9 +35,9 @@ export const signupUser = async (
     return validationErrors;
   }
 
-  const errors: ServerRequest<RegisterUserValidation> = validationErrors;
+  const errors: ServerRequest<SignUpUserValidation> = validationErrors;
 
-  const bodyRequest = getFormDataObject<IRegisterUser>(e, [
+  const bodyRequest = getFormDataObject<ISignUpUser>(e, [
     "name",
     "email",
     "dateOfBirth",
@@ -67,8 +55,24 @@ export const signupUser = async (
       },
       body: JSON.stringify(bodyRequest),
     });
-    const data = await response.json();
-    console.log({ e, response, data });
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        const data = await response.json();
+
+        if (data.message.message.includes("email"))
+          errors.email = "AlreadyExists";
+        if (data.message.message.includes("phone"))
+          errors.phoneNumber = "AlreadyExists";
+        errors.hasValidationErrors = true;
+        return errors;
+      }
+
+      const data = await response.json();
+      console.error(data);
+      errors.serverError = true;
+    }
+    errors.serverSucess = true;
   } catch (error) {
     console.error(error);
     errors.serverError = true;

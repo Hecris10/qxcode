@@ -1,4 +1,4 @@
-export interface IRegisterUser {
+export interface ISignUpUser {
   name: string;
   email: string;
   password: string;
@@ -6,4 +6,4 @@ export interface IRegisterUser {
   phoneNumber?: string;
 }
 
-export type RegisterUserValidation = IRegisterUser & { repeatPassword };
+export type SignUpUserValidation = ISignUpUser & { repeatPassword };

@@ -1,17 +1,11 @@
-import { redirect } from "next/navigation";
+"use client";
 import { FormButton } from "~/components/form-button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
 export const MainLoginForm = () => {
   return (
-    <form
-      action={async () => {
-        "use server";
-        redirect("/");
-      }}
-      className="flex flex-col w-full mt-4 gap-4"
-    >
+    <form className="flex flex-col w-full mt-4 gap-4">
       <div className="duration-300 bg-yellow-300 my-2 ease-in-out transition-all collapseItem w-full relative">
         <div className="relative w-full text-center mx-auto bg-red-400">
           <p className="text-red-500 text-center absolute w-full">

@@ -1,35 +1,72 @@
 "use client";
 import { Label } from "@radix-ui/react-label";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { FormButton } from "~/components/form-button";
 import { ErrorAlert } from "~/components/ui/error-alert";
 import { Input } from "~/components/ui/input";
 import { PhoneNumberInput } from "~/components/ui/phone-number-input/phone-number-input";
 import { SingleDatePicker } from "~/components/ui/single-date-picker";
+
 import { useFormValues } from "~/hooks/useFormValues";
 import { ServerRequest } from "~/services/api";
-import { signupUser } from "~/services/user/actions";
-import { RegisterUserValidation } from "~/services/user/users";
+import { signupUser } from "~/services/user/user-actions";
+import { SignUpUserValidation } from "~/services/user/users";
 
-const today = new Date();
+const toastId = "register";
 
-export const RegisterForm = () => {
-  const [errors, formAction, isPending] = useActionState(
-    signupUser,
-    {} as ServerRequest<RegisterUserValidation>
+export const SignupForm = () => {
+  // const [response, formAction, isPending] = useActionState(
+  //   signupUser,
+  //   {} as ServerRequest<SignUpUserValidation>
+  // );
+
+  const [response, setResponse] = useState<ServerRequest<SignUpUserValidation>>(
+    {} as ServerRequest<SignUpUserValidation>
   );
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  const { handleChange, getValue } = useFormValues<RegisterUserValidation>();
-
-  const getInputError = (field: keyof RegisterUserValidation) => {
-    return errors[field] as string;
+  const formAction = async (e: FormData) => {
+    startTransition(async () => {
+      setResponse({} as ServerRequest<SignUpUserValidation>);
+      const res = await signupUser(e);
+      setResponse(res);
+      if (res.serverSucess) {
+        setTimeout(() => {
+          toast.success("", {
+            description: "Your account was created successfully",
+            duration: 5000,
+          });
+          router.push("/");
+        }, 1000);
+      }
+      if (res.serverError) {
+        toast.error("", {
+          description: "Something went wrong, please try again",
+          duration: 5000,
+        });
+      }
+    });
   };
 
-  const getInputValue = (key: keyof RegisterUserValidation) =>
+  // useEffect(() => {
+  //   console.log({ response, isPending });
+
+  // }, [response, isPending]);
+
+  const { handleChange, getValue } = useFormValues<SignUpUserValidation>();
+
+  const getInputError = (field: keyof SignUpUserValidation) => {
+    return response[field] as string;
+  };
+
+  const getInputValue = (key: keyof SignUpUserValidation) =>
     getValue(key) as string;
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange(e.target.name as keyof RegisterUserValidation, e.target.value);
+    handleChange(e.target.name as keyof SignUpUserValidation, e.target.value);
   };
 
   return (
@@ -54,7 +91,7 @@ export const RegisterForm = () => {
         <Label className="text-white ml-2" htmlFor="email">
           Birthdate
         </Label>
-        <SingleDatePicker name="dateOfBirth" defaultValue={today} />
+        <SingleDatePicker name="dateOfBirth" />
         <ErrorAlert
           className="mx-1"
           message={"Birthdate is required"}
@@ -63,7 +100,7 @@ export const RegisterForm = () => {
         {/* <ErrorAlert
           className="mx-1"
           message={"Birthdate should be is in wrong format"}
-          inError={errors.dateOfBirth = "required"}
+          inError={response.dateOfBirth = "required"}
         /> */}
       </div>
       <div className="flex flex-col gap-1">
@@ -79,13 +116,18 @@ export const RegisterForm = () => {
         />
         <ErrorAlert
           className="mx-1"
-          message={"Invalid format"}
+          message="Invalid format"
           inError={getInputError("email") === "invalid"}
         />
         <ErrorAlert
           className="mx-1"
-          message={"Email is required"}
+          message="Email is required"
           inError={getInputError("email") === "required"}
+        />
+        <ErrorAlert
+          className="mx-1"
+          message="This Email already exists"
+          inError={getInputError("email") === "AlreadyExists"}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -95,8 +137,13 @@ export const RegisterForm = () => {
         <PhoneNumberInput name="phoneNumber" />
         <ErrorAlert
           className="mx-1"
-          message={"Phone number is required"}
+          message="Phone number is required"
           inError={getInputError("phoneNumber") === "required"}
+        />
+        <ErrorAlert
+          className="mx-1"
+          message="This Phone Number already exists"
+          inError={getInputError("phoneNumber") === "AlreadyExists"}
         />
       </div>
       <div className="flex flex-col gap-1">
