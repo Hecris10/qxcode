@@ -41,15 +41,6 @@ export const validateFormData = <T>({
     }
   });
 
-  // Validate required fields
-  if (validationConfig.requiredFields) {
-    validationConfig.requiredFields.forEach((field) => {
-      if (!formData.get(field as string)) {
-        formValidationErrors[`${field as string}`] = `required`;
-      }
-    });
-  }
-
   // Validate custom validations
   if (validationConfig.customValidations) {
     for (const field in validationConfig.customValidations) {
@@ -59,6 +50,15 @@ export const validateFormData = <T>({
         formValidationErrors[`${field}`] = validationError;
       }
     }
+  }
+
+  // Validate required fields
+  if (validationConfig.requiredFields) {
+    validationConfig.requiredFields.forEach((field) => {
+      if (!formData.get(field as string)) {
+        formValidationErrors[`${field as string}`] = `required`;
+      }
+    });
   }
 
   const hasErrors = Object.keys(formValidationErrors).length > 0;

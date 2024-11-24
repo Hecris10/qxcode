@@ -59,10 +59,8 @@ export const signupUser = async (e: FormData) => {
     if (!response.ok) {
       if (response.status === 409) {
         const data = await response.json();
-
-        if (data.message.message.includes("email"))
-          errors.email = "AlreadyExists";
-        if (data.message.message.includes("phone"))
+        if (data?.message?.includes("email")) errors.email = "AlreadyExists";
+        if (data?.message?.includes("phone"))
           errors.phoneNumber = "AlreadyExists";
         errors.hasValidationErrors = true;
         return errors;
@@ -71,12 +69,14 @@ export const signupUser = async (e: FormData) => {
       const data = await response.json();
       console.error(data);
       errors.serverError = true;
+      return errors;
     }
-    errors.serverSucess = true;
   } catch (error) {
     console.error(error);
     errors.serverError = true;
+    return errors;
   }
 
+  errors.serverSucess = true;
   return errors;
 };
