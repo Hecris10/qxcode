@@ -32,6 +32,7 @@ export const SignupForm = () => {
     startTransition(async () => {
       setResponse({} as ServerRequest<SignUpUserValidation>);
       const res = await signupUser(e);
+
       setResponse(res);
       if (res.serverSucess) {
         setTimeout(() => {
