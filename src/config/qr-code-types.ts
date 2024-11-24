@@ -12,8 +12,7 @@ export const qrCodeTypes = [
 export type QrCodeType = (typeof qrCodeTypes)[number];
 export type QrCodeTypeName = QrCodeType["name"];
 
-export type QrCodeTypeWithNoWifi = Exclude<QrCodeTypeName, 'Wifi'>;
-
+export type QrCodeTypeWithNoWifi = Exclude<QrCodeTypeName, "Wifi">;
 
 export interface NewQrCodeForm {
   name: string;
@@ -23,7 +22,7 @@ export interface NewQrCodeForm {
 
 export interface NewQrCodeFromWifi {
   name: string;
-  type: 'Wifi';
+  type: "Wifi";
   ssid: string;
   password: string;
   code: string;
@@ -32,8 +31,6 @@ export interface NewQrCodeFromWifi {
 export type NewQrCodeFormProps = {
   qrCodeData: NewQrdCode;
   userId: string;
-}
+};
 
 export type NewQrdCode = NewQrCodeForm | NewQrCodeFromWifi;
-
-export type QrCode = NewQrdCode & { id: string, type: QrCodeTypeName }

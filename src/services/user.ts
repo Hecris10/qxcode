@@ -1,7 +1,5 @@
-import { RegisterForm } from "~/app/register/register-form/register-form-types";
-
-export const registerUser = (data: RegisterForm) =>
-  fetch("/api/user", {
+export const registerUser = (data: any) =>
+  fetch("user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

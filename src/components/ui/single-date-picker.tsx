@@ -6,14 +6,17 @@ import {
 } from "react-icons/bs";
 
 export const SingleDatePicker = ({
+  name,
   defaultValue,
   onDateChange,
 }: {
+  name?: string;
   defaultValue?: Date;
   onDateChange?: (value: string) => void;
 }) => {
   return (
     <DatePicker.Root
+      name={name}
       onValueChange={(e) => onDateChange && onDateChange(e.valueAsString[0])}
     >
       <DatePicker.Control className="w-full flex relative gap-2 align-middle">
