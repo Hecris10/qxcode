@@ -1,5 +1,6 @@
 import { CiLink, CiTextAlignJustify } from "react-icons/ci";
 import { MdEmail, MdPhone, MdWifi } from "react-icons/md";
+import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
 export const qrCodeTypes = [
   { name: "URL", icon: CiLink, field: "url" },
   { name: "Text", icon: CiTextAlignJustify, field: "text" },
@@ -9,14 +10,9 @@ export const qrCodeTypes = [
   // { name: "Location", icon: MdLocationOn, field: "location" },
 ] as const;
 
-export type QrCodeType = (typeof qrCodeTypes)[number];
-export type QrCodeTypeName = QrCodeType["name"];
-
-export type QrCodeTypeWithNoWifi = Exclude<QrCodeTypeName, "Wifi">;
-
 export interface NewQrCodeForm {
   name: string;
-  type: QrCodeTypeWithNoWifi;
+  type: QrCodeType;
   code: string;
 }
 

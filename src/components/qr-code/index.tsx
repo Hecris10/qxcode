@@ -8,7 +8,10 @@ export const QrCodeContainer = ({
   code: string;
   className?: string;
 }) => (
-  <QrCode.Root className={cn("rounded-lg bg-slate-50", className)} value={code}>
+  <QrCode.Root
+    className={cn("rounded-lg bg-slate-50 p-0.5", className)}
+    value={code}
+  >
     <QrCode.Frame>
       <QrCode.Pattern />
     </QrCode.Frame>

@@ -26,4 +26,6 @@ export interface QrCodeText extends QrCodeBase {
 
 export type QrCode = QrCodeWifi | QrCodeLink | QrCodeText;
 
+export type QrCodeType = QrCode["type"];
+
 export type PaginatedQrCodes = PaginatedData<QrCode>;
