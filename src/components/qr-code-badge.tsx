@@ -7,7 +7,10 @@ export const QrCodeBadge = ({ type }: { type: QrCodeType }) => {
   switch (type) {
     case "link":
       return (
-        <Badge className="cursor-default" variant="secondary">
+        <Badge
+          className="cursor-default border border-slate-800 bg-slate-700 text-white"
+          variant="secondary"
+        >
           <Link2 className="w-4 h-4 mr-1" />
           Link
         </Badge>
@@ -15,7 +18,6 @@ export const QrCodeBadge = ({ type }: { type: QrCodeType }) => {
     case "text":
       return (
         <Badge className="cursor-default">
-          {" "}
           <FileType className="w-4 h-4 mr-1" />
           Text
         </Badge>
@@ -28,8 +30,10 @@ export const QrCodeBadge = ({ type }: { type: QrCodeType }) => {
       );
     case "phone":
       return (
-        <Badge className="cursor-default" variant="outline">
-          {" "}
+        <Badge
+          className="cursor-default border border-gray-600 bg-black text-white"
+          variant="outline"
+        >
           <Phone className="w-4 h-4 mr-1" />
           Phone
         </Badge>

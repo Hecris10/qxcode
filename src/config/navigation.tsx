@@ -1,5 +1,5 @@
+import { PlusCircle } from "lucide-react";
 import { BsQrCode } from "react-icons/bs";
-import { LuPlusCircle } from "react-icons/lu";
 
 export type NavigationItem = (typeof mainNavigation)[number];
 export const mainNavigation = [
@@ -7,6 +7,6 @@ export const mainNavigation = [
   {
     route: "/home/new",
     name: "New code",
-    icon: <LuPlusCircle className="h-6 w-6" />,
+    icon: <PlusCircle className="h-6 w-6" />,
   },
 ];

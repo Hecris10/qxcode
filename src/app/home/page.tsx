@@ -1,4 +1,4 @@
-import { getUserQrCodes } from "~/services/qrcodes/qrcodes";
+import { getQrCodeViewMode, getUserQrCodes } from "~/services/qrcodes/qrcodes";
 import { NoQrCode } from "./components/no-qr-code";
 import { QRCodeDisplay } from "./components/qr-code-display";
 import { QrCodeGrid } from "./components/qr-code-display/qr-code-grid";
@@ -9,7 +9,7 @@ export default async function Home() {
     await getUserQrCodes({ page: 1, limit: 10 })
   ).data;
 
-  console.log(qrCodes);
+  const isGridMode = (await getQrCodeViewMode()) === "grid";
 
   const renderQrCodeList = () => <QrCodeGrid qrCodes={qrCodes} />;
   const renderQrCodeGrid = () => <QrCodeList qrCodes={qrCodes} />;
@@ -17,8 +17,9 @@ export default async function Home() {
   if (qrCodes.length === 0) return <NoQrCode />;
 
   return (
-    <div className="w-full p-5">
+    <div className="w-full h-full">
       <QRCodeDisplay
+        isGridMode={isGridMode}
         qrCodes={qrCodes}
         qrCodeGrid={renderQrCodeList()}
         qrCodeList={renderQrCodeGrid()}

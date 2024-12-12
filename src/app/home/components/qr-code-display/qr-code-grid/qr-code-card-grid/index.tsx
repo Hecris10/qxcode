@@ -13,7 +13,7 @@ import { QrCodeListOption } from "../../qr-code-list-option";
 
 export const QrCodeCardGrid = ({ qrCode }: { qrCode: QrCode }) => {
   return (
-    <Card className="overflow-hidden qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
+    <Card className="overflow-hidden bg-slate-800 qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
       <CardHeader className="relative">
         <h3 className="font-semibold text-lg">{qrCode.name}</h3>
         <p className="text-sm my-auto text-gray-500">

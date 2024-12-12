@@ -1,28 +1,39 @@
 "use client";
 
 import { Grid, List } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import { Tooltip } from "~/components/ui/tooltip";
+import { setQrCodeViewMode } from "~/services/qrcodes/qrcodes";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
 
 export function QRCodeDisplay({
   qrCodes,
   qrCodeList,
   qrCodeGrid,
+  isGridMode,
 }: {
   qrCodes: QrCode[];
   qrCodeList: ReactNode;
   qrCodeGrid: ReactNode;
+  isGridMode: boolean;
 }) {
-  const [isGridView, setIsGridView] = useState(true);
+  const [isGridView, setIsGridView] = useState(isGridMode);
+
+  useEffect(() => {
+    const handleGridMode = async () => {
+      await setQrCodeViewMode(isGridView ? "grid" : "list");
+    };
+    handleGridMode();
+  }, [isGridView]);
 
   const toolTipText = isGridView
     ? "Switch to list view"
     : "Switch to grid view";
 
   return (
-    <div className="space-y-4">
+    <Card className="space-y-4 w-full h-full p-5">
       <div className="flex justify-end">
         <Tooltip content={toolTipText}>
           <Button
@@ -42,6 +53,6 @@ export function QRCodeDisplay({
         </Tooltip>
       </div>
       {isGridView ? qrCodeGrid : qrCodeList}
-    </div>
+    </Card>
   );
 }

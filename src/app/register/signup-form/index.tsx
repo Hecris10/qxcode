@@ -10,7 +10,7 @@ import { PhoneNumberInput } from "~/components/ui/phone-number-input/phone-numbe
 import { SingleDatePicker } from "~/components/ui/single-date-picker";
 
 import { useFormValues } from "~/hooks/useFormValues";
-import { ServerRequest } from "~/services/api";
+import { ServerRequest } from "~/services/api/api";
 import { signupUser } from "~/services/user/user-actions";
 import { SignUpUserValidation } from "~/services/user/users";
 

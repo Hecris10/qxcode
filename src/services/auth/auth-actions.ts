@@ -7,7 +7,7 @@ import { ValidationConfig } from "~/utils/server/validate-url-form-server";
 import { getFormDataObject } from "~/utils/validation/get-form-data-object";
 import { validateEmail } from "~/utils/validation/validate-email";
 import { validateFormData } from "~/utils/validation/validate-form-data";
-import { apiUrl } from "../api";
+import { apiUrl } from "../api/api";
 import { ILoginRequest, ILoginUser, IsUserAuth, UserAuth } from "./auth";
 
 const loginUserValidationConfig: ValidationConfig<ILoginUser> = {
@@ -87,7 +87,13 @@ export async function logOutUserAction() {
     httpOnly: true,
     path: "/",
   });
+  cookiesStore.set({
+    name: `${process.env.QX_CODE_VIEW_MODE}`,
+    value: "",
+  });
+
   cookiesStore.delete(`${process.env.AUTH_TOKEN_NAME}`);
+  cookiesStore.delete(`${process.env.QX_CODE_VIEW_MODE}`);
   redirect("/");
 }
 

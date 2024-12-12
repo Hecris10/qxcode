@@ -1,4 +1,4 @@
-import { ServerRequest } from "~/services/api";
+import { ServerRequest } from "~/services/api/api";
 
 type ValidationFunction<T> = (values: T) => string | null;
 
