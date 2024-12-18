@@ -53,7 +53,7 @@ export const QrCodeView = ({
           <QrCodeContainer
             code={qrCode.content}
             className="w-full h-full mx-auto my-auto max-w-[400px]"
-            logoSrc={code?.logo.url || undefined}
+            logoSrc={code?.logo?.url || undefined}
           />
           <div className="mt-2 md:hidden">
             <QrCodeBadge type={qrCode.type} />
@@ -71,7 +71,7 @@ export const QrCodeView = ({
             <div>
               <LogosModal logos={logos} onSelect={onSelectLogo}>
                 <Button className="w-full md:w-auto">
-                  {code?.logo.url.length ? "Change logo" : "Add a logo"}
+                  {code?.logo?.url?.length ? "Change logo" : "Add a logo"}
                 </Button>
               </LogosModal>
             </div>
@@ -136,7 +136,7 @@ export const QrCodeView = ({
           </div>
         </div>
       </div>
-      <input readOnly value={qrCode?.logo.url || ""} className="hidden" />
+      <input readOnly value={qrCode?.logo?.url || ""} className="hidden" />
       <FormButton buttonLabel="Save" buttonClassNames="w-full mt-10" />
     </form>
   );
