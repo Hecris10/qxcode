@@ -92,7 +92,6 @@ export const NewQrCodeForm = () => {
       });
 
       // res.encryptedKey should be uri encoded
-      console.log({ key: res.encryptedKey });
       router.push(`/home/qr-code/${res.encryptedKey || ""}`);
     }
 

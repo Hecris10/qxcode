@@ -24,7 +24,7 @@ export const QrCodeContainer = ({
           height={70}
           src={logoSrc}
           alt="QrCodeLogo"
-          className="rounded-full w-[70px] h-[70px]"
+          className="rounded-full "
         />
       </QrCode.Overlay>
     )}
