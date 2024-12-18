@@ -25,7 +25,11 @@ export interface QrCodeText extends QrCodeBase {
   text: string;
 }
 
-export type QrCode = QrCodeWifi | QrCodeLink | QrCodeText;
+export type QrCode = { logo: { id: number; url: string } } & (
+  | QrCodeWifi
+  | QrCodeLink
+  | QrCodeText
+);
 
 export type QrCodeEmpty = Omit<
   QrCodeBase,

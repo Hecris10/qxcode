@@ -2,7 +2,7 @@ import { QrCodeContainer } from "~/components/qr-code";
 import { QrCodeBadge } from "~/components/qr-code-badge";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { isoDateToLocale } from "~/utils/date";
-import { QrCodeListOption } from "./qr-code-list-option";
+import { QrCodeListOption } from "../qr-code-list-option";
 
 export const QrCodeCardList = ({ qrCode }: { qrCode: QrCode }) => (
   <section className="w-full bg-card flex justify-between align-middle rounded-lg shadow-lg p-3">

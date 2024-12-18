@@ -122,3 +122,25 @@ export async function isUserLoggedIn(): Promise<IsUserAuth> {
     return { isAuth: false };
   }
 }
+
+export async function getAuthUser(): Promise<UserAuth | null> {
+  const cookiesStore = await cookies();
+  const authCookie = cookiesStore.get(`${process.env.AUTH_TOKEN_NAME}`);
+  const accessToken = authCookie?.value;
+
+  if (!accessToken || accessToken === "") return null;
+  const secretToken = `${process.env.JWT_SECRET}`;
+
+  try {
+    const decodeUser = jwt.verify(
+      accessToken,
+      secretToken
+    ) as unknown as UserAuth;
+    if (decodeUser) return decodeUser;
+
+    return null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
