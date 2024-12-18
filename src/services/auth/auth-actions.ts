@@ -7,7 +7,7 @@ import { ValidationConfig } from "~/utils/server/validate-url-form-server";
 import { getFormDataObject } from "~/utils/validation/get-form-data-object";
 import { validateEmail } from "~/utils/validation/validate-email";
 import { validateFormData } from "~/utils/validation/validate-form-data";
-import { apiUrl } from "../api";
+import { apiUrl } from "../api/api";
 import { ILoginRequest, ILoginUser, IsUserAuth, UserAuth } from "./auth";
 
 const loginUserValidationConfig: ValidationConfig<ILoginUser> = {
@@ -87,7 +87,13 @@ export async function logOutUserAction() {
     httpOnly: true,
     path: "/",
   });
+  cookiesStore.set({
+    name: `${process.env.QX_CODE_VIEW_MODE}`,
+    value: "",
+  });
+
   cookiesStore.delete(`${process.env.AUTH_TOKEN_NAME}`);
+  cookiesStore.delete(`${process.env.QX_CODE_VIEW_MODE}`);
   redirect("/");
 }
 
@@ -114,5 +120,27 @@ export async function isUserLoggedIn(): Promise<IsUserAuth> {
   } catch (err) {
     console.error(err);
     return { isAuth: false };
+  }
+}
+
+export async function getAuthUser(): Promise<UserAuth | null> {
+  const cookiesStore = await cookies();
+  const authCookie = cookiesStore.get(`${process.env.AUTH_TOKEN_NAME}`);
+  const accessToken = authCookie?.value;
+
+  if (!accessToken || accessToken === "") return null;
+  const secretToken = `${process.env.JWT_SECRET}`;
+
+  try {
+    const decodeUser = jwt.verify(
+      accessToken,
+      secretToken
+    ) as unknown as UserAuth;
+    if (decodeUser) return decodeUser;
+
+    return null;
+  } catch (err) {
+    console.error(err);
+    return null;
   }
 }

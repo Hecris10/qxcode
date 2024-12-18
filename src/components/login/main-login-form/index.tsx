@@ -6,7 +6,7 @@ import { ErrorAlert } from "~/components/ui/error-alert";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { useFormValues } from "~/hooks/useFormValues";
-import { ServerRequest } from "~/services/api";
+import { ServerRequest } from "~/services/api/api";
 import { ILoginUser } from "~/services/auth/auth";
 import { loginUserAction } from "~/services/auth/auth-actions";
 

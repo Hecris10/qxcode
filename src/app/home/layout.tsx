@@ -15,7 +15,7 @@ export default function Layout({
             <NavigationLink key={navItem.route} {...navItem} />
           ))}
         </div>
-        <div className="w-full">{children}</div>
+        <div className="w-full justify-center h-full">{children}</div>
       </div>
     </HomeLayout>
   );

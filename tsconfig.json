@@ -26,7 +26,8 @@
         "./src/*"
       ]
     },
-    "target": "ES2017"
+    "target": "ES2017",
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": [
     "next-env.d.ts",
@@ -34,7 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "key.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -33,10 +33,7 @@ export const UserInfo = () => {
         <DropdownMenuSeparator /> */}
         <DropdownMenuItem className="hover:bg-slate-700">
           <form action={logOutUserAction}>
-            <button
-              onClick={() => {}}
-              className="gap-4 flex my-auto align-middle "
-            >
+            <button type="submit" className="gap-4 flex my-auto align-middle ">
               <MdLogout className="w-6 h-6 font-bold my-auto" /> Log out
             </button>
           </form>

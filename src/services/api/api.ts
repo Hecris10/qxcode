@@ -4,4 +4,5 @@ export type ServerRequest<T> = T & {
   serverError?: boolean;
   serverSucess?: boolean;
   hasValidationErrors?: boolean;
+  encryptedKey?: string;
 };
