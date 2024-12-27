@@ -6,15 +6,17 @@ export const FileUploader = ({
   triggerButtonName,
   fileUpload,
   className,
+  name,
 }: {
   triggerButtonName: string;
   fileUpload: UseFileUploadReturn;
   className?: string;
+  name?: string;
 }) => (
   <FileUpload.RootProvider value={fileUpload}>
     <FileUpload.Trigger className={className} asChild>
       <Button>{triggerButtonName}</Button>
     </FileUpload.Trigger>
-    <FileUpload.HiddenInput />
+    <FileUpload.HiddenInput name={name} />
   </FileUpload.RootProvider>
 );

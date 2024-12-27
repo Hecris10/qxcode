@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter as FontSans, Inter } from "next/font/google";
+import "react-color-palette/css";
 import "react-international-phone/style.css";
 import "./globals.css";
 import { Providers } from "./providers";

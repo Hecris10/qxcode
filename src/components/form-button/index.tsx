@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
@@ -18,7 +19,7 @@ export const FormButton = ({
   loadingLabelText?: string;
   buttonClassNames?: string;
   isLoading?: boolean;
-  variant?: "form" | "button";
+  variant?: "form" | "button" | "destructive";
   type?: "submit" | "button";
   onClick?: () => void;
 }) => {
@@ -26,9 +27,10 @@ export const FormButton = ({
 
   const isLoadingFromForm = isLoading || pending;
 
-  if (variant === "button")
+  if (variant === "button" || variant === "destructive")
     return (
       <Button
+        variant={variant === "destructive" ? "destructive" : "default"}
         disabled={isLoadingFromForm}
         type={type || "submit"}
         className={cn(buttonClassNames)}
@@ -38,6 +40,7 @@ export const FormButton = ({
         {isLoadingFromForm && !!loadingLabelText
           ? `${loadingLabelText}`
           : `${buttonLabel}`}
+        {variant === "destructive" && <Trash2Icon className="ml-2" />}
       </Button>
     );
 

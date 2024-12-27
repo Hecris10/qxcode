@@ -24,12 +24,18 @@ export interface QrCodeText extends QrCodeBase {
   type: "text" | "email" | "phone";
   text: string;
 }
-
-export type QrCode = { logo: { id: number; url: string } } & (
-  | QrCodeWifi
-  | QrCodeLink
-  | QrCodeText
-);
+export type QrCodePartial = {
+  logoId?: number;
+  backgroundColor?: string;
+  padding?: number;
+  logoBackgroundColor?: string;
+  logoBorderRadius?: number;
+  logoPadding?: number;
+  qrCodeBorderRadius?: number;
+};
+export type QrCode = QrCodePartial & {
+  logo?: { id: number; url: string } | null;
+} & (QrCodeWifi | QrCodeLink | QrCodeText);
 
 export type QrCodeEmpty = Omit<
   QrCodeBase,
@@ -68,3 +74,15 @@ export type NewQrCodeWifi = Omit<QrCodeWifi, "id" | "createdAt" | "updatedAt">;
 export type NewQrCodeLink = Omit<QrCodeLink, "id" | "createdAt" | "updatedAt">;
 
 export type PaginatedQrCodes = PaginatedData<QrCode>;
+
+export interface UpdateQrCodeForm {
+  id: number;
+  name: string;
+  logoId?: number;
+  backgroundColor?: string;
+  padding?: number;
+  logoBackgroundColor?: string;
+  logoBorderRadius?: number;
+  logoPadding?: number;
+  qrCodeBorderRadius?: number;
+}

@@ -1,18 +1,27 @@
 "use client";
 
 import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { deleteQrCode } from "~/services/qrcodes/qrcodes";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { QrCodeDropdownMenu } from "../qr-code-dropdown-menu";
 import { QrCodeDropDownOptions } from "../qr-code-dropdown-menu/qr-code-dropdown-menu.type";
 
-export const QrCodeListOption = ({ qrCode }: { qrCode: QrCode }) => {
+export const QrCodeListOption = ({
+  qrCode,
+  url,
+}: {
+  qrCode: QrCode;
+  url: string;
+}) => {
+  const router = useRouter();
+
   const qrCodeCardSettings: QrCodeDropDownOptions[][] = [
     [
       {
         name: "Edit",
-        action: async (qrCode: QrCode) => console.log(`Edit ${qrCode.name}`),
+        action: async (qrCode: QrCode) => router.push(url),
         icon: <Edit className="h-4 w-4" />,
       },
       {

@@ -60,7 +60,8 @@
 }
 
 .home-layout {
-  height: calc(100vh - 83px);
+  height: 100%;
+  min-height: calc(100vh - 83px);
 }
 
 @layer base {

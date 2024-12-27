@@ -14,6 +14,8 @@ import {
   NewQrCode,
   PaginatedQrCodes,
   QrCode,
+  QrCodePartial,
+  UpdateQrCodeForm,
 } from "./qrcodes.type";
 
 export const getUserQrCodes = async (params: PaginationParams) => {
@@ -147,11 +149,8 @@ export const updateQrCode = async (qrCodeData: QrCode) => {
     }
 
     const data = (await response.json()) as QrCode;
-    console.log({ data });
     const encryptedId = encrypt(data.id.toString());
-    console.log({ encryptedId });
     const encodedURI = encodeURIComponent(encryptedId);
-    console.log({ encodedURI });
     errors.serverSucess = true;
     errors.encryptedKey = encodedURI;
     revalidatePath("/home", "page");
@@ -161,6 +160,61 @@ export const updateQrCode = async (qrCodeData: QrCode) => {
     console.error({ e });
     const errors: ServerRequest<AllQrCodeProps> =
       {} as ServerRequest<AllQrCodeProps>;
+    errors.serverError = true;
+    return errors;
+  }
+};
+
+export const updatePartialQrCode = async (e: FormData) => {
+  const qrCodeDataEntries = Object.fromEntries(e.entries());
+  const qrCodeId = qrCodeDataEntries.id;
+  const reqBody: QrCodePartial = {
+    logoId: qrCodeDataEntries.logoId ? +qrCodeDataEntries.logoId : undefined,
+    backgroundColor: qrCodeDataEntries.backgroundColor as string,
+    padding: qrCodeDataEntries.padding ? +qrCodeDataEntries.padding : undefined,
+    qrCodeBorderRadius: qrCodeDataEntries.qrCodeBorderRadius
+      ? +qrCodeDataEntries.qrCodeBorderRadius
+      : undefined,
+    logoBackgroundColor: qrCodeDataEntries.logoBackgroundColor as string,
+    logoBorderRadius: qrCodeDataEntries.logoBorderRadius
+      ? +qrCodeDataEntries.logoBorderRadius
+      : undefined,
+    logoPadding: qrCodeDataEntries.logoPadding
+      ? +qrCodeDataEntries.logoPadding
+      : undefined,
+  };
+
+  const userToken = await getUserToken();
+
+  const errors: ServerRequest<UpdateQrCodeForm> =
+    {} as ServerRequest<AllQrCodeProps>;
+
+  try {
+    const response = await fetch(`${apiUrl}/qr-codes/${qrCodeId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify(reqBody),
+    });
+
+    if (!response.ok) {
+      if (response.status !== 400) {
+        errors.serverError = true;
+        return errors;
+      }
+
+      return errors;
+    }
+
+    revalidatePath("/home", "page");
+    revalidateTag(fetchTags.qrCodes);
+    return errors;
+  } catch (e) {
+    console.error({ e });
+    const errors: ServerRequest<UpdateQrCodeForm> =
+      {} as ServerRequest<UpdateQrCodeForm>;
     errors.serverError = true;
     return errors;
   }
@@ -182,6 +236,28 @@ export const deleteQrCode = async (id: number) => {
   }
 
   revalidatePath("/home", "page");
+  revalidateTag(fetchTags.qrCodes);
+  return true;
+};
+
+export const deleteQrCodeLogo = async (qrCodeId: number, logoId: number) => {
+  const userToken = await getUserToken();
+
+  const response = await fetch(
+    `${apiUrl}/qr-codes/${qrCodeId}/logo/${logoId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    return false;
+  }
+
   revalidateTag(fetchTags.qrCodes);
   return true;
 };

@@ -5,7 +5,7 @@ import { getUserLogos } from "~/services/logos/userLogos";
 import { getQrCodeById } from "~/services/qrcodes/qrcodes";
 import { QrCodeView } from "./components/qr-code-view";
 
-export default function NewQrCode(props: PageProps) {
+export default function QrCodePage(props: PageProps) {
   const params = use(props.params);
   const slug = params.slug;
 
@@ -17,7 +17,7 @@ export default function NewQrCode(props: PageProps) {
   const userLogos = getUserLogos();
 
   return (
-    <Card className="pt-6 px-10 md:pt-24">
+    <Card className="py-6 px-10 rounded-none w-full home-layout md:py-10">
       <QrCodeView logos={userLogos} qrCode={qrCode} />
     </Card>
   );

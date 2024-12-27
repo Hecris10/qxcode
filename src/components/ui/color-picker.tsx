@@ -1,94 +1,86 @@
 "use client";
-import { ColorPicker } from "@ark-ui/react";
-import { PipetteIcon } from "lucide-react";
-
-import { Input } from "~/components/ui/input";
+import {
+  ColorPicker,
+  ColorService,
+  IColor,
+  useColor,
+} from "react-color-palette";
+import { cn } from "~/lib/utils";
 import { Button } from "./button";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-export const ColorPickerInput = (props: ColorPicker.RootProps) => {
+export const ColorPickerInput = ({
+  defaultColor,
+  name,
+  className,
+  onChange,
+}: {
+  defaultColor?: string;
+  name?: string;
+  className?: string;
+  onChange?: (newColor: string) => void;
+}) => {
+  const [color, setColor] = useColor(defaultColor || "#561ecb");
+
+  const onColorChange = (color: IColor) => {
+    setColor(color as IColor);
+    onChange && onChange(color.hex);
+  };
+
   return (
-    <ColorPicker.Root {...props}>
-      <ColorPicker.Context>
-        {(api) => (
-          <>
-            <ColorPicker.Label>Color Picker</ColorPicker.Label>
-            <ColorPicker.Control>
-              <ColorPicker.ChannelInput channel="hex" asChild>
-                <Input />
-              </ColorPicker.ChannelInput>
-              <ColorPicker.Trigger asChild>
-                <Button variant="outline">
-                  <ColorPicker.Swatch value={api.value} />
-                </Button>
-              </ColorPicker.Trigger>
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-              <ColorPicker.Content>
-                <div>
-                  <ColorPicker.Area>
-                    <ColorPicker.AreaBackground />
-                    <ColorPicker.AreaThumb />
-                  </ColorPicker.Area>
-                  <div>
-                    <ColorPicker.EyeDropperTrigger asChild>
-                      <Button
-                        className="xs"
-                        variant="outline"
-                        aria-label="Pick a color"
-                      >
-                        <PipetteIcon />
-                      </Button>
-                    </ColorPicker.EyeDropperTrigger>
-                    <div>
-                      <ColorPicker.ChannelSlider channel="hue">
-                        <ColorPicker.ChannelSliderTrack />
-                        <ColorPicker.ChannelSliderThumb />
-                      </ColorPicker.ChannelSlider>
-                      <ColorPicker.ChannelSlider channel="alpha">
-                        <ColorPicker.TransparencyGrid size="8px" />
-                        <ColorPicker.ChannelSliderTrack />
-                        <ColorPicker.ChannelSliderThumb />
-                      </ColorPicker.ChannelSlider>
-                    </div>
-                  </div>
-                  <div>
-                    <ColorPicker.ChannelInput channel="hex" asChild>
-                      <Input />
-                    </ColorPicker.ChannelInput>
-                    <ColorPicker.ChannelInput channel="alpha" asChild>
-                      <Input />
-                    </ColorPicker.ChannelInput>
-                  </div>
-                  <div>
-                    <p>Saved Colors</p>
-                    <ColorPicker.SwatchGroup>
-                      {presets.map((color, id) => (
-                        <ColorPicker.SwatchTrigger key={id} value={color}>
-                          <ColorPicker.Swatch value={color} />
-                        </ColorPicker.SwatchTrigger>
-                      ))}
-                    </ColorPicker.SwatchGroup>
-                  </div>
-                </div>
-              </ColorPicker.Content>
-            </ColorPicker.Positioner>
-          </>
-        )}
-      </ColorPicker.Context>
-      <ColorPicker.HiddenInput />
-    </ColorPicker.Root>
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              "w-[40px] h-[40px] rounded-lg border-2 p-6 border-blue1 hover:border-gray-200",
+              className
+            )}
+            style={{ backgroundColor: color.hex }}
+          />
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-1 shadow-lg rounded-lg border-none">
+          <ColorPicker
+            onChangeComplete={onColorChange}
+            hideInput={["hsv", "rgb"]}
+            color={color}
+            onChange={setColor}
+          />
+          <div>
+            {presets.map((preset) => (
+              <Button
+                key={preset}
+                variant="outline"
+                className="w-8 h-8 rounded-lg border-2 p-1 border-blue1 hover:border-gray-200"
+                style={{ backgroundColor: preset }}
+                onClick={() =>
+                  onColorChange({
+                    hex: ColorService.toHex(preset),
+                    hsv: ColorService.toHsv(preset),
+                    rgb: ColorService.toRgb(preset),
+                  })
+                }
+              />
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+      <input name={name} readOnly value={color.hex} className="hidden" />
+    </>
   );
 };
 
 const presets = [
-  "hsl(10, 81%, 59%)",
-  "hsl(60, 81%, 59%)",
-  "hsl(100, 81%, 59%)",
-  "hsl(175, 81%, 59%)",
-  "hsl(190, 81%, 59%)",
-  "hsl(205, 81%, 59%)",
-  "hsl(220, 81%, 59%)",
-  "hsl(250, 81%, 59%)",
-  "hsl(280, 81%, 59%)",
-  "hsl(350, 81%, 59%)",
+  "#e63946",
+  "#f4a261",
+  "#2a9d8f",
+  "#00a8e8",
+  "#0077b6",
+  "#023e8a",
+  "#03045e",
+  "#7209b7",
+  "#b5179e",
+  "#ff006e",
+  "#561ecb",
 ];

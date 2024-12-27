@@ -33,7 +33,7 @@ export function QRCodeDisplay({
     : "Switch to grid view";
 
   return (
-    <Card className="space-y-4 w-full h-full p-5">
+    <Card className="space-y-4 w-full home-layout p-5">
       <div className="flex justify-end">
         <Tooltip content={toolTipText}>
           <Button
