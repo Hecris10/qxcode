@@ -7,7 +7,6 @@ import {
   CardFooter,
   CardHeader,
 } from "~/components/ui/card";
-import { cn } from "~/lib/utils";
 import { encrypt } from "~/services/crypt";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { isoDateToLocale } from "~/utils/date";
@@ -16,12 +15,13 @@ import { QrCodeListOption } from "../../qr-code-list-option";
 export const QrCodeCardGrid = ({ qrCode }: { qrCode: QrCode }) => {
   const encryptedId = encrypt(qrCode.id.toString());
   const encodedURI = encodeURIComponent(encryptedId);
+  const url = `/home/qr-code/${encodedURI || ""}`;
 
   return (
     <Card className="overflow-hidden bg-slate-800 qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
       <CardHeader className="relative">
         <Link
-          href={`/home/qr-code/${encodedURI || ""}`}
+          href={url}
           className="font-semibold text-lg hover:underline hover:text-muted-foreground"
         >
           {qrCode.name}
@@ -30,14 +30,20 @@ export const QrCodeCardGrid = ({ qrCode }: { qrCode: QrCode }) => {
           {isoDateToLocale(qrCode.createdAt)}
         </p>
         <div className="qr-code-grid-options absolute right-1">
-          <QrCodeListOption qrCode={qrCode} />
+          <QrCodeListOption url={url} qrCode={qrCode} />
         </div>
       </CardHeader>
       <CardContent>
         <QrCodeContainer
+          className="w-full h-full mx-auto my-auto max-w-[400px]"
+          code={qrCode?.content || ""}
+          padding={qrCode?.padding}
+          backgroundColor={qrCode?.backgroundColor}
           logoSrc={qrCode?.logo?.url || undefined}
-          code={qrCode.content}
-          className={cn("object-cover")}
+          borderRadius={qrCode.qrCodeBorderRadius}
+          logoPadding={qrCode?.logoPadding || 0}
+          logoBackground={qrCode.logoBackgroundColor}
+          logoBorderRadius={qrCode.logoBorderRadius}
         />
       </CardContent>
       <CardFooter className={`gap-2"}`}>

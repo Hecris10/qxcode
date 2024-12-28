@@ -22,10 +22,12 @@ export const LogosModal = ({
   children,
   logos,
   onSelect,
+  name,
 }: {
   children: ReactNode;
   logos: Promise<Logo[]>;
   onSelect: (file: Logo) => void;
+  name?: string;
 }) => {
   const userLogos = use(logos);
   const [selectedLogo, setSelectedLogo] = useState<Logo | null>(null);
@@ -38,6 +40,7 @@ export const LogosModal = ({
       setOpen(false);
     }
   };
+
   const fileUpload = useFileUpload({
     maxFiles: 1,
     onFileAccept: (e) =>
@@ -85,6 +88,7 @@ export const LogosModal = ({
               className="my-auto"
               fileUpload={fileUpload}
               triggerButtonName="Add new"
+              name={name}
             />
           </div>
         </DialogHeader>

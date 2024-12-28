@@ -9,7 +9,7 @@ export default function Layout({
 }>) {
   return (
     <HomeLayout>
-      <div className="flex w-full h-full">
+      <div className="flex w-full h-full ">
         <div className="w-[20rem] border-r border-slate-700 flex flex-col align-middle gap-4 pt-8">
           {mainNavigation.map((navItem) => (
             <NavigationLink key={navItem.route} {...navItem} />

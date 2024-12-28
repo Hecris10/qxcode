@@ -8,7 +8,7 @@ export const QrCodeBadge = ({
   type,
   className,
 }: {
-  type: QrCodeType;
+  type: QrCodeType | string;
   className?: string;
 }) => {
   switch (type) {
