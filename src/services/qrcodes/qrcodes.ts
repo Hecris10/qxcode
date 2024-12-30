@@ -77,11 +77,14 @@ export const createNewQrCode = async (qrCodeData: NewQrCode) => {
     if (!response.ok) {
       if (response.status !== 400) {
         errors.serverError = true;
+        const err = await response.json();
+        console.log({ err });
         return errors;
       }
 
       errors.hasValidationErrors = true;
       const errorData = (await response.json()) as RequestError;
+      console.log({ errorData });
       if (errorData.message.includes("Name")) errors.name = "Missing";
       if (errorData.message.includes("Type")) errors.type = "Missing";
       if (errorData.message.includes("SSID")) errors.ssid = "Missing";
