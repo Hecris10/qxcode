@@ -1,6 +1,5 @@
-import { mainNavigation } from "~/config/navigation";
 import { HomeLayout } from "./components/home-layout";
-import { NavigationLink } from "./components/navigation-link";
+import { LargeSidebar } from "./components/home-layout/side-bar/large-sidebar";
 
 export default function Layout({
   children,
@@ -10,11 +9,7 @@ export default function Layout({
   return (
     <HomeLayout>
       <div className="flex w-full h-full ">
-        <div className="w-[20rem] border-r border-slate-700 flex flex-col align-middle gap-4 pt-8">
-          {mainNavigation.map((navItem) => (
-            <NavigationLink key={navItem.route} {...navItem} />
-          ))}
-        </div>
+        <LargeSidebar />
         <div className="w-full justify-center h-full">{children}</div>
       </div>
     </HomeLayout>

@@ -4,7 +4,7 @@ import { MainLoginForm } from "./main-login-form";
 
 export const Login = () => (
   <div className="w-screen h-screen flex align-top lg:align-middle justify-center p-4">
-    <section className="w-[90%] max-w-[400px] text-white px-3 md:px-8 py-8 rounded-2xl mt-[6vh] lg:my-auto mx-auto mb-auto border lg:border-none shadow-lg lg:shadow-none">
+    <section className="w-[90%] max-w-[400px] text-white px-3 md:px-8 py-8 rounded-2xl lg:mt-[6vh] lg:my-auto mx-auto mb-auto border lg:border-none shadow-lg lg:shadow-none">
       <Logo />
       <h2 className="text-center">Sign in to QxCode</h2>
       <MainLoginForm />
