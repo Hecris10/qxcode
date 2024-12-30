@@ -5,16 +5,14 @@ import { QrCodeGrid } from "./components/qr-code-display/qr-code-grid";
 import { QrCodeList } from "./components/qr-code-display/qr-code-list";
 
 export default async function Home() {
-  const qrCodes = await await (
-    await getUserQrCodes({ page: 1, limit: 10 })
-  ).data;
+  const qrCodes = (await getUserQrCodes({ page: 1, limit: 10 })).data || [];
 
   const isGridMode = (await getQrCodeViewMode()) === "grid";
 
   const renderQrCodeList = () => <QrCodeGrid qrCodes={qrCodes} />;
   const renderQrCodeGrid = () => <QrCodeList qrCodes={qrCodes} />;
 
-  if (qrCodes.length === 0) return <NoQrCode />;
+  if (qrCodes?.length === 0) return <NoQrCode />;
 
   return (
     <div className="w-full h-full">
