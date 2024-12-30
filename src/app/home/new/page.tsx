@@ -3,7 +3,7 @@ import { QrCodePhoneLottie } from "~/components/lotties/qr-code-phone/qr-code-ph
 
 export default function NewQrCode() {
   return (
-    <div className="mt-6 px-6 md:mt-24">
+    <div className="pt-6 px-6 md:pt-24 home-layout">
       <div className="w-full flex flex-col md:flex-row justify-center gap-4 md:gap-20 md:my-auto">
         <div>
           <p className="text-slate-400 md:text-xl">

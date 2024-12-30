@@ -4,7 +4,7 @@ import { QrCodeBasicLottie } from "~/components/lotties/qr-code-basic-lottie";
 import { Card } from "~/components/ui/card";
 
 export const NoQrCode = () => (
-  <Card className="flex h-full rounded-none flex-col items-center justify-center min-h-[400px]">
+  <Card className="flex h-full rounded-none home-layout flex-col items-center justify-center min-h-[400px]">
     <div className="flex flex-col items-center justify-center gap-4 text-center px-4">
       <div className="relative p-2 flex items-center justify-center rounded-xl bg-slate-200 shadow-lg">
         <QrCodeBasicLottie />

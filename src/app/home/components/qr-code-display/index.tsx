@@ -6,15 +6,12 @@ import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Tooltip } from "~/components/ui/tooltip";
 import { setQrCodeViewMode } from "~/services/qrcodes/qrcodes";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
 
 export function QRCodeDisplay({
-  qrCodes,
   qrCodeList,
   qrCodeGrid,
   isGridMode,
 }: {
-  qrCodes: QrCode[];
   qrCodeList: ReactNode;
   qrCodeGrid: ReactNode;
   isGridMode: boolean;
@@ -33,7 +30,7 @@ export function QRCodeDisplay({
     : "Switch to grid view";
 
   return (
-    <Card className="space-y-4 w-full home-layout p-5">
+    <Card className="space-y-4 w-full rounded-none home-layout p-5">
       <div className="flex justify-end">
         <Tooltip content={toolTipText}>
           <Button
