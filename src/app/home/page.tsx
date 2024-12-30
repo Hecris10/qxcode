@@ -18,7 +18,6 @@ export default async function Home() {
     <div className="w-full h-full">
       <QRCodeDisplay
         isGridMode={isGridMode}
-        qrCodes={qrCodes}
         qrCodeGrid={renderQrCodeList()}
         qrCodeList={renderQrCodeGrid()}
       />

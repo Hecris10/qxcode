@@ -1,14 +1,16 @@
 "use client";
 import { Collapsible } from "@ark-ui/react";
+import { Download } from "lucide-react";
 import { useState } from "react";
 import { FormButton } from "~/components/form-button";
 import { LogosModal } from "~/components/logos/logos-modal";
-import { QrCodeContainer } from "~/components/qr-code";
 import { QrCodeBadge } from "~/components/qr-code-badge";
+import { QrCodeContainer } from "~/components/qr-code-container";
 import { Button } from "~/components/ui/button";
 import { ColorPickerInput } from "~/components/ui/color-picker";
 import { Label } from "~/components/ui/label";
 import { Slider } from "~/components/ui/slider";
+import { useDivToImage } from "~/hooks/useDivToImage";
 import { Logo } from "~/services/logos/logos.type";
 import { updatePartialQrCode } from "~/services/qrcodes/qrcodes";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
@@ -28,6 +30,7 @@ export const QrCodeView = ({
     logoPadding: qrCode.logoPadding || 0,
     logoBorderRadius: qrCode.logoBorderRadius || 0,
   });
+  const { divRef, onDownload } = useDivToImage(qrCode.name);
   // const [error, submitAction, isPending] = useActionState(
   //   async (previousState, formData) => {
   //     const error = await updateName(formData.get("name"));
@@ -74,11 +77,15 @@ export const QrCodeView = ({
   };
 
   return (
-    <form action={updatePartialQrCode} className="w-full md:w-[75%] md:mx-auto">
+    <form
+      action={updatePartialQrCode}
+      className="w-full md:w-[75%]  md:mx-auto"
+    >
       <h1 className="my-2 text-xl ">{code?.name}</h1>
       <div className="flex flex-col md:flex-row mb-6 gap-3 md:gap-8">
         <div className="w-full h-full my-auto ">
           <QrCodeContainer
+            ref={divRef}
             className="w-full h-full mx-auto my-auto max-w-[400px]"
             code={code?.content || ""}
             padding={code?.padding}
@@ -91,6 +98,12 @@ export const QrCodeView = ({
           />
           <div className="mt-2 md:hidden">
             <QrCodeBadge type={code?.type || ""} />
+          </div>
+          <div className="flex justify-end px-4 mt-4">
+            <Button onClick={onDownload}>
+              Download
+              <Download className="ml-2" />
+            </Button>
           </div>
         </div>
         <div className="gap-6 md:mt-3 w-full">

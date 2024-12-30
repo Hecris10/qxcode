@@ -20,7 +20,7 @@ export const ColorPickerInput = ({
   className?: string;
   onChange?: (newColor: string) => void;
 }) => {
-  const [color, setColor] = useColor(defaultColor || "#561ecb");
+  const [color, setColor] = useColor(defaultColor || "#ffffff");
 
   const onColorChange = (color: IColor) => {
     setColor(color as IColor);

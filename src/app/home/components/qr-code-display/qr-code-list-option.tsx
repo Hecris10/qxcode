@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
+import { Download, Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { deleteQrCode } from "~/services/qrcodes/qrcodes";
@@ -11,9 +11,11 @@ import { QrCodeDropDownOptions } from "../qr-code-dropdown-menu/qr-code-dropdown
 export const QrCodeListOption = ({
   qrCode,
   url,
+  onDownload,
 }: {
   qrCode: QrCode;
   url: string;
+  onDownload: () => Promise<void>;
 }) => {
   const router = useRouter();
 
@@ -28,6 +30,13 @@ export const QrCodeListOption = ({
         name: "Delete",
         action: async (qrCode: QrCode) => deleteQrCode(qrCode.id),
         icon: <Trash2 className="h-4 w-4 text-red-700" />,
+      },
+    ],
+    [
+      {
+        name: "Download",
+        action: onDownload,
+        icon: <Download className="h-4 w-4" />,
       },
     ],
   ];
