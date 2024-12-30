@@ -1,19 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { NavigationItem } from "~/config/navigation";
 import { cn } from "~/lib/utils";
 
-export const NavigationLink = ({ route, name, icon: Icon }: NavigationItem) => {
-  const pathName = usePathname();
-  const isActive = pathName.toLowerCase().includes(route.toLowerCase());
-
+export const NavigationLink = ({
+  route,
+  name,
+  icon: Icon,
+  isOnRoute,
+}: NavigationItem) => {
   return (
     <Link
+      data-route={isOnRoute}
       className={cn(
-        "flex w-[80%] align-middle gap-4 ml-6 rounded-xl hover:bg-slate-700 hover:text-slate-100 text-slate-400 p-4 duration-500 ease-in transition-all",
-        isActive && "font-extrabold text-white hover:text-white"
+        "flex w-full lg:w-[80%] align-middle gap-4 lg:ml-6 rounded-xl hover:bg-slate-700 hover:text-slate-100 text-slate-400 p-4 duration-500 ease-in transition-all",
+        "data-[route=true]:font-extrabold data-[route=true]:text-white data-[route=true]:hover:text-white"
       )}
       key={route}
       href={route}

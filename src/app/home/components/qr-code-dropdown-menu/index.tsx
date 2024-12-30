@@ -19,7 +19,9 @@ export const QrCodeDropdownMenu = ({
   qrCode,
 }: QrCodeDropDownProps) => (
   <DropdownMenu>
-    <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+    <DropdownMenuTrigger className="p-0" asChild>
+      {children}
+    </DropdownMenuTrigger>
     <DropdownMenuContent className="w-56">
       <DropdownMenuLabel className="w-full flex justify-between">
         {name} <QrCodeBadge type={qrCode.type} />
