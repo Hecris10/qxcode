@@ -48,11 +48,11 @@ export const QrCodeListOption = ({
       options={qrCodeCardSettings}
     >
       <Button
-        className="border-transparent hover:bg-blue3"
-        variant="outline"
+        className="hover:bg-blue2 p-0 w-8 h-4"
+        variant="ghost"
         size="icon"
       >
-        <EllipsisVertical />
+        <EllipsisVertical className="w-4 h-4" />
       </Button>
     </QrCodeDropdownMenu>
   );
