@@ -1,6 +1,7 @@
 "use server";
 
-import { formatInputDateToIso } from "~/utils/dates";
+import { formatInputDateToIso, validateDate } from "~/utils/dates";
+import { getLocale } from "~/utils/server/locale";
 import { ValidationConfig } from "~/utils/server/validate-url-form-server";
 import { getFormDataObject } from "~/utils/validation/get-form-data-object";
 import { validateEmail } from "~/utils/validation/validate-email";
@@ -44,8 +45,20 @@ export const signupUser = async (e: FormData) => {
     "password",
     "phoneNumber",
   ]);
+  const locale = await getLocale();
 
-  bodyRequest.dateOfBirth = formatInputDateToIso(bodyRequest.dateOfBirth);
+  const birthDate = validateDate(bodyRequest.dateOfBirth, locale);
+
+  if (!birthDate) {
+    errors.dateOfBirth = "Invalid";
+    errors.hasValidationErrors = true;
+    return errors;
+  }
+
+  bodyRequest.dateOfBirth = formatInputDateToIso(
+    bodyRequest.dateOfBirth,
+    locale
+  );
 
   try {
     const response = await fetch(`${apiUrl}/user/signup`, {
