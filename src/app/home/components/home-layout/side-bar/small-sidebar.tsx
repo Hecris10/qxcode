@@ -2,16 +2,19 @@
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MdLogout } from "react-icons/md";
 import { Logo } from "~/components/logo";
 import { Button } from "~/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
 import { mainNavigation } from "~/config/navigation";
+import { logOutUserAction } from "~/services/auth/auth-actions";
 import { NavigationLink } from "../../navigation-link";
 
 export const SmallSidebar = () => {
@@ -51,16 +54,31 @@ export const SmallSidebar = () => {
             QX Code
           </SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col align-middle gap-4 pt-8">
-          {mainNavigation.map((navItem) => (
-            <NavigationLink
-              key={navItem.route}
-              isOnRoute={compareRoute(navItem.route)}
-              {...navItem}
-            />
-          ))}
+        <div className="flex flex-col justify-between h-full">
+          <div className="flex flex-col align-middle gap-4 pt-8">
+            {mainNavigation.map((navItem) => (
+              <NavigationLink
+                key={navItem.route}
+                isOnRoute={compareRoute(navItem.route)}
+                {...navItem}
+              />
+            ))}
+          </div>
+          <form
+            className="flex w-full lg:w-[80%] px-4 align-middle gap-4 lg:ml-6"
+            action={logOutUserAction}
+          >
+            <button
+              type="submit"
+              className="flex gap-4 w-full -mt-40  align-middle "
+            >
+              <MdLogout className="w-6 h-6 font-bold my-auto" />{" "}
+              <p className="my-auto">Log out</p>
+            </button>
+          </form>
         </div>
       </SheetContent>
+      <SheetFooter>TESTE</SheetFooter>
     </Sheet>
   );
 };
