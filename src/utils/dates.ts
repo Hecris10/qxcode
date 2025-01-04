@@ -1,17 +1,30 @@
-export function validateDate(dateString: string): boolean {
-  // Regular expression to match YYYY-MM-DD format
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
+export function getDateMask(locale: string): string {
+  return locale === "en-US" ? "MM/DD/YYYY" : "DD/MM/YYYY";
+}
 
-  // Test the dateString against the regex
-  if (!regex.test(dateString)) {
-    return false;
+export function validateDate(dateString: string, locale: string): boolean {
+  let dateParts: string[];
+  let day: number, month: number, year: number;
+
+  if (locale === "en-US") {
+    // MM/DD/YYYY
+    dateParts = dateString.split("/");
+    if (dateParts.length !== 3) return false;
+    month = parseInt(dateParts[0], 10);
+    day = parseInt(dateParts[1], 10);
+    year = parseInt(dateParts[2], 10);
+  } else {
+    // DD/MM/YYYY
+    dateParts = dateString.split("/");
+    if (dateParts.length !== 3) return false;
+    day = parseInt(dateParts[0], 10);
+    month = parseInt(dateParts[1], 10);
+    year = parseInt(dateParts[2], 10);
   }
 
-  // Parse the date parts to check if it's a valid date
-  const [year, month, day] = dateString.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
+  if (isNaN(day) || isNaN(month) || isNaN(year)) return false;
 
-  // Check if the date is valid
+  const date = new Date(year, month - 1, day);
   return (
     date.getFullYear() === year &&
     date.getMonth() === month - 1 &&
@@ -19,7 +32,27 @@ export function validateDate(dateString: string): boolean {
   );
 }
 
-export function formatInputDateToIso(dateString: string): string {
-  const date = new Date(dateString);
+export function formatInputDateToIso(
+  dateString: string,
+  locale: string
+): string {
+  let dateParts: string[];
+  let day: number, month: number, year: number;
+
+  if (locale === "en-US") {
+    // MM/DD/YYYY
+    dateParts = dateString.split("/");
+    month = parseInt(dateParts[0], 10);
+    day = parseInt(dateParts[1], 10);
+    year = parseInt(dateParts[2], 10);
+  } else {
+    // DD/MM/YYYY
+    dateParts = dateString.split("/");
+    day = parseInt(dateParts[0], 10);
+    month = parseInt(dateParts[1], 10);
+    year = parseInt(dateParts[2], 10);
+  }
+
+  const date = new Date(year, month - 1, day);
   return date.toISOString();
 }

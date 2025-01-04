@@ -1,4 +1,4 @@
-import { DatePicker, Portal } from "@ark-ui/react";
+import { DatePicker, DateValue, Portal } from "@ark-ui/react";
 import {
   BsChevronLeft,
   BsChevronRight,
@@ -7,17 +7,24 @@ import {
 
 export const SingleDatePicker = ({
   name,
-  defaultValue,
   onDateChange,
+  locale,
+  max,
+  min,
 }: {
   name?: string;
-  defaultValue?: Date;
   onDateChange?: (value: string) => void;
+  locale?: string;
+  min?: DateValue;
+  max?: DateValue;
 }) => {
   return (
     <DatePicker.Root
       name={name}
+      locale={locale}
       onValueChange={(e) => onDateChange && onDateChange(e.valueAsString[0])}
+      max={max}
+      min={min}
     >
       <DatePicker.Control className="w-full flex relative gap-2 align-middle">
         <DatePicker.Input maxLength={10} />

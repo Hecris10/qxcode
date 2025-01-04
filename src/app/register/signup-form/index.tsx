@@ -1,4 +1,6 @@
 "use client";
+import { DateValue } from "@ark-ui/react";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { Label } from "@radix-ui/react-label";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -13,20 +15,16 @@ import { useFormValues } from "~/hooks/useFormValues";
 import { ServerRequest } from "~/services/api/api";
 import { signupUser } from "~/services/user/user-actions";
 import { SignUpUserValidation } from "~/services/user/users";
+import { getDateMask } from "~/utils/dates";
 
-const toastId = "register";
-
-export const SignupForm = () => {
-  // const [response, formAction, isPending] = useActionState(
-  //   signupUser,
-  //   {} as ServerRequest<SignUpUserValidation>
-  // );
-
+export const SignupForm = ({ locale }: { locale: string }) => {
+  const todayDate = today(getLocalTimeZone());
   const [response, setResponse] = useState<ServerRequest<SignUpUserValidation>>(
     {} as ServerRequest<SignUpUserValidation>
   );
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { handleChange, getValue } = useFormValues<SignUpUserValidation>();
 
   const formAction = async (e: FormData) => {
     startTransition(async () => {
@@ -52,23 +50,12 @@ export const SignupForm = () => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log({ response, isPending });
-
-  // }, [response, isPending]);
-
-  const { handleChange, getValue } = useFormValues<SignUpUserValidation>();
-
-  const getInputError = (field: keyof SignUpUserValidation) => {
-    return response[field] as string;
-  };
-
+  const getInputError = (field: keyof SignUpUserValidation) =>
+    response[field] as string;
   const getInputValue = (key: keyof SignUpUserValidation) =>
     getValue(key) as string;
-
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     handleChange(e.target.name as keyof SignUpUserValidation, e.target.value);
-  };
 
   return (
     <form action={formAction} className="flex flex-col w-full my-auto gap-3">
@@ -92,17 +79,21 @@ export const SignupForm = () => {
         <Label className="text-white ml-2" htmlFor="email">
           Birthdate
         </Label>
-        <SingleDatePicker name="dateOfBirth" />
+        <SingleDatePicker
+          max={todayDate as unknown as DateValue}
+          locale={locale}
+          name="dateOfBirth"
+        />
         <ErrorAlert
           className="mx-1"
           message={"Birthdate is required"}
           inError={getInputError("dateOfBirth") == "required"}
         />
-        {/* <ErrorAlert
+        <ErrorAlert
           className="mx-1"
-          message={"Birthdate should be is in wrong format"}
-          inError={response.dateOfBirth = "required"}
-        /> */}
+          message={`Birthdate should be in format ${getDateMask(locale)} `}
+          inError={response.dateOfBirth === "Invalid"}
+        />
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
