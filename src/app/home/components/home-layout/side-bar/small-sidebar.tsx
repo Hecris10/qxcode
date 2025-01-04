@@ -8,7 +8,6 @@ import { Button } from "~/components/ui/button";
 import {
   Sheet,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -78,7 +77,6 @@ export const SmallSidebar = () => {
           </form>
         </div>
       </SheetContent>
-      <SheetFooter>TESTE</SheetFooter>
     </Sheet>
   );
 };
