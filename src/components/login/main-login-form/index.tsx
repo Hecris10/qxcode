@@ -34,19 +34,9 @@ export const MainLoginForm = () => {
     });
   };
 
-  // const [response, formAction, isPending] = useActionState(
-  //   loginUserAction,
-  //   {} as ServerRequest<ILoginUser>
-  // );
-
-  const getInputError = (field: keyof ILoginUser) => {
-    return response[field] as string;
-  };
-
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const getInputError = (field: keyof ILoginUser) => response[field] as string;
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     handleChange(e.target.name as keyof ILoginUser, e.target.value);
-  };
-
   const getInputValue = (key: keyof ILoginUser) => getValue(key) as string;
 
   return (
