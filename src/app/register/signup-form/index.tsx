@@ -58,7 +58,7 @@ export const SignupForm = ({ locale }: { locale: string }) => {
     handleChange(e.target.name as keyof SignUpUserValidation, e.target.value);
 
   return (
-    <form action={formAction} className="flex flex-col w-full my-auto gap-3">
+    <form action={formAction} className="flex flex-col w-full my-auto gap-1">
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Nome
@@ -183,7 +183,7 @@ export const SignupForm = ({ locale }: { locale: string }) => {
         isLoading={isPending}
         buttonLabel="Register"
         loadingLabelText="Registering..."
-        buttonClassNames="bg-slate-800 my-10"
+        buttonClassNames="bg-slate-800 mt-4"
       />
     </form>
   );

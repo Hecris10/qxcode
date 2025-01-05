@@ -40,15 +40,15 @@ export const MainLoginForm = () => {
   const getInputValue = (key: keyof ILoginUser) => getValue(key) as string;
 
   return (
-    <form action={formAction} className="flex flex-col w-full mt-4 gap-4">
+    <form action={formAction} className="flex flex-col w-full gap-3">
       <ErrorAlert
         className="mx-1"
         message="Email or passoword is incorrect"
         inError={getInputError("email") === "NotFound"}
       />
-      <div className="flex flex-col gap-4 mb-8">
+      <div className="flex flex-col gap-1">
         <div>
-          <div className="flex flex-col gap-1 mb-2">
+          <div className="flex flex-col gap-1">
             <Label className="text-white ml-2" htmlFor="email">
               Email
             </Label>
@@ -94,6 +94,7 @@ export const MainLoginForm = () => {
         </div>
       </div>
       <FormButton
+        buttonClassNames="mt-4"
         isLoading={isPending}
         buttonLabel="Sign in"
         loadingLabelText="Signing in"

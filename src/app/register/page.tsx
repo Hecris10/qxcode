@@ -13,12 +13,12 @@ export default async function Register() {
   const locale = await getLocale();
 
   return (
-    <div className="w-full h-screen justify-center flex align-middle">
-      <section className="w-[90%] max-w-[400px] text-white px-3 rounded-2xl m-auto">
+    <div className="w-full h-svh justify-center flex align-middle">
+      <section className="w-full max-w-[400px] py-2 text-white px-3 max-h-svh rounded-2xl m-auto">
         <MdQrCodeScanner className="mx-auto w-24 h-24 text-slate-600" />
         <h2 className="text-center">Register your account</h2>
         <SignupForm locale={locale} />
-        <div className="mx-auto  ">
+        <div className="mx-auto mt-4">
           <p className="text-center text-slate-500 mx-auto">
             {`Already have an account?  `}
             <Link href={"/"} className="font-bold text-slate-400">

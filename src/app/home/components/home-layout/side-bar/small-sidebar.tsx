@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from "~/components/ui/sheet";
 import { mainNavigation } from "~/config/navigation";
+import { cn } from "~/lib/utils";
 import { logOutUserAction } from "~/services/auth/auth-actions";
 import { NavigationLink } from "../../navigation-link";
 
@@ -64,16 +65,20 @@ export const SmallSidebar = () => {
             ))}
           </div>
           <form
-            className="flex w-full lg:w-[80%] px-4 align-middle gap-4 lg:ml-6"
+            className="lg:flex flex-col w-full gap-4 align-middle"
             action={logOutUserAction}
           >
-            <button
+            <Button
+              variant="ghost"
+              className={cn(
+                "flex w-full lg:w-[80%] -mt-28 justify-start align-middle gap-4 lg:ml-6 rounded-xl hover:bg-slate-700 hover:text-slate-100 text-slate-400 p-4 duration-500 ease-in transition-all"
+              )}
+              size="auto"
               type="submit"
-              className="flex gap-4 w-full -mt-40  align-middle "
             >
               <MdLogout className="w-6 h-6 font-bold my-auto" />{" "}
               <p className="my-auto">Log out</p>
-            </button>
+            </Button>
           </form>
         </div>
       </SheetContent>

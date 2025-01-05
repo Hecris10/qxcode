@@ -118,7 +118,7 @@ export const QrCodeView = ({
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-sm">Background Color</Label>
+                <Label className="text-base lg:text-sm">Background Color</Label>
                 <ColorPickerInput
                   name="backgroundColor"
                   defaultColor={code?.backgroundColor}
@@ -127,7 +127,7 @@ export const QrCodeView = ({
                 />
               </div>
               <div>
-                <Label className="text-sm">Padding</Label>
+                <Label className="text-base lg:text-sm">Padding</Label>
                 <Slider
                   value={[code?.padding || 0]}
                   min={0}
@@ -139,7 +139,7 @@ export const QrCodeView = ({
                 />
               </div>
               <div>
-                <Label className="text-sm">Border Radius</Label>
+                <Label className="text-base lg:text-sm">Border Radius</Label>
                 <Slider
                   value={[code?.qrCodeBorderRadius || 0]}
                   min={0}
@@ -178,7 +178,9 @@ export const QrCodeView = ({
               <Collapsible.Root open={!!code.logo}>
                 <Collapsible.Content>
                   <div className="space-y-2">
-                    <Label className="text-sm">Logo Background Color</Label>
+                    <Label className="text-base lg:text-sm">
+                      Logo Background Color
+                    </Label>
                     <ColorPickerInput
                       name="logoBackgroundColor"
                       defaultColor={code?.logoBackgroundColor}
@@ -187,7 +189,7 @@ export const QrCodeView = ({
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">Logo Padding</Label>
+                    <Label className="text-base lg:text-sm">Logo Padding</Label>
                     <Slider
                       value={[code?.logoPadding || 0]}
                       min={0}
@@ -199,7 +201,9 @@ export const QrCodeView = ({
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">Logo Border Radius</Label>
+                    <Label className="text-base lg:text-sm">
+                      Logo Border Radius
+                    </Label>
                     <Slider
                       value={[code.logoBorderRadius || 0]}
                       min={0}
