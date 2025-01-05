@@ -3,7 +3,14 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "check-types"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.local"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.local",
+        ".env.development",
+        ".env.production",
+        ".env.prd"
+      ],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "check-types": {
