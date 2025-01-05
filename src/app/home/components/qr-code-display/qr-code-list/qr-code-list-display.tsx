@@ -39,7 +39,7 @@ export const QrCodeCardListDisplay = ({
           >
             {qrCode.name}
           </Link>
-          <p className="text-sm my-auto text-gray-500">
+          <p className="text-base lg:text-sm my-auto text-gray-500">
             {isoDateToLocale(qrCode.createdAt)}
           </p>
         </div>

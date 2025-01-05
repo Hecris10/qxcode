@@ -13,7 +13,7 @@ export const NoQrCode = () => (
         <h3 className="text-xl font-semibold tracking-tight">
           No QR Codes Yet
         </h3>
-        <p className="text-sm text-muted-foreground max-w-[300px]">
+        <p className="text-base text-muted-foreground max-w-[300px]">
           Get started by creating your first QR code. It only takes a few
           seconds.
         </p>

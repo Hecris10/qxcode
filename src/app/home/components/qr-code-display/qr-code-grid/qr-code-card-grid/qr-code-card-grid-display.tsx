@@ -31,7 +31,7 @@ export const QrCodeCardGridDisplay = ({
         >
           {qrCode.name}
         </Link>
-        <p className="text-sm my-auto text-gray-500">
+        <p className="text-md lg:text-sm my-auto text-gray-500">
           {isoDateToLocale(qrCode.createdAt)}
         </p>
         <div className="qr-code-grid-options absolute right-1">
