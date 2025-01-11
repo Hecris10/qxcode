@@ -67,6 +67,11 @@ export const QrCodeContainer = ({
               className="bg-white p-1 scale-75  overflow-hidden"
             >
               <Image
+                style={{
+                  background: logoBackground,
+                  padding: `${logoPadding}px` || "0.25rem",
+                  borderRadius: `${logoBorderRadius}px`,
+                }}
                 width={70}
                 height={70}
                 src={logoSrc}

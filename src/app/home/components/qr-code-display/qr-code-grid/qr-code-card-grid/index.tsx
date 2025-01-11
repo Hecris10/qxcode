@@ -9,15 +9,3 @@ export const QrCodeCardGrid = ({ qrCode }: { qrCode: QrCode }) => {
 
   return <QrCodeCardGridDisplay qrCode={qrCode} url={url} />;
 };
-
-{
-  /* <section className="w-full bg-card flex-col rounded-2xl">
-  <CardHeader>
-    <CardTitle>{qrCode.name}</CardTitle>
-    <CardDescription>{qrCode.type}</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <QrCodeContainer code={qrCode.content} />
-  </CardContent>
-</section>; */
-}
