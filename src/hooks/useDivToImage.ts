@@ -1,4 +1,4 @@
-import { toPng } from "html-to-image";
+import html2canvas from "html2canvas";
 import { useRef } from "react";
 
 export const useDivToImage = (fileName: string) => {
@@ -8,18 +8,15 @@ export const useDivToImage = (fileName: string) => {
     if (divRef.current === null) {
       return;
     }
-    toPng(divRef.current)
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-        link.href = dataUrl;
-        link.download = `${fileName}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
-      .catch((err) => {
-        console.error("Oops, something went wrong!", err);
-      });
+    try {
+      const canvas = await html2canvas(divRef.current);
+      const link = document.createElement("a");
+      link.download = `${fileName}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return { divRef, onDownload };

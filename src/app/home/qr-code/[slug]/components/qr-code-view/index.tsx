@@ -96,6 +96,7 @@ export const QrCodeView = ({
             logoBackground={code.logoBackgroundColor}
             logoBorderRadius={code.logoBorderRadius}
           />
+
           <div className="mt-2 md:hidden">
             <QrCodeBadge type={code?.type || ""} />
           </div>
@@ -221,6 +222,7 @@ export const QrCodeView = ({
         </div>
       </div>
       <input readOnly name="id" value={code.id} className="hidden" />
+
       <FormButton buttonLabel="Save" buttonClassNames="w-full mt-10" />
     </form>
   );
