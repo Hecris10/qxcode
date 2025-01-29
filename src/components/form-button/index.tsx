@@ -1,22 +1,23 @@
 "use client";
 
 import { Trash2Icon } from "lucide-react";
+import { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 import { cn } from "~/lib/utils";
 
 export const FormButton = ({
-  buttonLabel,
-  loadingLabelText,
+  children,
+  loadingElement,
   buttonClassNames,
   isLoading,
   variant,
   type,
   onClick,
 }: {
-  buttonLabel: string;
-  loadingLabelText?: string;
+  children?: ReactNode;
+  loadingElement?: ReactNode;
   buttonClassNames?: string;
   isLoading?: boolean;
   variant?: "form" | "button" | "destructive";
@@ -27,19 +28,19 @@ export const FormButton = ({
 
   const isLoadingFromForm = isLoading || pending;
 
+  console.log("isLoadingFromForm", isLoadingFromForm);
+
   if (variant === "button" || variant === "destructive")
     return (
       <Button
         variant={variant === "destructive" ? "destructive" : "default"}
         disabled={isLoadingFromForm}
         type={type || "submit"}
-        className={cn(buttonClassNames)}
+        className={cn(" py-2 hover:bg-slate-800", buttonClassNames)}
         onClick={onClick}
       >
-        {isLoadingFromForm && <Spinner />}{" "}
-        {isLoadingFromForm && !!loadingLabelText
-          ? `${loadingLabelText}`
-          : `${buttonLabel}`}
+        {isLoadingFromForm && <Spinner className="text-blue2" />}{" "}
+        {isLoadingFromForm && !!loadingElement ? loadingElement : children}
         {variant === "destructive" && <Trash2Icon className="ml-2" />}
       </Button>
     );
@@ -55,9 +56,7 @@ export const FormButton = ({
       onClick={onClick}
     >
       {isLoadingFromForm && <Spinner />}{" "}
-      {isLoadingFromForm && !!loadingLabelText
-        ? `${loadingLabelText}`
-        : `${buttonLabel}`}
+      {isLoadingFromForm && !!loadingElement ? loadingElement : children}
     </Button>
   );
 };

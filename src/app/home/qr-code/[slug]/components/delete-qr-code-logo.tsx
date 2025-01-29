@@ -41,9 +41,10 @@ export const DeleteQrCodeLogoButton = ({
     <FormButton
       isLoading={isPendingDeleteQrCode}
       variant="destructive"
-      buttonLabel={"Remove logo"}
       type="button"
       onClick={onSubmit}
-    />
+    >
+      Remove logo
+    </FormButton>
   );
 };

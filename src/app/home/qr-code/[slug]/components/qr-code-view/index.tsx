@@ -1,6 +1,6 @@
 "use client";
 import { Collapsible } from "@ark-ui/react";
-import { Download, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import { FormButton } from "~/components/form-button";
 import { LogosModal } from "~/components/logos/logos-modal";
@@ -20,6 +20,7 @@ import {
   QrCodeDotType,
   qrCodeDotTypesOptions,
 } from "~/services/qrcodes/qrcodes.utils";
+import { ButtonQrCodeDownload } from "../button-qr-code-download";
 import { DeleteQrCodeLogoButton } from "../delete-qr-code-logo";
 
 export const QrCodeView = ({
@@ -134,10 +135,7 @@ export const QrCodeView = ({
             <QrCodeBadge type={code?.type || ""} />
           </div>
           <div className="flex justify-end px-4 mt-4">
-            <Button onClick={onDownload}>
-              Download
-              <Download className="ml-2" />
-            </Button>
+            <ButtonQrCodeDownload onDownload={onDownload} />
           </div>
         </div>
         <div className="gap-6 md:mt-3 w-full">
@@ -287,7 +285,12 @@ export const QrCodeView = ({
         </div>
       </div>
       <input readOnly name="id" value={code.id} className="hidden" />
-      <FormButton buttonLabel="Save" buttonClassNames="w-full mt-10" />
+      <FormButton
+        loadingElement={<>Saving...</>}
+        buttonClassNames="w-full mt-10"
+      >
+        Save
+      </FormButton>
     </form>
   );
 };

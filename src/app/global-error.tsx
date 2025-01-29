@@ -15,6 +15,9 @@ export default function GlobalError({
       <body>
         <h2>Something went wrong!</h2>
         <button onClick={() => reset()}>Try again</button>
+        <pre>{error.stack}</pre>
+        {error.digest && <p>Error digest: {error.digest}</p>}
+        {JSON.stringify(error, null, 2)}
       </body>
     </html>
   );
