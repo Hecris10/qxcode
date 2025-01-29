@@ -9,7 +9,6 @@ import {
   CardFooter,
   CardHeader,
 } from "~/components/ui/card";
-import { useDivToImage } from "~/hooks/useDivToImage";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { isoDateToLocale } from "~/utils/date";
 import { QrCodeListOption } from "../../qr-code-list-option";
@@ -21,10 +20,15 @@ export const QrCodeCardGridDisplay = ({
   qrCode: QrCode;
   url: string;
 }) => {
-  const { divRef, onDownload } = useDivToImage(qrCode.name);
-  const onDownloadRef = useRef<(name?: string) => Promise<boolean> | null>(
-    async () => false
-  );
+  const downloadRef = useRef<{ onDowload: () => Promise<void> }>({
+    onDowload: async () => {},
+  });
+
+  const onDownload = async () => {
+    if (downloadRef.current) {
+      await downloadRef.current.onDowload();
+    }
+  };
 
   return (
     <Card className="overflow-hidden bg-slate-800 qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
@@ -44,6 +48,7 @@ export const QrCodeCardGridDisplay = ({
       </CardHeader>
       <CardContent>
         <QrCodeContainer
+          onDownloadQrCodeRef={downloadRef}
           className="w-full h-full mx-auto my-auto max-w-[400px]"
           code={qrCode?.content || ""}
           padding={qrCode?.padding}

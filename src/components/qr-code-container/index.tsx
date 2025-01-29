@@ -98,9 +98,13 @@ export const QrCodeContainer = ({
   ]);
 
   const onDownload = async () => {
-    if (qrCode && qrCode.current) {
-      qrCode.current.downloadImage();
-    }
+   try {
+     if (qrCode && qrCode.current) {
+       qrCode.current.downloadImage();
+     }
+   } catch (e) {
+     console.log(e);
+   }
   };
 
   useEffect(() => {
