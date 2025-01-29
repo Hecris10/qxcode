@@ -1,7 +1,7 @@
 "use client";
 import { Collapsible } from "@ark-ui/react";
-import { Download, Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { Plus } from "lucide-react";
+import { useRef, useState, useTransition } from "react";
 import { FormButton } from "~/components/form-button";
 import { LogosModal } from "~/components/logos/logos-modal";
 import { QrCodeBadge } from "~/components/qr-code-badge";
@@ -13,13 +13,14 @@ import { SelectScrollable } from "~/components/ui/select-scrollable";
 import { Slider } from "~/components/ui/slider";
 import { Logo } from "~/services/logos/logos.type";
 import { updatePartialQrCode } from "~/services/qrcodes/qrcodes";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
+import { QrCode, QrCodePartial } from "~/services/qrcodes/qrcodes.type";
 import {
   QrCodeCornerType,
   qrCodeCornerTypesOptions,
   QrCodeDotType,
   qrCodeDotTypesOptions,
 } from "~/services/qrcodes/qrcodes.utils";
+import { ButtonQrCodeDownload } from "../button-qr-code-download";
 import { DeleteQrCodeLogoButton } from "../delete-qr-code-logo";
 
 export const QrCodeView = ({
@@ -40,6 +41,40 @@ export const QrCodeView = ({
     nodesColor: qrCode.nodesColor || "#000000",
     backgroundColor: qrCode.backgroundColor || "#ffffff00",
   });
+
+  const [isPending, onSaveAction] = useTransition();
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const data = new FormData(e.currentTarget);
+    const qrCodeDataEntries = Object.fromEntries(data.entries());
+
+    const reqBody: QrCodePartial = {
+      logoId: qrCodeDataEntries.logoId ? +qrCodeDataEntries.logoId : undefined,
+      backgroundColor: qrCodeDataEntries.backgroundColor as string,
+      padding: qrCodeDataEntries.padding
+        ? +qrCodeDataEntries.padding
+        : undefined,
+      logoBackgroundColor: qrCodeDataEntries.logoBackgroundColor as string,
+      logoBorderRadius: qrCodeDataEntries.logoBorderRadius
+        ? +qrCodeDataEntries.logoBorderRadius
+        : undefined,
+      logoPadding: qrCodeDataEntries.logoPadding
+        ? +qrCodeDataEntries.logoPadding
+        : undefined,
+      cornersColor: qrCodeDataEntries.cornersColor as string,
+      nodesColor: qrCodeDataEntries.nodesColor as string,
+      cornerType: qrCodeDataEntries.cornerType as QrCodeCornerType,
+      dotsType: qrCodeDataEntries.dotsType as QrCodeDotType,
+    };
+
+    console.log({ reqBody });
+
+    onSaveAction(() => {
+      updatePartialQrCode({ ...reqBody, id: qrCode.id });
+    });
+  };
 
   const downloadRef = useRef<{ onDowload: () => Promise<void> }>({
     onDowload: async () => {},
@@ -109,12 +144,9 @@ export const QrCodeView = ({
   };
 
   return (
-    <form
-      action={updatePartialQrCode}
-      className="w-full md:w-[75%]  md:mx-auto"
-    >
+    <form onSubmit={onSubmit} className="w-full md:mx-auto">
       <div className="flex flex-col md:flex-row mb-6 gap-3 md:gap-8">
-        <div className="w-full h-full my-auto ">
+        <div className="w-full h-full my-auto p-2 lg:px-6">
           <QrCodeContainer
             onDownloadQrCodeRef={downloadRef}
             name={qrCode.name}
@@ -133,11 +165,8 @@ export const QrCodeView = ({
           <div className="mt-2 md:hidden">
             <QrCodeBadge type={code?.type || ""} />
           </div>
-          <div className="flex justify-end px-4 mt-4">
-            <Button onClick={onDownload}>
-              Download
-              <Download className="ml-2" />
-            </Button>
+          <div className="flex justify-end md:mt-4 lg:mt-6">
+            <ButtonQrCodeDownload onDownload={onDownload} />
           </div>
         </div>
         <div className="gap-6 md:mt-3 w-full">
@@ -149,9 +178,8 @@ export const QrCodeView = ({
               <h2 className="text-xl font-semibold">{code?.name}</h2>
               <p className="text-slate-400">{code?.content}</p>
             </div>
-
             <div className="space-y-4">
-              <div className="flex space-x-4">
+              <div className="w-full grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label className="text-base lg:text-sm">
                     Background Color
@@ -172,16 +200,17 @@ export const QrCodeView = ({
                     onChange={onColorsChange("cornersColor")}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label className="text-base lg:text-sm">Nodes Color</Label>
+                  <ColorPickerInput
+                    name="nodesColor"
+                    defaultColor={code?.nodesColor}
+                    className="ml-2"
+                    onChange={onColorsChange("nodesColor")}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label className="text-base lg:text-sm">Nodes Color</Label>
-                <ColorPickerInput
-                  name="nodesColor"
-                  defaultColor={code?.nodesColor}
-                  className="ml-2"
-                  onChange={onColorsChange("nodesColor")}
-                />
-              </div>
+
               <div>
                 <Label className="text-base lg:text-sm">Padding</Label>
                 <Slider
@@ -218,13 +247,13 @@ export const QrCodeView = ({
               <div>
                 <div className="flex gap-3">
                   <LogosModal logos={logos} onSelect={onSelectLogo}>
-                    <Button className="w-full md:w-auto">
+                    <Button className="w-full">
                       <Plus />{" "}
                       {code?.logo?.url?.length ? "Change logo" : "Add a logo"}
                     </Button>
                   </LogosModal>
-                  <Collapsible.Root open={!!code.logo}>
-                    <Collapsible.Content>
+                  <Collapsible.Root className="w-full" open={!!code.logo}>
+                    <Collapsible.Content className="w-full">
                       <DeleteQrCodeLogoButton
                         qrCodeId={code.id}
                         logoId={code.logo?.id || 0}
@@ -242,7 +271,7 @@ export const QrCodeView = ({
                 </div>
               </div>
               <Collapsible.Root open={!!code.logo}>
-                <Collapsible.Content>
+                <Collapsible.Content className="space-y-2">
                   <div className="space-y-2">
                     <Label className="text-base lg:text-sm">
                       Logo Background Color
@@ -287,7 +316,13 @@ export const QrCodeView = ({
         </div>
       </div>
       <input readOnly name="id" value={code.id} className="hidden" />
-      <FormButton buttonLabel="Save" buttonClassNames="w-full mt-10" />
+      <FormButton
+        isLoading={isPending}
+        loadingElement={<>Saving...</>}
+        buttonClassNames="w-full mt-10"
+      >
+        Save
+      </FormButton>
     </form>
   );
 };

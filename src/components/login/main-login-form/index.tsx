@@ -96,9 +96,10 @@ export const MainLoginForm = () => {
       <FormButton
         buttonClassNames="mt-4"
         isLoading={isPending}
-        buttonLabel="Sign in"
-        loadingLabelText="Signing in"
-      />
+        loadingElement="Signing in..."
+      >
+        Sign in
+      </FormButton>
     </form>
   );
 };

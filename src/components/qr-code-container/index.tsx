@@ -87,7 +87,7 @@ export const QrCodeContainer = ({
     logoSrc,
     padding,
     backgroundColor,
-    ,
+    name,
     logoPadding,
     logoBackground,
     logoBorderRadius,
@@ -118,8 +118,8 @@ export const QrCodeContainer = ({
       ref={ref}
       id="qr-code"
       className={cn(
-        className,
-        "w-full mx-auto flex align-middle justify-center"
+        "w-full mx-auto flex align-middle justify-center",
+        className
       )}
     >
       <canvas className="w-full h-full" ref={canvasRef} />

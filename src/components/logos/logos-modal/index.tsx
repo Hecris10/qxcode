@@ -116,11 +116,12 @@ export const LogosModal = ({
               <FormButton
                 onClick={onConfirmSelectLogo}
                 isLoading={isPending}
-                loadingLabelText="Uploading..."
+                loadingElement="Uploading..."
                 buttonClassNames="w-full bg-white text-black"
-                buttonLabel="Confirm"
                 variant="button"
-              />
+              >
+                Confirm
+              </FormButton>
             </Collapsible.Content>
           </Collapsible.Root>
         </DialogFooter>

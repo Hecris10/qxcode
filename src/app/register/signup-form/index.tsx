@@ -181,10 +181,11 @@ export const SignupForm = ({ locale }: { locale: string }) => {
       </div>
       <FormButton
         isLoading={isPending}
-        buttonLabel="Register"
-        loadingLabelText="Registering..."
+        loadingElement="Loading..."
         buttonClassNames="bg-slate-800 mt-4"
-      />
+      >
+        Register
+      </FormButton>
     </form>
   );
 };
