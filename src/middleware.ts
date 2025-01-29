@@ -20,7 +20,7 @@ export async function middleware(request: Request) {
     return NextResponse.next();
   }
 
-  if (request.url.includes("/home"))
+  if (request.url.includes("/home") || request.url.includes("/test"))
     return NextResponse.redirect(new URL("/", request.url));
 
   return NextResponse.next();

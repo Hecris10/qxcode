@@ -1,82 +1,128 @@
 "use client";
-import { QrCode } from "@ark-ui/react";
-import Image from "next/image";
-import { RefObject } from "react";
+import QrCodeWithLogo from "qrcode-with-logos";
+import { RefObject, useEffect, useRef } from "react";
 import { cn } from "~/lib/utils";
+import {
+  QrCodeCornerType,
+  QrCodeDotType,
+} from "~/services/qrcodes/qrcodes.utils";
 
 export const QrCodeContainer = ({
   ref,
+  onDownloadQrCodeRef,
   code,
   className,
   logoSrc,
   padding,
   backgroundColor,
-  borderRadius,
   logoPadding,
   logoBackground,
   logoBorderRadius,
+  qrCodeCornerType,
+  qrCodeDotType,
+  name,
+  cornersColor,
+  nodesColor,
 }: {
-  ref?: RefObject<HTMLDivElement | null>;
+  ref?: RefObject<HTMLDivElement> | undefined;
+  onDownloadQrCodeRef?: RefObject<{
+    onDowload: () => Promise<void>;
+  }>;
   code: string;
   className?: string;
   logoSrc?: string;
   padding?: number;
   backgroundColor?: string;
-  borderRadius?: number;
   logoBackground?: string;
   logoPadding?: number;
   logoBorderRadius?: number;
+  qrCodeCornerType: QrCodeCornerType;
+  qrCodeDotType: QrCodeDotType;
+  name: string;
+  cornersColor: string;
+  nodesColor: string;
 }) => {
-  const getBorderRadius = () => {
-    if (borderRadius && typeof borderRadius === "number")
-      return `${borderRadius}px`;
-    if (borderRadius === 0) return "0px";
-    return "20px";
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const qrCode = useRef<QrCodeWithLogo | null>(null);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      qrCode.current = new QrCodeWithLogo({
+        downloadName: name,
+        content: code,
+        width: 380,
+        nodeQrCodeOptions: {
+          margin: padding,
+          color: {
+            dark: backgroundColor,
+            light: backgroundColor,
+          },
+          errorCorrectionLevel: "H",
+        },
+        dotsOptions: {
+          type: qrCodeDotType,
+          color: nodesColor,
+        },
+        cornersOptions: {
+          type: qrCodeCornerType,
+          color: cornersColor,
+        },
+        logo: logoSrc && {
+          src: logoSrc || "",
+          logoRadius: logoBorderRadius,
+          borderRadius: logoBorderRadius,
+          bgColor: logoBackground,
+          borderWidth: logoPadding,
+        },
+        canvas: canvasRef.current,
+      });
+      qrCode.current.getCanvas().then((canvas) => {
+        if (canvasRef.current) {
+          canvasRef.current.replaceWith(canvas);
+        }
+      });
+    }
+  }, [
+    code,
+    logoSrc,
+    padding,
+    backgroundColor,
+    ,
+    logoPadding,
+    logoBackground,
+    logoBorderRadius,
+    qrCodeCornerType,
+    qrCodeDotType,
+    cornersColor,
+    nodesColor,
+  ]);
+
+  const onDownload = async () => {
+   try {
+     if (qrCode && qrCode.current) {
+       qrCode.current.downloadImage();
+     }
+   } catch (e) {
+     console.log(e);
+   }
   };
 
-  const getPadding = () => {
-    if (padding && typeof padding === "number") return `${padding}px`;
-    return "0px";
-  };
+  useEffect(() => {
+    if (onDownloadQrCodeRef && qrCode.current) {
+      onDownloadQrCodeRef.current.onDowload = onDownload;
+    }
+  }, [onDownloadQrCodeRef, qrCode.current]);
 
   return (
-    <>
-      <div ref={ref} id="qr-code">
-        <QrCode.Root
-          encoding={{
-            ecc: "H",
-          }}
-          style={{
-            padding: getPadding(),
-            backgroundColor,
-            borderRadius: getBorderRadius(),
-          }}
-          className={cn("bg-slate-50", className)}
-          value={code}
-        >
-          <QrCode.Frame>
-            <QrCode.Pattern />
-          </QrCode.Frame>
-          {logoSrc && (
-            <QrCode.Overlay
-              style={{
-                background: logoBackground,
-                padding: `${logoPadding}px` || "0.25rem",
-                borderRadius: `${logoBorderRadius}px`,
-              }}
-              className="bg-white p-1 scale-75  overflow-hidden"
-            >
-              <Image
-                width={70}
-                height={70}
-                src={logoSrc}
-                alt="QrCodeLogo"
-                className="w-auto h-auto"
-              />
-            </QrCode.Overlay>
-          )}
-        </QrCode.Root>
-      </div>
-    </>
+    <div
+      ref={ref}
+      id="qr-code"
+      className={cn(
+        className,
+        "w-full mx-auto flex align-middle justify-center"
+      )}
+    >
+      <canvas className="w-full h-full" ref={canvasRef} />
+    </div>
   );
 };

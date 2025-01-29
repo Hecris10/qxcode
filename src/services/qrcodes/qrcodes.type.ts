@@ -1,4 +1,5 @@
 import { PaginatedData } from "~/common/pagination/pagination.type";
+import { QrCodeCornerType, QrCodeDotType } from "./qrcodes.utils";
 
 export interface QrCodeBase {
   id: number;
@@ -31,7 +32,10 @@ export type QrCodePartial = {
   logoBackgroundColor?: string;
   logoBorderRadius?: number;
   logoPadding?: number;
-  qrCodeBorderRadius?: number;
+  cornerType: QrCodeCornerType;
+  dotsType: QrCodeDotType;
+  cornersColor: string;
+  nodesColor: string;
 };
 export type QrCode = QrCodePartial & {
   logo?: { id: number; url: string } | null;

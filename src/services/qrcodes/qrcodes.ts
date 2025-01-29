@@ -17,6 +17,7 @@ import {
   QrCodePartial,
   UpdateQrCodeForm,
 } from "./qrcodes.type";
+import { QrCodeCornerType, QrCodeDotType } from "./qrcodes.utils";
 
 export const getUserQrCodes = async (params: PaginationParams) => {
   const userToken = await getUserToken();
@@ -175,9 +176,6 @@ export const updatePartialQrCode = async (e: FormData) => {
     logoId: qrCodeDataEntries.logoId ? +qrCodeDataEntries.logoId : undefined,
     backgroundColor: qrCodeDataEntries.backgroundColor as string,
     padding: qrCodeDataEntries.padding ? +qrCodeDataEntries.padding : undefined,
-    qrCodeBorderRadius: qrCodeDataEntries.qrCodeBorderRadius
-      ? +qrCodeDataEntries.qrCodeBorderRadius
-      : undefined,
     logoBackgroundColor: qrCodeDataEntries.logoBackgroundColor as string,
     logoBorderRadius: qrCodeDataEntries.logoBorderRadius
       ? +qrCodeDataEntries.logoBorderRadius
@@ -185,6 +183,10 @@ export const updatePartialQrCode = async (e: FormData) => {
     logoPadding: qrCodeDataEntries.logoPadding
       ? +qrCodeDataEntries.logoPadding
       : undefined,
+    cornersColor: qrCodeDataEntries.cornersColor as string,
+    nodesColor: qrCodeDataEntries.nodesColor as string,
+    cornerType: qrCodeDataEntries.cornerType as QrCodeCornerType,
+    dotsType: qrCodeDataEntries.dotsType as QrCodeDotType,
   };
 
   const userToken = await getUserToken();
@@ -211,8 +213,8 @@ export const updatePartialQrCode = async (e: FormData) => {
       return errors;
     }
 
-    revalidatePath("/home", "page");
     revalidateTag(fetchTags.qrCodes);
+
     return errors;
   } catch (e) {
     console.error({ e });
