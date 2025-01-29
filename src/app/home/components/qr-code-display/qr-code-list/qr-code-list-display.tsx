@@ -20,16 +20,19 @@ export const QrCodeCardListDisplay = ({
     <section className="w-full bg-slate-900 flex justify-between align-middle rounded-lg shadow-lg p-3">
       <div className="flex gap-8 my-auto">
         <QrCodeContainer
-          ref={divRef}
           className="w-20 h-20 mx-auto my-auto max-w-[400px]"
           code={qrCode?.content || ""}
           padding={qrCode?.padding}
           backgroundColor={qrCode?.backgroundColor}
           logoSrc={qrCode?.logo?.url || undefined}
-          borderRadius={qrCode.qrCodeBorderRadius}
           logoPadding={qrCode?.logoPadding || 0}
           logoBackground={qrCode.logoBackgroundColor}
           logoBorderRadius={qrCode.logoBorderRadius}
+          name={qrCode.name}
+          qrCodeCornerType={qrCode.cornerType}
+          qrCodeDotType={qrCode.dotsType}
+          cornersColor={qrCode.cornersColor}
+          nodesColor={qrCode.nodesColor}
         />
         <div className="my-auto">
           <QrCodeBadge type={qrCode.type} />
