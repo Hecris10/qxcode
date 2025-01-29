@@ -111,7 +111,7 @@ export const QrCodeContainer = ({
     if (onDownloadQrCodeRef && qrCode.current) {
       onDownloadQrCodeRef.current.onDowload = onDownload;
     }
-  }, [onDownloadQrCodeRef, qrCode.current]);
+  }, [onDownloadQrCodeRef]);
 
   return (
     <div
