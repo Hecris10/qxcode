@@ -26,7 +26,8 @@ export const FormButton = ({
 }) => {
   const { pending } = useFormStatus();
 
-  const isLoadingFromForm = isLoading || pending;
+  const isLoadingFromForm =
+    isLoading || ((type === undefined || type === "submit") && pending);
 
   console.log("isLoadingFromForm", isLoadingFromForm);
 
@@ -36,7 +37,7 @@ export const FormButton = ({
         variant={variant === "destructive" ? "destructive" : "default"}
         disabled={isLoadingFromForm}
         type={type || "submit"}
-        className={cn(" py-2 hover:bg-slate-800", buttonClassNames)}
+        className={cn(" py-2", buttonClassNames)}
         onClick={onClick}
       >
         {isLoadingFromForm && <Spinner className="text-blue2" />}{" "}
