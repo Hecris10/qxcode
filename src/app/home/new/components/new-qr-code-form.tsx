@@ -209,10 +209,11 @@ export const NewQrCodeForm = () => {
         </section>
         <FormButton
           isLoading={isSubmitting}
-          buttonLabel="Save"
-          loadingLabelText="Saving.."
+          loadingElement="Saving.."
           buttonClassNames="bg-slate-800 my-10 w-full"
-        />
+        >
+          Save
+        </FormButton>
       </form>
     </FormProvider>
   );

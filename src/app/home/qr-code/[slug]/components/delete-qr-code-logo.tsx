@@ -39,6 +39,7 @@ export const DeleteQrCodeLogoButton = ({
 
   return (
     <FormButton
+      buttonClassNames="w-full"
       isLoading={isPendingDeleteQrCode}
       variant="destructive"
       type="button"
