@@ -3,4 +3,5 @@ export const fetchTags = {
   users: "users",
   auth: "auth",
   logos: "logos",
+  qrCodeControllers: "qr-code-controllers",
 };
