@@ -36,6 +36,7 @@ export type QrCodePartial = {
   dotsType: QrCodeDotType;
   cornersColor: string;
   nodesColor: string;
+  isControlled?: boolean;
 };
 export type QrCode = QrCodePartial & {
   logo?: { id: number; url: string } | null;

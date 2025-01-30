@@ -11,6 +11,7 @@ import { ColorPickerInput } from "~/components/ui/color-picker";
 import { Label } from "~/components/ui/label";
 import { SelectScrollable } from "~/components/ui/select-scrollable";
 import { Slider } from "~/components/ui/slider";
+import { Switch } from "~/components/ui/switch";
 import { Logo } from "~/services/logos/logos.type";
 import { updatePartialQrCode } from "~/services/qrcodes/qrcodes";
 import { QrCode, QrCodePartial } from "~/services/qrcodes/qrcodes.type";
@@ -40,6 +41,7 @@ export const QrCodeView = ({
     cornersColor: qrCode.cornersColor || "#000000",
     nodesColor: qrCode.nodesColor || "#000000",
     backgroundColor: qrCode.backgroundColor || "#ffffff00",
+    isControlled: qrCode.isControlled || false,
   });
 
   const [isPending, onSaveAction] = useTransition();
@@ -67,6 +69,7 @@ export const QrCodeView = ({
       nodesColor: qrCodeDataEntries.nodesColor as string,
       cornerType: qrCodeDataEntries.cornerType as QrCodeCornerType,
       dotsType: qrCodeDataEntries.dotsType as QrCodeDotType,
+      isControlled: Boolean(qrCodeDataEntries.isControlled),
     };
 
     console.log({ reqBody });
@@ -177,40 +180,50 @@ export const QrCodeView = ({
               </div>
               <h2 className="text-xl font-semibold">{code?.name}</h2>
               <p className="text-slate-400">{code?.content}</p>
+              <div className="flex gap-4 mt-4">
+                <Label className="text-base lg:text-sm">Is Controlled</Label>
+                <Switch
+                  name="isControlled"
+                  defaultChecked={code.isControlled}
+                />
+              </div>
             </div>
-            <div className="space-y-4">
-              <div className="w-full grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-base lg:text-sm">
+            <div className="flex flex-col gap-4">
+              <div className="w-full grid grid-cols-2 lg:grid-cols-3 lg:gap-4 gap-6">
+                <div className="flex gap-2 align-middle">
+                  <Label className="text-base my-auto lg:text-sm">
                     Background Color
                   </Label>
                   <ColorPickerInput
                     name="backgroundColor"
                     defaultColor={code?.backgroundColor}
-                    className="ml-2"
+                    className="my-auto"
                     onChange={onColorsChange("backgroundColor")}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-base lg:text-sm">Corners Color</Label>
+                <div className="flex gap-2 align-middle">
+                  <Label className="text-base my-auto lg:text-sm">
+                    Corners Color
+                  </Label>
                   <ColorPickerInput
                     name="cornersColor"
                     defaultColor={code?.cornersColor}
-                    className="ml-2"
+                    className="my-auto"
                     onChange={onColorsChange("cornersColor")}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-base lg:text-sm">Nodes Color</Label>
+                <div className="flex gap-2 align-middle">
+                  <Label className="text-base my-auto lg:text-sm">
+                    Nodes Color
+                  </Label>
                   <ColorPickerInput
                     name="nodesColor"
                     defaultColor={code?.nodesColor}
-                    className="ml-2"
+                    className="my-auto"
                     onChange={onColorsChange("nodesColor")}
                   />
                 </div>
               </div>
-
               <div>
                 <Label className="text-base lg:text-sm">Padding</Label>
                 <Slider
@@ -223,7 +236,6 @@ export const QrCodeView = ({
                   name="padding"
                 />
               </div>
-
               <div className="flex space-x-4 w-full">
                 <div className="w-full">
                   <Label className="text-base lg:text-sm">Corners Shapes</Label>

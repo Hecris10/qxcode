@@ -72,6 +72,7 @@ export const QrCodeContainer = ({
           logoRadius: logoBorderRadius,
           borderRadius: logoBorderRadius,
           bgColor: logoBackground,
+          borderColor: logoBackground,
           borderWidth: logoPadding,
         },
         canvas: canvasRef.current,
