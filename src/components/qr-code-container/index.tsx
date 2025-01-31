@@ -45,6 +45,8 @@ export const QrCodeContainer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const qrCode = useRef<QrCodeWithLogo | null>(null);
 
+  console.log({ code });
+
   useEffect(() => {
     if (canvasRef.current) {
       qrCode.current = new QrCodeWithLogo({
@@ -99,13 +101,13 @@ export const QrCodeContainer = ({
   ]);
 
   const onDownload = async () => {
-   try {
-     if (qrCode && qrCode.current) {
-       qrCode.current.downloadImage();
-     }
-   } catch (e) {
-     console.log(e);
-   }
+    try {
+      if (qrCode && qrCode.current) {
+        qrCode.current.downloadImage();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {

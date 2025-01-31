@@ -9,20 +9,22 @@ import { getUserToken } from "../auth/get-user-token";
 import { CreateQrCodeController } from "./qr-code-controller.type";
 
 export const createQrCodeControllerAction = async (
-  qrCodeController: CreateQrCodeController
+  qrCodeController: CreateQrCodeController & { url: string }
 ) => {
   let res = true;
+  const { url, ...reqBody } = qrCodeController;
   try {
     const user = await getAuthUser();
     if (!user) return null;
     const userToken = await getUserToken();
+
     await fetch(`${apiUrl}/qr-code-controller`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
       },
-      body: JSON.stringify(qrCodeController),
+      body: JSON.stringify(reqBody),
       cache: "no-cache",
       next: {
         tags: [fetchTags.qrCodeControllers],
@@ -34,7 +36,7 @@ export const createQrCodeControllerAction = async (
     console.error(e);
     res = false;
   }
-  if (res) redirect("/home");
+  if (res) redirect(url);
   redirect("/404");
 
   return res;

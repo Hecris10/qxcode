@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { Spinner } from "~/components/ui/spinner";
 import { createQrCodeControllerAction } from "~/services/qr-code-controller/qr-code-controller-actions";
-import { CreateQrCodeController } from "~/services/qr-code-controller/qr-code-controller.type";
 
 export const RedirectClient = ({
   qrCodeId,
@@ -12,6 +11,7 @@ export const RedirectClient = ({
   ip2,
   locale,
   timeStamp,
+  link,
 }: {
   qrCodeId: number;
   ip: string | null;
@@ -19,7 +19,9 @@ export const RedirectClient = ({
   ip2: string | null;
   locale: string | null;
   timeStamp: Date;
+  link: string;
 }) => {
+  const resRequested = useRef(false);
   const [isPending, action] = useTransition();
 
   useEffect(() => {
@@ -28,7 +30,8 @@ export const RedirectClient = ({
     const pageUrl = window.location.href;
 
     const onRedirect = async () => {
-      const reqBody: CreateQrCodeController = {
+      if (resRequested.current) return;
+      const reqBody = {
         qrCodeId,
         ip: ip || "",
         ip2: ip2 || "",
@@ -38,12 +41,13 @@ export const RedirectClient = ({
         screenResolution,
         timestamp: timeStamp,
         pageUrl,
+        url: link,
       };
 
       action(async () => {
-        const res = await createQrCodeControllerAction(reqBody);
-        console.log({ res });
+        createQrCodeControllerAction(reqBody);
       });
+      resRequested.current = true;
     };
 
     onRedirect();
