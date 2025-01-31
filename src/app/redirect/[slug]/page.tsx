@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { decrypt } from "~/services/crypt";
+import { decrypt, EncryptedQrCodeLink } from "~/services/crypt";
 import { RedirectClient } from "./components/redirect-client";
 
 export const metadata: Metadata = {
@@ -15,9 +15,11 @@ export default async function Redirect(propsPage: PageProps) {
 
   const decodedURI = decodeURIComponent(slug);
 
-  const decryptedId = decrypt(decodedURI);
+  const decrypteData = decrypt(decodedURI);
 
-  if (decryptedId === "fail") redirect("/404");
+  if (decrypteData === "fail") redirect("/404");
+
+  const linkData: EncryptedQrCodeLink = JSON.parse(decrypteData);
 
   const headersList = await headers();
   const ip = headersList.get("x-real-ip");
@@ -31,7 +33,7 @@ export default async function Redirect(propsPage: PageProps) {
     ip2,
     locale,
     timeStamp,
-    qrCodeId: +decryptedId,
+    linkData,
   };
 
   return <RedirectClient {...props} />;

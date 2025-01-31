@@ -1,7 +1,6 @@
 "use client";
 import { Collapsible } from "@ark-ui/react";
 import { Plus } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { FormButton } from "~/components/form-button";
@@ -33,8 +32,6 @@ export const QrCodeView = ({
   qrCode: QrCode;
   logos: Promise<Logo[]>;
 }) => {
-  const router = useRouter();
-  const pathname = usePathname();
   const [code, setCode] = useState<QrCode>({
     ...qrCode,
     padding: qrCode.padding || 0,
@@ -83,9 +80,8 @@ export const QrCodeView = ({
       await updatePartialQrCode({
         data: reqBody,
         qrCode,
-        redirectPath: pathname,
       });
-      router.push(pathname);
+
       toast.success("QrCode updated successfully", {
         id: "saving",
       });

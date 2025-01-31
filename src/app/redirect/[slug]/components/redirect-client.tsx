@@ -2,27 +2,26 @@
 
 import { useEffect, useRef, useTransition } from "react";
 import { Spinner } from "~/components/ui/spinner";
+import { EncryptedQrCodeLink } from "~/services/crypt";
 import { createQrCodeControllerAction } from "~/services/qr-code-controller/qr-code-controller-actions";
 
 export const RedirectClient = ({
-  qrCodeId,
+  linkData,
   ip,
   userAgent,
   ip2,
   locale,
   timeStamp,
-  link,
 }: {
-  qrCodeId: number;
+  linkData: EncryptedQrCodeLink;
   ip: string | null;
   userAgent: string | null;
   ip2: string | null;
   locale: string | null;
   timeStamp: Date;
-  link: string;
 }) => {
   const resRequested = useRef(false);
-  const [isPending, action] = useTransition();
+  const [, action] = useTransition();
 
   useEffect(() => {
     const screenResolution = `${window.screen.width}x${window.screen.height}`;
@@ -32,7 +31,7 @@ export const RedirectClient = ({
     const onRedirect = async () => {
       if (resRequested.current) return;
       const reqBody = {
-        qrCodeId,
+        linkData,
         ip: ip || "",
         ip2: ip2 || "",
         userAgent: userAgent || "",
@@ -41,7 +40,7 @@ export const RedirectClient = ({
         screenResolution,
         timestamp: timeStamp,
         pageUrl,
-        url: link,
+        qrCodeId: linkData.id,
       };
 
       action(async () => {

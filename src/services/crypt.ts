@@ -3,6 +3,11 @@ import crypto from "crypto";
 const algorithm = "aes-256-ctr";
 const secretKey = Buffer.from(`${process.env.QR_CODE_SECRET_KEY_ID}`, "base64");
 
+export type EncryptedQrCodeLink = {
+  id: number;
+  link: string;
+};
+
 export const encrypt = (text: string): string => {
   try {
     const iv = crypto.randomBytes(16);
