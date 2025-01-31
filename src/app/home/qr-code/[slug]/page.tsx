@@ -8,7 +8,7 @@ export default async function QrCodePage(props: PageProps) {
   const params = await props.params;
   const slug = params.slug;
 
-  const decodedURI = decodeURIComponent(slug);
+const decodedURI = decodeURIComponent(slug);
 
   const decryptedId = decrypt(decodedURI);
 

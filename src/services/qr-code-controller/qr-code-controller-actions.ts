@@ -1,43 +1,43 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { fetchTags } from "~/config/tags";
 import { apiUrl } from "../api/api";
-import { getAuthUser } from "../auth/auth-actions";
-import { getUserToken } from "../auth/get-user-token";
 import { CreateQrCodeController } from "./qr-code-controller.type";
 
 export const createQrCodeControllerAction = async (
-  qrCodeController: CreateQrCodeController & { url: string }
+  data: CreateQrCodeController
 ) => {
-  let res = true;
-  const { url, ...reqBody } = qrCodeController;
+  let url = "/404";
+  let req = false;
+  console.log("here");
   try {
-    const user = await getAuthUser();
-    if (!user) return null;
-    const userToken = await getUserToken();
-
-    await fetch(`${apiUrl}/qr-code-controller`, {
+    console.log({ data });
+    const res = await fetch(`${apiUrl}/qr-code-controller`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
       },
-      body: JSON.stringify(reqBody),
+      body: JSON.stringify(data),
       cache: "no-cache",
       next: {
         tags: [fetchTags.qrCodeControllers],
       },
     });
-    revalidateTag(fetchTags.qrCodes);
-  } catch (e) {
-    console.log({ e });
-    console.error(e);
-    res = false;
-  }
-  if (res) redirect(url);
-  redirect("/404");
 
-  return res;
+    const resData = (await res.json()) as { link: string };
+
+    // send the link to url
+    req = true;
+    url = resData.link;
+  } catch (e) {
+    console.error(e);
+  }
+  if (req) {
+    redirect(url, RedirectType.push);
+    return url;
+  }
+  redirect("/404", RedirectType.push);
+
+  return false;
 };
