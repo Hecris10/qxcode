@@ -2,6 +2,7 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect, RedirectType } from "next/navigation";
 import { fetchTags } from "~/config/tags";
 import { getPaginatedUrl } from "~/utils/url/get-value-param";
 import { PaginationParams } from "~/utils/url/url.types";
@@ -50,7 +51,7 @@ export const getQrCodeById = async (id: number) => {
     },
     cache: "force-cache",
     next: {
-      tags: [fetchTags.qrCodes],
+      tags: [fetchTags.qrCodes, `qr-code-${id}`],
       revalidate: 600,
     },
   });
@@ -165,24 +166,45 @@ export const updateQrCode = async (qrCodeData: QrCode) => {
   }
 };
 
-export const updatePartialQrCode = async (
-  data: QrCodePartial & { id: number }
-) => {
+export const updatePartialQrCode = async ({
+  data,
+  qrCode,
+  redirectPath,
+}: {
+  data: QrCodePartial;
+  qrCode: QrCode;
+  redirectPath?: string;
+}) => {
   const userToken = await getUserToken();
 
   const errors: ServerRequest<UpdateQrCodeForm> =
     {} as ServerRequest<AllQrCodeProps>;
 
-  const { id, ...reqBody } = data;
+  console.log({ data, qrCode });
 
   try {
-    const response = await fetch(`${apiUrl}/qr-codes/${id}`, {
+    const qrCodeData: QrCode = {
+      ...data,
+      id: qrCode.id,
+      content: qrCode.content,
+    } as QrCode;
+
+    if (qrCode.type === "link" && qrCode.isControlled !== data.isControlled) {
+      if (data.isControlled) {
+        const encryptedId = encrypt(qrCode.id.toString());
+        const url = `${process.env.FRONTEND_URL}/redirect/${encryptedId}`;
+        qrCodeData.content = url;
+      } else {
+        qrCodeData.content = qrCode.link;
+      }
+    }
+    const response = await fetch(`${apiUrl}/qr-codes/${qrCode.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
       },
-      body: JSON.stringify(reqBody),
+      body: JSON.stringify(qrCodeData),
     });
 
     if (!response.ok) {
@@ -194,8 +216,8 @@ export const updatePartialQrCode = async (
       return errors;
     }
 
-    revalidateTag(fetchTags.qrCodes);
-
+    revalidateTag(`qr-code-${qrCode.id}`);
+    if (redirectPath) redirect(redirectPath, RedirectType.replace);
     return errors;
   } catch (e) {
     console.error({ e });

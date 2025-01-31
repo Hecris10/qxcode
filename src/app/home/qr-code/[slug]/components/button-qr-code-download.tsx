@@ -2,11 +2,14 @@ import { Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { FormButton } from "~/components/form-button";
+import { cn } from "~/lib/utils";
 
 export const ButtonQrCodeDownload = ({
   onDownload,
+  className,
 }: {
   onDownload: () => Promise<void>;
+  className?: string;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,6 +33,7 @@ export const ButtonQrCodeDownload = ({
       variant="button"
       loadingElement="Downloading..."
       onClick={onClick}
+      buttonClassNames={cn(className)}
     >
       Download
       <Download className="ml-2" />

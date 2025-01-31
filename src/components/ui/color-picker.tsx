@@ -40,7 +40,7 @@ export const ColorPickerInput = ({
             style={{ backgroundColor: color.hex }}
           />
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-1 shadow-lg rounded-lg border-none">
+        <PopoverContent className="w-auto text-lg p-1 shadow-lg rounded-lg border-none">
           <ColorPicker
             onChangeComplete={onColorChange}
             hideInput={["hsv", "rgb"]}

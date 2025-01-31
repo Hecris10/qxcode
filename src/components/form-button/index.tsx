@@ -29,8 +29,6 @@ export const FormButton = ({
   const isLoadingFromForm =
     isLoading || ((type === undefined || type === "submit") && pending);
 
-  console.log("isLoadingFromForm", isLoadingFromForm);
-
   if (variant === "button" || variant === "destructive")
     return (
       <Button
