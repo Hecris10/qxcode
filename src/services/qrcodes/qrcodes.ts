@@ -9,7 +9,7 @@ import { PaginationParams } from "~/utils/url/url.types";
 import { apiUrl, ServerRequest } from "../api/api";
 import { RequestError } from "../api/api.types";
 import { getUserToken } from "../auth/get-user-token";
-import { encrypt } from "../crypt";
+import { encrypt, EncryptedQrCodeLink } from "../crypt";
 import {
   AllQrCodeProps,
   NewQrCode,
@@ -180,8 +180,6 @@ export const updatePartialQrCode = async ({
   const errors: ServerRequest<UpdateQrCodeForm> =
     {} as ServerRequest<AllQrCodeProps>;
 
-  console.log({ data, qrCode });
-
   try {
     const qrCodeData: QrCode = {
       ...data,
@@ -191,8 +189,13 @@ export const updatePartialQrCode = async ({
 
     if (qrCode.type === "link" && qrCode.isControlled !== data.isControlled) {
       if (data.isControlled) {
-        const encryptedId = encrypt(qrCode.id.toString());
-        const url = `${process.env.FRONTEND_URL}/redirect/${encryptedId}`;
+        const linkData: EncryptedQrCodeLink = {
+          link: qrCode.link,
+          id: qrCode.id,
+        };
+        const payload = JSON.stringify(linkData);
+        const encryptedData = encrypt(payload);
+        const url = `${process.env.FRONTEND_URL}/redirect/${encryptedData}`;
         qrCodeData.content = url;
       } else {
         qrCodeData.content = qrCode.link;

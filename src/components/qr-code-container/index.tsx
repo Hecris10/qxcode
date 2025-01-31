@@ -45,8 +45,6 @@ export const QrCodeContainer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const qrCode = useRef<QrCodeWithLogo | null>(null);
 
-  console.log({ code });
-
   useEffect(() => {
     if (canvasRef.current) {
       qrCode.current = new QrCodeWithLogo({
