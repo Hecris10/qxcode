@@ -15,7 +15,7 @@ export const SelectLogoItem = ({
       data-selected={isSelected}
       type="button"
       onClick={() => onSelect(logo)}
-      className="p-4s h-[76px] w-[76px] bg-transparent border p-1 border-gray-700 data-[selected=true]:border-gray-200 data-[selected=true]:bg-slate-800 data-[selected=true]:shado rounded-md"
+      className="p-4s h-[76px] w-[76px] bg-transparent border p-1 border-gray-700 data-[selected=true]:border-gray-200 data-[selected=true]:bg-slate-800 rounded-md"
     >
       <Image
         alt={`logo-${logo.id}`}

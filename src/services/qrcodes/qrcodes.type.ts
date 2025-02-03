@@ -13,7 +13,8 @@ export interface QrCodeBase {
 export interface QrCodeWifi extends QrCodeBase {
   type: "wifi";
   ssid: string;
-  password: any;
+  password: string;
+  security: string;
 }
 
 export interface QrCodeLink extends QrCodeBase {
@@ -51,7 +52,7 @@ export type QrCodeType = QrCode["type"];
 
 export type NewQrCode = Omit<
   QrCodeWifi | QrCodeLink | QrCodeText,
-  "id" | "createdAt" | "updatedAt"
+  "id" | "createdAt" | "updatedAt" | "userId"
 >;
 
 export interface AllQrCodeProps {
@@ -63,6 +64,7 @@ export interface AllQrCodeProps {
   password: string;
   text: string;
   link: string;
+  security: string;
 }
 
 export type NewQrCodeValidation = {
