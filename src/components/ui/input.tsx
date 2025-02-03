@@ -9,9 +9,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
       <input
+        maxLength={100}
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-2xl border-2 border-blue4 bg-slate-700 px-4 py-5 text-white placeholder:text-blue2 text-base lg:text-sm ring-offset-background file:border-0 file:bg-transparent file:text-base lg:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:outline-slate-600 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-10 w-full rounded-2xl border-2 border-blue4 bg-slate-700 px-4 py-5 text-white placeholder:text-blue2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-base lg:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:outline-slate-600 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}
@@ -23,3 +24,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input";
 
 export { Input };
+

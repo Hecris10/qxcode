@@ -59,7 +59,7 @@ export const getQrCodeById = async (id: number) => {
   return response.json() as Promise<QrCode>;
 };
 
-export const createNewQrCode = async (qrCodeData: NewQrCode) => {
+export const createNewQrCodeAction = async (qrCodeData: NewQrCode) => {
   const userToken = await getUserToken();
 
   const errors: ServerRequest<AllQrCodeProps> =
@@ -85,12 +85,13 @@ export const createNewQrCode = async (qrCodeData: NewQrCode) => {
 
       errors.hasValidationErrors = true;
       const errorData = (await response.json()) as RequestError;
-      console.log({ errorData });
+
       if (errorData.message.includes("Name")) errors.name = "Missing";
       if (errorData.message.includes("Type")) errors.type = "Missing";
       if (errorData.message.includes("SSID")) errors.ssid = "Missing";
       if (errorData.message.includes("Password")) errors.password = "Missing";
       if (errorData.message.includes("Link")) errors.link = "Missing";
+      if (errorData.message.includes("Content")) errors.content = "Missing";
 
       // if (errorData.message.includes("Content")) errors.content = "Missing";
 
