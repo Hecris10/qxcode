@@ -4,7 +4,7 @@ import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
 import { capitalizeText } from "~/utils/strings";
 import { Badge } from "./ui/badge";
 
-export const QrCodeBadge = ({
+export const ControlledBadge = ({
   type,
   className,
 }: {
@@ -17,7 +17,7 @@ export const QrCodeBadge = ({
         <Badge
           className={cn(
             className,
-            "cursor-default border text-red-400 border-slate-800 bg-slate-700 text-white"
+            "cursor-default border border-slate-800 bg-slate-700 text-white"
           )}
           variant="secondary"
         >

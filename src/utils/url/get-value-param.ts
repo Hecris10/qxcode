@@ -24,6 +24,12 @@ export const getPaginatedUrl = (
   if (params.endDate) {
     urlParams.set("endDate", params.endDate);
   }
+  if (params.isControlled) {
+    urlParams.set("isControlled", params.isControlled.toString());
+  }
+  if (params.type) {
+    urlParams.set("type", params.type);
+  }
 
   url.search = urlParams.toString();
   return url.toString();

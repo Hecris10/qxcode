@@ -1,26 +1,41 @@
-import { getQrCodeViewMode, getUserQrCodes } from "~/services/qrcodes/qrcodes";
-import { NoQrCode } from "./components/no-qr-code";
-import { QRCodeDisplay } from "./components/qr-code-display";
-import { QrCodeGrid } from "./components/qr-code-display/qr-code-grid";
-import { QrCodeList } from "./components/qr-code-display/qr-code-list";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { getQrCodeViewMode } from "~/services/qrcodes/qrcodes";
+import { AllQrCodes } from "./components/qr-code-display/all-qr-codes";
+import { QrCodeDisplayButton } from "./components/qr-code-display/qr-code-display-button";
+import { QrCodeSlider } from "./components/qr-code-display/qr-code-slider";
 
-export default async function Home() {
-  const qrCodes = (await getUserQrCodes({ page: 1, limit: 10 })).data || [];
-
+export default async function Home({ searchParams }: PageProps) {
+  const params = await searchParams;
   const isGridMode = (await getQrCodeViewMode()) === "grid";
-
-  const renderQrCodeList = () => <QrCodeGrid qrCodes={qrCodes} />;
-  const renderQrCodeGrid = () => <QrCodeList qrCodes={qrCodes} />;
-
-  if (qrCodes?.length === 0) return <NoQrCode />;
-
   return (
-    <div className="w-full h-full">
-      <QRCodeDisplay
-        isGridMode={isGridMode}
-        qrCodeGrid={renderQrCodeList()}
-        qrCodeList={renderQrCodeGrid()}
-      />
+    <div className="pt-6 px-6 home-layout">
+      <div className="relative">
+        <div className="absolute flex justify-between gap-3 left-0 w-full top-16 md:top-16">
+          <Link
+            href="/home/new"
+            className="bg-white text-black rounded-lg py-2 w-full md:max-w-[200px] flex align-middle justify-center gap-2"
+          >
+            <Plus className="my-auto h-4 w-4" />
+            Create QR Code
+          </Link>
+          <QrCodeDisplayButton isGridMode={isGridMode} />
+        </div>
+        <div className="w-full flex flex-col gap-20">
+          <QrCodeSlider searchParams={params}>
+            <AllQrCodes isGridMode={isGridMode} isControlled={false} />
+            <AllQrCodes isGridMode={isGridMode} isControlled />
+          </QrCodeSlider>
+        </div>
+      </div>
     </div>
   );
+}
+
+{
+  /* <QRCodeDisplay
+  isGridMode={isGridMode}
+  qrCodeGrid={renderQrCodeList()}
+  qrCodeList={renderQrCodeGrid()}
+/>; */
 }

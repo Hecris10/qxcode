@@ -1,5 +1,5 @@
-import { HomeLayout } from "./components/home-layout";
-import { LargeSidebar } from "./components/home-layout/side-bar/large-sidebar";
+import { SideBar } from "./components/home-layout/side-bar";
+import { UserInfo } from "./components/home-layout/user-info";
 
 export default function Layout({
   children,
@@ -7,11 +7,14 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <HomeLayout>
-      <div className="flex w-full h-full ">
-        <LargeSidebar />
-        <div className="w-full justify-center h-full">{children}</div>
+    <div className="flex w-full h-[100svh] ">
+      <SideBar>
+        <UserInfo />
+      </SideBar>
+
+      <div className="w-full justify-center h-full bg-dark px-8">
+        {children}
       </div>
-    </HomeLayout>
+    </div>
   );
 }

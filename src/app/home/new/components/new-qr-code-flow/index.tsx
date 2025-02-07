@@ -268,8 +268,9 @@ export const NewQrCodeFlow = ({
           <Button
             variant={position === 2 ? "ghost" : "default"}
             data-islaststap={position === 2}
+            data-isfirststap={position === 0}
             type="button"
-            className="w-full data-[islaststap=true]:w-auto"
+            className="w-full data-[islaststap=true]:w-auto data-[isfirststap=true]:hidden"
             onClick={moveBackward}
             disabled={position <= 0}
           >

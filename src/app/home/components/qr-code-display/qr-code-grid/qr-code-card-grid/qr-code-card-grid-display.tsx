@@ -31,7 +31,7 @@ export const QrCodeCardGridDisplay = ({
   };
 
   return (
-    <Card className="overflow-hidden bg-slate-800 qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
+    <Card className="overflow-hidden bg-blue2 qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
       <CardHeader className="relative">
         <Link
           href={url}
