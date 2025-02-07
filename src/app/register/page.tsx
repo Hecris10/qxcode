@@ -13,7 +13,7 @@ export default async function Register() {
   const locale = await getLocale();
 
   return (
-    <div className="w-full h-svh justify-center flex align-middle">
+    <div className="w-full h-svh justify-center flex align-middle bg-blue4">
       <section className="w-full max-w-[400px] py-2 text-white px-3 max-h-svh rounded-2xl m-auto">
         <MdQrCodeScanner className="mx-auto w-24 h-24 text-slate-600" />
         <h2 className="text-center">Register your account</h2>

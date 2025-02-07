@@ -56,6 +56,8 @@ export const loginUserAction = async (
       name: `${process.env.AUTH_TOKEN_NAME}`,
       value: `${data.accessToken}`,
       httpOnly: true,
+      sameSite: "lax",
+      // expires: new Date(20),
       path: "/",
     });
     validationErrors.serverSucess = true;
@@ -86,6 +88,7 @@ export async function logOutUserAction() {
     value: "",
     httpOnly: true,
     path: "/",
+    sameSite: "lax",
   });
   cookiesStore.set({
     name: `${process.env.QX_CODE_VIEW_MODE}`,

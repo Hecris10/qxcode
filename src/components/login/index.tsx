@@ -3,7 +3,7 @@ import { Logo } from "../logo";
 import { MainLoginForm } from "./main-login-form";
 
 export const Login = () => (
-  <div className="w-full h-svh justify-center flex align-middle">
+  <div className="w-full h-svh bg-blue4 justify-center flex align-middle">
     <section className="w-full max-w-[400px] text-white px-3 max-h-svh rounded-2xl m-auto">
       <Logo />
       <h2 className="text-center">Sign in to QxCode</h2>

@@ -53,7 +53,7 @@ export const RedirectClient = ({
   }, []);
 
   return (
-    <div className="w-full flex align-middle">
+    <div className="w-full flex align-middle bg-blue4">
       <div className="flex gap-4 mx-4 my-3">
         {" "}
         Redirecting... <Spinner />
