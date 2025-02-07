@@ -1,4 +1,3 @@
-import { HomeLayout } from "./components/home-layout";
 import { LargeSidebar } from "./components/home-layout/side-bar/large-sidebar";
 
 export default function Layout({
@@ -7,11 +6,11 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <HomeLayout>
-      <div className="flex w-full h-full ">
-        <LargeSidebar />
-        <div className="w-full justify-center h-full">{children}</div>
+    <div className="flex w-full h-full ">
+      <LargeSidebar />
+      <div className="w-full justify-center h-full bg-dark px-8">
+        {children}
       </div>
-    </HomeLayout>
+    </div>
   );
 }

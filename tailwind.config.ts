@@ -40,6 +40,7 @@ const config = {
         blue3: "#13182C",
         blue4: "#10162A",
         blue5: "#050813",
+        dark: "#020817",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",

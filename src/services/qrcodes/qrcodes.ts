@@ -19,7 +19,10 @@ import {
   UpdateQrCodeForm,
 } from "./qrcodes.type";
 
-export const getUserQrCodes = async (params: PaginationParams) => {
+export const getUserQrCodes = async (
+  params: PaginationParams,
+  tags?: string[]
+) => {
   const userToken = await getUserToken();
 
   const baseUrl = getPaginatedUrl(`${apiUrl}/qr-codes`, params);
@@ -30,10 +33,9 @@ export const getUserQrCodes = async (params: PaginationParams) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
     },
-    cache: "force-cache",
+    cache: "no-cache",
     next: {
-      tags: [fetchTags.qrCodes],
-      revalidate: 600,
+      tags: tags ? [fetchTags.qrCodes, ...tags] : [fetchTags.qrCodes],
     },
   });
 
