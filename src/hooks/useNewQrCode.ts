@@ -47,7 +47,7 @@ export const useNewQrCode = ({
 
   useLayoutEffect(() => {
     if (urlState.position < 0 || urlState.position > 2) router.push("/404");
-  }, [urlState.position]);
+  }, [urlState.position, router]);
 
   const moveForward = () => {
     switch (urlState.position) {

@@ -1,4 +1,3 @@
-import { Card } from "~/components/ui/card";
 import { decrypt } from "~/services/crypt";
 import { getUserLogos } from "~/services/logos/userLogos";
 import { getQrCodeById } from "~/services/qrcodes/qrcodes";
@@ -8,7 +7,7 @@ export default async function QrCodePage(props: PageProps) {
   const params = await props.params;
   const slug = params.slug;
 
-const decodedURI = decodeURIComponent(slug);
+  const decodedURI = decodeURIComponent(slug);
 
   const decryptedId = decrypt(decodedURI);
 
@@ -16,8 +15,8 @@ const decodedURI = decodeURIComponent(slug);
   const userLogos = getUserLogos();
 
   return (
-    <Card className="py-6 px-10 rounded-none w-full home-layout md:py-10">
+    <div className="pt-8  w-full px-6 home-layout">
       <QrCodeView logos={userLogos} qrCode={qrCode} />
-    </Card>
+    </div>
   );
 }

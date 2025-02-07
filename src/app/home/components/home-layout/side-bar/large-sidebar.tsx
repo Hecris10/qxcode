@@ -12,6 +12,7 @@ export const LargeSidebar = () => {
   const compareRoute = (route: string) => {
     return pathname.toLowerCase() === route.toLowerCase();
   };
+
   return (
     <div className="w-[20rem] hidden lg:flex flex-col justify-between border-r border-slate-700 pt-8">
       <div className="lg:flex flex-col w-full gap-4 align-middle">
