@@ -45,8 +45,10 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Capacity</CardTitle>
-        <CardDescription>Your have the free plan</CardDescription>
+        <CardTitle className=" text-lg">Capacity</CardTitle>
+        <CardDescription className="text-sm">
+          Your have the free plan
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         {isPending ? (
@@ -54,7 +56,7 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
             <Spinner /> Loading...{" "}
           </div>
         ) : (
-          <div className="mx-auto aspect-square max-h-[200px]">
+          <div className="mx-auto aspect-square max-h-[145px]">
             {/* Circular Progress */}
             <div className="relative p-2">
               <svg

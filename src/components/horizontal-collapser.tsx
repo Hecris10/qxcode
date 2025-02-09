@@ -1,3 +1,4 @@
+"use client";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
@@ -26,10 +27,7 @@ export const HorizontalCollapser = ({
     <div
       ref={containerRef}
       style={{ width, transition: "width 0.3s ease-in" }}
-      className={cn(
-        "whitespace-nowrap hidden md:block my-auto overflow-hidden",
-        className
-      )}
+      className={cn("whitespace-nowrap  my-auto overflow-hidden", className)}
     >
       {children}
     </div>
