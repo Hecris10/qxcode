@@ -217,18 +217,19 @@ export const NewQrCodeFlow = ({
   };
 
   return (
-    <>
-      <Button
-        data-invisible={position <= 0}
-        disabled={position <= 0}
-        type="button"
-        hidden={position <= 0}
-        variant="ghost"
-        className="m-0 data-[invisible=true] lg:hidden"
-        onClick={moveBackward}
-      >
-        <ChevronLeft />
-      </Button>
+    <div>
+      {position > 0 && (
+        <Button
+          disabled={position <= 0}
+          type="button"
+          hidden={position <= 0}
+          variant="ghost"
+          className="m-0 lg:hidden"
+          onClick={moveBackward}
+        >
+          <ChevronLeft />
+        </Button>
+      )}
 
       <form onSubmit={onSubmit} className="w-full">
         <ComponentSlider
@@ -270,7 +271,7 @@ export const NewQrCodeFlow = ({
             data-islaststap={position === 2}
             data-isfirststap={position === 0}
             type="button"
-            className="w-full data-[islaststap=true]:w-auto data-[isfirststap=true]:hidden"
+            className="w-full data-[islaststap=true]:w-auto data-[isfirststap=true]:hidden hidden lg:flex"
             onClick={moveBackward}
             disabled={position <= 0}
           >
@@ -298,6 +299,6 @@ export const NewQrCodeFlow = ({
           )}
         </div>
       </form>
-    </>
+    </div>
   );
 };
