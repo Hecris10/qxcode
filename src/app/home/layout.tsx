@@ -1,5 +1,5 @@
+import { isUserLoggedIn } from "~/services/auth/auth-actions";
 import { getUserToken } from "~/services/auth/get-user-token";
-import { getNameInitials } from "~/utils/strings";
 import { LargeSideBar } from "./components/home-layout/large-sidebar";
 import { SmallHeader } from "./components/home-layout/small-header";
 import { SmallSidebar } from "./components/home-layout/small-sidebar";
@@ -10,20 +10,27 @@ export default async function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const userToken = (await getUserToken()) || "";
+  const [userToken, userData] = await Promise.all([
+    getUserToken(),
+    isUserLoggedIn(),
+  ]);
+
+  if (!userData.isAuth) return null;
 
   const userImage = "";
 
-  const initials = getNameInitials("Helaman Ewerton");
-
   return (
     <div>
-      <SmallHeader userImage={userImage} initials={initials}>
-        <SmallSidebar userToken={userToken} />
+      <SmallHeader userImageSrc={userImage} userName={userData.user.name}>
+        <SmallSidebar userToken={userToken || ""} />
       </SmallHeader>
       <div className=" flex home-layout pb-4">
-        <LargeSideBar userToken={userToken}>
-          <UserInfo />
+        <LargeSideBar userToken={userToken || ""}>
+          <UserInfo
+            userImageSrc={userImage}
+            userName={userData.user.name}
+            userEmail={userData.user.email}
+          />
         </LargeSideBar>
         <div className="home-layout w-full lg:h-[100svh] px-4">{children}</div>
       </div>

@@ -3,17 +3,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { logOutUserAction } from "~/services/auth/auth-actions";
 import { getNameInitials } from "~/utils/strings";
 
-export const UserInfo = () => {
-  const userImage = "";
-  const userName = "Helaman Ewerton";
-  const userEmail = "ewerton.webdev@gmail.com";
+export const UserInfo = ({
+  userImageSrc,
+  userName,
+  userEmail,
+}: {
+  userImageSrc: string;
+  userName: string;
+  userEmail: string;
+}) => {
   const userInitials = getNameInitials(userName);
 
   return (
-    <div className="w-full gap-2 flex justify-between align-middle border border-transparent  hover:border-slate-700 active:border-slate-700 p-2 rounded-full duration-300 ease-in-out hover:bg-slate-800">
-      <div className="flex gap-2 ">
+    <div className="w-full  gap-2 flex justify-between align-middle border border-transparent hover:border-slate-700 active:border-slate-700 p-2 rounded-full duration-300 ease-in-out hover:bg-slate-800">
+      <div className="gap-2 hidden lg:flex">
         <Avatar className="w-14 h-14">
-          <AvatarImage src={userImage} alt="User image" />
+          <AvatarImage src={userImageSrc} alt="User image" />
           <AvatarFallback className="text-white font-bold text-xl">
             {userInitials}
           </AvatarFallback>
@@ -29,6 +34,7 @@ export const UserInfo = () => {
           className="w-full gap-4 my-auto align-middle flex"
         >
           <MdLogout className="w-6 h-6 font-bold text-red-400 my-auto" />
+          <span className="lg:hidden">Log out</span>
         </button>
       </form>
     </div>

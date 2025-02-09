@@ -23,7 +23,7 @@ export const SmallSidebar = ({ userToken }: { userToken: string }) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>
+      <SheetTrigger className="lg:hidden" asChild>
         <Button
           variant="ghost"
           className="py-0.5 px-3 hover:shadow-xl"
@@ -33,9 +33,9 @@ export const SmallSidebar = ({ userToken }: { userToken: string }) => {
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent className="lg:hidden" side="left">
         <MenuOptions userToken={userToken} />
-        <UserInfo />
+        <UserInfo userImageSrc={""} userName={""} userEmail={""} />
       </SheetContent>
     </Sheet>
   );
