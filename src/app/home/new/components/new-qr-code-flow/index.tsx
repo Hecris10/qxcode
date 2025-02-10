@@ -9,10 +9,11 @@ import { FormButton } from "~/components/form-button";
 import { Button } from "~/components/ui/button";
 import { useNewQrCode } from "~/hooks/useNewQrCode";
 import { generateWiFiString } from "~/lib/utils";
-import { ServerRequest } from "~/services/api/api";
-import { createNewQrCodeAction } from "~/services/qrcodes/qrcodes";
 import {
-  AllQrCodeProps,
+  createNewQrCodeAction,
+  NewQrCodeRequest,
+} from "~/services/qrcodes/qrcodes";
+import {
   NewQrCodeLink,
   NewQrCodeText,
   NewQrCodeWifi,
@@ -20,6 +21,7 @@ import {
 import { NewQrCodeContent } from "./new-qr-code-content";
 import { NewQRCodeName } from "./new-qr-code-name";
 import { NewQrCodeType } from "./new-qr-code-type";
+import { QuantityExpiredDialog } from "./quantity-experied-dialog";
 
 export const NewQrCodeFlow = ({
   searchParams,
@@ -44,6 +46,7 @@ export const NewQrCodeFlow = ({
     security,
     setQrCodeContent,
     onChangeWifiValues,
+    quantityExpired: [quantityExpired, setQuantityExpired],
   } = useNewQrCode({
     params: searchParams,
     router,
@@ -75,8 +78,6 @@ export const NewQrCodeFlow = ({
     handleErrosSlide();
   }, [errors]);
 
-  console.log({ security });
-
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     formAction(async () => {
@@ -84,8 +85,7 @@ export const NewQrCodeFlow = ({
         description: "Creating your QrCode",
         id: "new-qr-code",
       });
-      let res: ServerRequest<AllQrCodeProps> =
-        {} as ServerRequest<AllQrCodeProps>;
+      let res: NewQrCodeRequest = {} as NewQrCodeRequest;
 
       if (type === "wifi") {
         const newQrCode = {} as NewQrCodeWifi;
@@ -208,6 +208,12 @@ export const NewQrCodeFlow = ({
         return;
       }
       if (res.serverError) {
+        if (res.quantityExpired) {
+          setQuantityExpired(true);
+          toast.dismiss("new-qr-code");
+          return;
+        }
+
         toast.error("Error!", {
           description: "An error occurred while creating your QrCode",
           id: "new-qr-code",
@@ -299,6 +305,10 @@ export const NewQrCodeFlow = ({
           )}
         </div>
       </form>
+      <QuantityExpiredDialog
+        open={quantityExpired}
+        onOpenChange={setQuantityExpired}
+      />
     </div>
   );
 };
