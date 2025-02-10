@@ -18,7 +18,7 @@ export const MenuOptions = ({ userToken }: { userToken: string }) => (
     <div className="flex w-full gap-3 mx-auto">
       <Logo className=" h-12 w-12 md:w-20 md:h-20 m-0" />
       <HorizontalCollapser isCollapsed={!open}>
-        <h1 className="my-auto  text-3xl text-slate-600 font-bold">QX Code</h1>
+        <h1 className="my-auto  text-3xl font-bold">QX Code</h1>
       </HorizontalCollapser>
     </div>
     <div>
