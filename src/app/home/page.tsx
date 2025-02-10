@@ -17,7 +17,7 @@ export default async function Home({ searchParams }: PageProps) {
             className="bg-white text-black rounded-lg py-2 w-full md:max-w-[200px] flex align-middle justify-center gap-2"
           >
             <Plus className="my-auto h-4 w-4" />
-            Create QR Code
+            <p className="my-auto">Create QR Code</p>
           </Link>
           <QrCodeDisplayButton isGridMode={isGridMode} />
         </div>

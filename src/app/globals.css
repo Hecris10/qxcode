@@ -29,6 +29,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    @apply text-[16px] lg:text-sm;
   }
 
   .dark {
@@ -62,9 +63,10 @@
 input,
 textarea,
 label,
+a,
 select,
 button {
-  font-size: 16px; /* Prevents zooming */
+  @apply text-[16px] lg:text-sm;
 }
 
 .home-layout {

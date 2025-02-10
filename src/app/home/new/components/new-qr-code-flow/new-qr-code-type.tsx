@@ -51,7 +51,7 @@ export const NewQrCodeType = ({
     <div className="w-full">
       <div className="m-4 lg:m-0">
         <h2 className="text-xl font-bold">Select QR Code Type</h2>
-        <p className="text-gray-500">
+        <p className="text-gray-500 text-[16px] lg:text-sm">
           Choose the type of QR code you want to create. You can create a QR
           code for a text, link, wifi, email, or phone number.
         </p>
