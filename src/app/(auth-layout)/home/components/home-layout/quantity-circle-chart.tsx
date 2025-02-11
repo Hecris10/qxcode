@@ -1,5 +1,5 @@
 "use client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
@@ -17,7 +17,6 @@ import { fetchTags } from "~/config/tags";
 import { apiUrl } from "~/services/api/api";
 
 export const QuantyCircle = ({ userToken }: { userToken: string }) => {
-  const queryClient = useQueryClient();
   const pathName = usePathname();
   const { data, isLoading, refetch } = useQuery({
     queryKey: [fetchTags.qrCodeQuantity],
