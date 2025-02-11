@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Trash } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -11,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { fetchTags } from "~/config/tags";
 
 export const DeleteQrCodeDialog = ({
   open,
@@ -22,7 +24,7 @@ export const DeleteQrCodeDialog = ({
   onConfirm: () => Promise<boolean>;
 }) => {
   const [pending, formAction] = useTransition();
-
+  const queryClient = useQueryClient();
   const onDelete = () => {
     formAction(async () => {
       try {
@@ -34,6 +36,9 @@ export const DeleteQrCodeDialog = ({
         onOpenChange(false);
         toast.success("QR code deleted", {
           id: "delete-qr-code",
+        });
+        queryClient.invalidateQueries({
+          queryKey: [fetchTags.qrCodeQuantity],
         });
       } catch (e) {
         console.log(e);

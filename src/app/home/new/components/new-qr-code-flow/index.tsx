@@ -1,12 +1,14 @@
 "use client";
 import { ComponentSlider } from "~/components/component-slider";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useTransition } from "react";
 import { toast } from "sonner";
 import { FormButton } from "~/components/form-button";
 import { Button } from "~/components/ui/button";
+import { fetchTags } from "~/config/tags";
 import { useNewQrCode } from "~/hooks/useNewQrCode";
 import { generateWiFiString } from "~/lib/utils";
 import {
@@ -28,6 +30,7 @@ export const NewQrCodeFlow = ({
 }: {
   searchParams: SearchParamsNotPromise;
 }) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [pending, formAction] = useTransition();
   const {
@@ -177,6 +180,10 @@ export const NewQrCodeFlow = ({
         toast.success("Success!", {
           description: "Your QrCode was created sucessfully",
           id: "new-qr-code",
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: [fetchTags.qrCodeQuantity],
         });
 
         // res.encryptedKey should be uri encoded

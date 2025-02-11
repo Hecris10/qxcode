@@ -1,6 +1,7 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
 
 import {
@@ -11,14 +12,15 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Spinner } from "~/components/ui/spinner";
+import { Skeleton } from "~/components/ui/skeleton";
 import { fetchTags } from "~/config/tags";
 import { apiUrl } from "~/services/api/api";
 
 export const QuantyCircle = ({ userToken }: { userToken: string }) => {
-  const pathname = usePathname();
-  const { data, isPending } = useQuery({
-    queryKey: [fetchTags.qrCodes, pathname],
+  const queryClient = useQueryClient();
+  const pathName = usePathname();
+  const { data, isLoading } = useQuery({
+    queryKey: [fetchTags.qrCodeQuantity],
     queryFn: async () => {
       try {
         const res = await fetch(`${apiUrl}/qr-codes/count`, {
@@ -35,7 +37,17 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
         return 0;
       }
     },
+    refetchInterval: 1000 * 45,
   });
+
+  useEffect(() => {
+    if (pathName === "/home") {
+      queryClient.invalidateQueries({
+        queryKey: [fetchTags.qrCodeQuantity],
+      });
+    }
+  }, [pathName]);
+
   const quantity = data || 0;
   const capacity = 15;
 
@@ -50,10 +62,10 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
           Your have the free plan
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pY-0">
-        {isPending ? (
-          <div className="flex gap-2">
-            <Spinner /> Loading...{" "}
+      <CardContent className="flex-1 py-0">
+        {isLoading ? (
+          <div className="flex u mx-auto  gap-2">
+            <Skeleton className="rounded-full my-3 mx-auto w-[80px] h-[80px]" />
           </div>
         ) : (
           <div className="mx-auto aspect-square max-h-[100px]">
