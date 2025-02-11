@@ -14,7 +14,7 @@ export interface UncontrolledTabs {
   onClick?: (tab: number) => void;
 }
 
-export interface Tabs {
+export interface TabsTransition {
   labels: string[];
   duration?: number;
   transition?:
@@ -30,8 +30,10 @@ export interface Tabs {
   className?: string;
 }
 
-export type TabsProps = Tabs & (ControlledTabs | UncontrolledTabs);
-export const Tabs = (props: TabsProps) => {
+export type TrabsTransitionProps = TabsTransition &
+  (ControlledTabs | UncontrolledTabs);
+
+export const TabsTransition = (props: TrabsTransitionProps) => {
   const [activeTab, setActiveTab] = useState(
     props.isControlled ? props.activeTab : props.defaultActiveTab
   );

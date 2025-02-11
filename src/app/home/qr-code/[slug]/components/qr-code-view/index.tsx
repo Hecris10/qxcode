@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { ComponentSlider } from "~/components/component-slider";
 import { FormButton } from "~/components/form-button";
 import { LogosModal } from "~/components/logos/logos-modal";
 import { QrCodeBadge } from "~/components/qr-code-badge";
@@ -14,6 +15,7 @@ import { Label } from "~/components/ui/label";
 import { SelectScrollable } from "~/components/ui/select-scrollable";
 import { Slider } from "~/components/ui/slider";
 import { Switch } from "~/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { fetchTags } from "~/config/tags";
 import { Logo } from "~/services/logos/logos.type";
 import { updatePartialQrCode } from "~/services/qrcodes/qrcodes";
@@ -46,6 +48,7 @@ export const QrCodeView = ({
     backgroundColor: qrCode.backgroundColor || "#ffffff00",
     isControlled: qrCode.isControlled || false,
   });
+  const [tabsPosition, setTabsPosition] = useState(0);
   const queryClient = useQueryClient();
   const [isPending, onSaveAction] = useTransition();
 
@@ -163,9 +166,19 @@ export const QrCodeView = ({
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-        <div className="space-y-4">
+    <form className="h-full md:flex my-auto" onSubmit={onSubmit}>
+      <div className="max-w-4xl m-auto grid md:grid-cols-2 gap-8">
+        <div id="grid1" className="space-y-2 md:col-span-1 md:row-span-1">
+          <div className="flex items-center gap-2">
+            <QrCodeBadge type={code?.type || ""} />
+          </div>
+          <h2 className="text-2xl font-bold">{code?.name}</h2>
+          <p className="text-slate-400">{content}</p>
+        </div>
+        <div
+          id="grid2"
+          className="space-y-4 h-full md:col-span-1 md:row-start-2"
+        >
           <QrCodeContainer
             key={qrCode.content}
             onDownloadQrCodeRef={downloadRef}
@@ -182,166 +195,182 @@ export const QrCodeView = ({
             cornersColor={code.cornersColor}
             nodesColor={code.nodesColor}
           />
-
-          <ButtonQrCodeDownload className="w-full" onDownload={onDownload} />
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <QrCodeBadge type={code?.type || ""} />
-            </div>
-            <h2 className="text-2xl font-bold">{code?.name}</h2>
-            <p className="text-slate-400">{content}</p>
-          </div>
-
           <div className="flex items-center justify-between">
             <Label htmlFor="controlled">Is Controlled</Label>
             <Switch name="isControlled" defaultChecked={code.isControlled} />
           </div>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2 flex flex-col">
-                <Label>Background Color</Label>
-                <ColorPickerInput
-                  name="backgroundColor"
-                  defaultColor={code?.backgroundColor}
-                  className="my-auto w-full"
-                  onChange={onColorsChange("backgroundColor")}
-                />
-              </div>
-              <div className="space-y-2 flex flex-col">
-                <Label>Corners Color</Label>
-                <ColorPickerInput
-                  name="cornersColor"
-                  defaultColor={code?.cornersColor}
-                  className="my-auto w-full"
-                  onChange={onColorsChange("cornersColor")}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2 flex flex-col">
-              <Label>Nodes Color</Label>
-              <ColorPickerInput
-                name="nodesColor"
-                defaultColor={code?.nodesColor}
-                className="my-auto w-full"
-                onChange={onColorsChange("nodesColor")}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Padding</Label>
-              <Slider
-                value={[code?.padding || 0]}
-                min={1}
-                max={100}
-                step={1}
-                className="mt-2"
-                onValueChange={onSliderChange("padding")}
-                name="padding"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Corners Shapes</Label>
-                <SelectScrollable
-                  name="cornerType"
-                  defaultValue={code.cornerType}
-                  onChange={onSelectCornerType}
-                  options={qrCodeCornerTypesOptions}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Dots shape</Label>
-                <SelectScrollable
-                  name="dotsType"
-                  defaultValue={code.dotsType}
-                  onChange={onSelectDotType}
-                  options={qrCodeDotTypesOptions}
-                />
-              </div>
-            </div>
-
-            <div
-              data-logo={!!code?.logo?.url?.length}
-              className=" data-[logo=true]:grid grid-cols-2 gap-4"
-            >
-              <LogosModal logos={logos} onSelect={onSelectLogo}>
-                <Button className="w-full">
-                  <Plus />{" "}
-                  {code?.logo?.url?.length ? "Change logo" : "Add a logo"}
-                </Button>
-              </LogosModal>
-              <Collapsible.Root className="w-full" open={!!code.logo}>
-                <Collapsible.Content className="w-full">
-                  <DeleteQrCodeLogoButton
-                    qrCodeId={code.id}
-                    logoId={code.logo?.id || 0}
-                    isLogoSet={!!qrCode.logo}
-                    onLogoDelete={onDeleteQrCodeLogo}
-                  />
-                </Collapsible.Content>
-              </Collapsible.Root>
-              <input
-                readOnly
-                value={code?.logo?.id || ""}
-                className="hidden"
-                name="logoId"
-              />
-            </div>
-            <Collapsible.Root open={!!code.logo}>
-              <Collapsible.Content className="space-y-2">
-                <div className="space-y-2 flex flex-col">
-                  <Label>Logo Background Color</Label>
+          <ButtonQrCodeDownload className="w-auto" onDownload={onDownload} />
+        </div>
+        <div id="grid3" className="w-full md:col-span-1 md:row-start-2">
+          <Tabs
+            onValueChange={(value) => setTabsPosition(Number(value))}
+            value={tabsPosition.toString()}
+            className="w-full mb-3"
+          >
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger className="mb-1" value="0">
+                Colors
+              </TabsTrigger>
+              <TabsTrigger className="mb-1" value="1">
+                Styles
+              </TabsTrigger>
+              <TabsTrigger className="mb-1" value="2">
+                Logo
+              </TabsTrigger>
+            </TabsList>
+            <div></div>
+          </Tabs>
+          <div className="h-full flex flex-col">
+            <ComponentSlider position={tabsPosition} duration={300}>
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <div className="space-y-2 flex w-full flex-col">
+                  <Label>Background Color</Label>
                   <ColorPickerInput
-                    name="logoBackgroundColor"
-                    defaultColor={code?.logoBackgroundColor}
-                    className="w-full"
-                    onChange={onColorsChange("logoBackgroundColor")}
+                    name="backgroundColor"
+                    defaultColor={code?.backgroundColor}
+                    className="my-auto w-full"
+                    onChange={onColorsChange("backgroundColor")}
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Logo Padding</Label>
-                  <Slider
-                    value={[code?.logoPadding || 0]}
-                    min={0}
-                    max={16}
-                    step={1}
-                    className="mt-2"
-                    onValueChange={onSliderChange("logoPadding")}
-                    name="logoPadding"
+                <div className="space-y-2 flex flex-col">
+                  <Label>Corners Color</Label>
+                  <ColorPickerInput
+                    name="cornersColor"
+                    defaultColor={code?.cornersColor}
+                    className="my-auto w-full"
+                    onChange={onColorsChange("cornersColor")}
                   />
                 </div>
+                <div className="space-y-2 flex flex-col col-span-2">
+                  <Label>Nodes Color</Label>
+                  <ColorPickerInput
+                    name="nodesColor"
+                    defaultColor={code?.nodesColor}
+                    className="my-auto w-full"
+                    onChange={onColorsChange("nodesColor")}
+                  />
+                </div>
+              </div>
 
+              <div className="w-full space-y-3">
                 <div className="space-y-2">
-                  <Label>Logo Border Radius</Label>
+                  <Label>Padding</Label>
                   <Slider
-                    value={[code.logoBorderRadius || 0]}
-                    min={0}
+                    value={[code?.padding || 0]}
+                    min={1}
                     max={100}
                     step={1}
                     className="mt-2"
-                    onValueChange={onSliderChange("logoBorderRadius")}
-                    name="logoBorderRadius"
+                    onValueChange={onSliderChange("padding")}
+                    name="padding"
                   />
                 </div>
-              </Collapsible.Content>
-            </Collapsible.Root>
-          </div>
 
-          <FormButton
-            variant="button"
-            isLoading={isPending}
-            loadingElement={<>Saving...</>}
-            buttonClassNames="w-full mt-10"
-          >
-            Save
-          </FormButton>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Corners Shapes</Label>
+                    <SelectScrollable
+                      name="cornerType"
+                      defaultValue={code.cornerType}
+                      onChange={onSelectCornerType}
+                      options={qrCodeCornerTypesOptions}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Dots shape</Label>
+                    <SelectScrollable
+                      name="dotsType"
+                      defaultValue={code.dotsType}
+                      onChange={onSelectDotType}
+                      options={qrCodeDotTypesOptions}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 pb-2 w-full">
+                <div
+                  data-logo={!!code?.logo?.url?.length}
+                  className=" data-[logo=true]:grid grid-cols-2 gap-4"
+                >
+                  {!code?.logo?.url?.length && (
+                    <p className="text-slate-400 my-2">No logo selected.</p>
+                  )}
+                  <LogosModal logos={logos} onSelect={onSelectLogo}>
+                    <Button className="w-full">
+                      <Plus />{" "}
+                      {code?.logo?.url?.length ? "Change logo" : "Add a logo"}
+                    </Button>
+                  </LogosModal>
+                  <Collapsible.Root className="w-full" open={!!code.logo}>
+                    <Collapsible.Content className="w-full">
+                      <DeleteQrCodeLogoButton
+                        qrCodeId={code.id}
+                        logoId={code.logo?.id || 0}
+                        isLogoSet={!!qrCode.logo}
+                        onLogoDelete={onDeleteQrCodeLogo}
+                      />
+                    </Collapsible.Content>
+                  </Collapsible.Root>
+                  <input
+                    readOnly
+                    value={code?.logo?.id || ""}
+                    className="hidden"
+                    name="logoId"
+                  />
+                </div>
+                <Collapsible.Root open={!!code.logo}>
+                  <Collapsible.Content className="space-y-2">
+                    <div className="space-y-2 flex flex-col">
+                      <Label>Logo Background Color</Label>
+                      <ColorPickerInput
+                        name="logoBackgroundColor"
+                        defaultColor={code?.logoBackgroundColor}
+                        className="w-full"
+                        onChange={onColorsChange("logoBackgroundColor")}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Logo Padding</Label>
+                      <Slider
+                        value={[code?.logoPadding || 0]}
+                        min={0}
+                        max={16}
+                        step={1}
+                        className="mt-2"
+                        onValueChange={onSliderChange("logoPadding")}
+                        name="logoPadding"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Logo Border Radius</Label>
+                      <Slider
+                        value={[code.logoBorderRadius || 0]}
+                        min={0}
+                        max={100}
+                        step={1}
+                        className="mt-2"
+                        onValueChange={onSliderChange("logoBorderRadius")}
+                        name="logoBorderRadius"
+                      />
+                    </div>
+                  </Collapsible.Content>
+                </Collapsible.Root>
+              </div>
+            </ComponentSlider>
+
+            <FormButton
+              variant="button"
+              isLoading={isPending}
+              loadingElement={<>Saving...</>}
+              buttonClassNames="w-full mt-10"
+            >
+              Save
+            </FormButton>
+          </div>
         </div>
       </div>
     </form>
