@@ -27,8 +27,6 @@ export const QrCodeCardListDisplay = ({
     }
   };
 
-  console.log(deleteDialog);
-
   return (
     <>
       <DeleteQrCodeDialog
