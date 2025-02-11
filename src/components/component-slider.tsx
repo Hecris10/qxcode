@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
 export const ComponentSlider = ({
@@ -7,6 +7,7 @@ export const ComponentSlider = ({
   duration = 500,
   transition = "ease-linear",
   unMountOnExit = false,
+  autoHeight = false,
 }: {
   position: number;
   children: React.ReactNode[];
@@ -22,19 +23,24 @@ export const ComponentSlider = ({
     | "steps"
     | "cubic-bezier";
   unMountOnExit?: boolean;
+  autoHeight?: boolean;
 }) => {
   const refs = React.useRef<HTMLDivElement[]>([]);
   const isRendered = useRef(false);
   const [height, setHeight] = useState<number | undefined>();
 
-  useEffect(() => {
-    if (!isRendered.current) {
-      isRendered.current = true;
-      return;
-    }
+  useLayoutEffect(() => {
+    const calculeHeight = () => {
+      if (!autoHeight) return;
+      if (!isRendered.current) {
+        isRendered.current = true;
+        return;
+      }
 
-    const newHeight = refs.current[position]?.offsetHeight;
-    if (newHeight) setHeight(newHeight);
+      const newHeight = refs.current[position]?.offsetHeight;
+      if (newHeight) setHeight(newHeight);
+    };
+    calculeHeight();
   }, [position]);
 
   return (

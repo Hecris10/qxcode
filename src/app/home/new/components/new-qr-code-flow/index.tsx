@@ -253,6 +253,7 @@ export const NewQrCodeFlow = ({
           duration={250}
           transition="ease-in-out"
           position={position}
+          autoHeight
         >
           <div className="w-full pb-1">
             <NewQrCodeType params={searchParams} isSelected={position === 0} />
@@ -266,7 +267,7 @@ export const NewQrCodeFlow = ({
               error={errors.name}
             />
           </div>
-          <div className="flex min-h-[70svh]">
+          <div className="flex w-full min-h-[70svh]">
             <NewQrCodeContent
               isSelected={position === 2}
               content={content}
