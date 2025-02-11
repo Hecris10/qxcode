@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { useUrlState } from "state-in-url/next";
 import { ComponentSlider } from "~/components/component-slider";
-import { Tabs } from "~/components/tabs";
+import { TabsTransition } from "~/components/ui/tabs-transition";
 
 export type QrCodeView = "my-codes" | "controlled-codes";
 
@@ -24,7 +24,7 @@ export const QrCodeSlider = ({
 
   return (
     <>
-      <Tabs
+      <TabsTransition
         duration={300}
         transition="ease-in-out"
         labels={["My codes", "Controlled codes"]}

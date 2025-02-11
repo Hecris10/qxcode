@@ -165,6 +165,18 @@ export const QrCodeView = ({
   return (
     <form onSubmit={onSubmit}>
       <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <QrCodeBadge type={code?.type || ""} />
+          </div>
+          <h2 className="text-2xl font-bold">{code?.name}</h2>
+          <p className="text-slate-400">{content}</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="controlled">Is Controlled</Label>
+          <Switch name="isControlled" defaultChecked={code.isControlled} />
+        </div>
+
         <div className="space-y-4">
           <QrCodeContainer
             key={qrCode.content}
@@ -187,18 +199,6 @@ export const QrCodeView = ({
         </div>
 
         <div className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <QrCodeBadge type={code?.type || ""} />
-            </div>
-            <h2 className="text-2xl font-bold">{code?.name}</h2>
-            <p className="text-slate-400">{content}</p>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="controlled">Is Controlled</Label>
-            <Switch name="isControlled" defaultChecked={code.isControlled} />
-          </div>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2 flex flex-col">

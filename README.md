@@ -7,8 +7,8 @@ QX Code is a SaaS platform that enables users to generate fully customizable QR 
 - **Customizable QR Codes** – Change colors, shapes, and branding elements.
 - **Free and Permanent** – QR codes never expire and can be used indefinitely.
 - **Modern UI** – Built using React 19 and Next.js 15 with a smooth and interactive user experience.
-- **Server Actions** – Efficient server-side processing with React Server Components.
-- **Optimized Performance** – Implements server-side rendering (SSR) and static site generation (SSG).
+- **Server Actions** – Efficient server-side processing with React Server Actions.
+- **Optimized Performance** – Implements server-side rendering (SSR) with React Server Components (RSC)
 
 ## Tech Stack
 
