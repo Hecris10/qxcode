@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# QX Code
 
-## Getting Started
+QX Code is a SaaS platform that enables users to generate fully customizable QR codes for free. The generated QR codes can be downloaded and never expire. The application leverages modern web technologies to deliver a fast, scalable, and secure experience.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Customizable QR Codes** – Change colors, shapes, and branding elements.
+- **Free and Permanent** – QR codes never expire and can be used indefinitely.
+- **Modern UI** – Built using React 19 and Next.js 15 with a smooth and interactive user experience.
+- **Server Actions** – Efficient server-side processing with React Server Components.
+- **Optimized Performance** – Implements server-side rendering (SSR) and static site generation (SSG).
+
+## Tech Stack
+
+- **Frontend:** Next.js 15 (React 19, Server Components, SSR, SSG)
+- **Styling:** Tailwind CSS
+- **State Management & Data Fetching:** TanStack React Query
+- **UI Components:** Radix UI
+- **Authentication:** bcrypt & jsonwebtoken
+- **QR Code Generation:** qrcode-with-logos
+- **Deployment:** Vercel / AWS
+
+## Live Demo
+
+Check out the deployed version at: [QX Code](https://qxcode.tech)
+
+## Installation
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- Node.js 18+
+- pnpm (preferred package manager)
+
+### Setup
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-username/qxcode.git
+   cd qxcode
+   ```
+2. Install dependencies:
+   ```sh
+   pnpm install
+   ```
+3. Set up environment variables:
+   - Copy `.env.example` to `.env.local` and update the values.
+4. Run the development server:
+   ```sh
+   pnpm dev
+   ```
+   The app should now be running at `http://localhost:3000`.
+
+## Build & Deployment
+
+To build the application for production:
+
+```sh
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To start the production server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+pnpm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Contributing
 
-## Learn More
+We welcome contributions! Feel free to submit issues or pull requests to improve the project.
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project is licensed under the MIT License.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+🚀 Built with love and modern web technologies!
