@@ -80,6 +80,12 @@ export const NewQrCodeFlow = ({
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (position < 2) {
+      moveForward();
+      return;
+    }
+
     formAction(async () => {
       toast.loading("Saving...", {
         description: "Creating your QrCode",
@@ -224,18 +230,16 @@ export const NewQrCodeFlow = ({
 
   return (
     <div>
-      {position > 0 && (
-        <Button
-          disabled={position <= 0}
-          type="button"
-          hidden={position <= 0}
-          variant="ghost"
-          className="m-0 lg:hidden"
-          onClick={moveBackward}
-        >
-          <ChevronLeft />
-        </Button>
-      )}
+      <Button
+        disabled={position <= 0}
+        type="button"
+        hidden={position <= 0}
+        variant="ghost"
+        className="disabled:opacity-0 m-0 lg:hidden"
+        onClick={moveBackward}
+      >
+        <ChevronLeft />
+      </Button>
 
       <form onSubmit={onSubmit} className="w-full">
         <ComponentSlider
@@ -243,32 +247,38 @@ export const NewQrCodeFlow = ({
           transition="ease-in-out"
           position={position}
         >
-          <NewQrCodeType params={searchParams} isSelected={position === 0} />
-          <NewQRCodeName
-            isSelected={position === 1}
-            name={name}
-            type={type}
-            onChange={setQrCodeName}
-            error={errors.name}
-          />
-          <NewQrCodeContent
-            isSelected={position === 2}
-            content={content}
-            setContent={setQrCodeContent}
-            name={name}
-            type={type}
-            contentError={errors.content}
-            wifiValues={{
-              ssid: ssid,
-              security: security || "nopass",
-              password: password,
-            }}
-            onChangeWifiValues={onChangeWifiValues}
-            wifiError={{
-              securityError: errors.security,
-              passwordError: errors.password,
-            }}
-          />
+          <div className="w-full pb-1">
+            <NewQrCodeType params={searchParams} isSelected={position === 0} />
+          </div>
+          <div className="w-full min-h-[50svh]">
+            <NewQRCodeName
+              isSelected={position === 1}
+              name={name}
+              type={type}
+              onChange={setQrCodeName}
+              error={errors.name}
+            />
+          </div>
+          <div className="flex min-h-[70svh]">
+            <NewQrCodeContent
+              isSelected={position === 2}
+              content={content}
+              setContent={setQrCodeContent}
+              name={name}
+              type={type}
+              contentError={errors.content}
+              wifiValues={{
+                ssid: ssid,
+                security: security || "nopass",
+                password: password,
+              }}
+              onChangeWifiValues={onChangeWifiValues}
+              wifiError={{
+                securityError: errors.security,
+                passwordError: errors.password,
+              }}
+            />
+          </div>
         </ComponentSlider>
 
         <div className="w-full gap-4 flex">
@@ -283,26 +293,15 @@ export const NewQrCodeFlow = ({
           >
             Back
           </Button>
-          {position < 2 ? (
-            <Button
-              key="forward"
-              type="button"
-              className="w-full"
-              onClick={moveForward}
-            >
-              {position === 2 ? "Save" : "Next"}
-            </Button>
-          ) : (
-            <FormButton
-              key="submit"
-              variant="button"
-              isLoading={pending}
-              type={"submit"}
-              buttonClassNames="w-full"
-            >
-              Save
-            </FormButton>
-          )}
+          <FormButton
+            key="submit"
+            variant="button"
+            isLoading={pending}
+            type={"submit"}
+            buttonClassNames="w-full"
+          >
+            {position === 2 ? "Save" : "Next"}
+          </FormButton>
         </div>
       </form>
       <QuantityExpiredDialog

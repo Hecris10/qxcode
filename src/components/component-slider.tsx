@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
 export const ComponentSlider = ({
@@ -23,8 +23,25 @@ export const ComponentSlider = ({
     | "cubic-bezier";
   unMountOnExit?: boolean;
 }) => {
+  const refs = React.useRef<HTMLDivElement[]>([]);
+  const isRendered = useRef(false);
+  const [height, setHeight] = useState<number | undefined>();
+
+  useEffect(() => {
+    if (!isRendered.current) {
+      isRendered.current = true;
+      return;
+    }
+
+    const newHeight = refs.current[position]?.offsetHeight;
+    if (newHeight) setHeight(newHeight);
+  }, [position]);
+
   return (
-    <div className={cn("relative h-full w-full overflow-hidden")}>
+    <div
+      style={{ height }}
+      className={cn("relative h-auto w-full overflow-hidden")}
+    >
       <div
         className="flex transition-transform w-full"
         style={{
@@ -41,13 +58,22 @@ export const ComponentSlider = ({
           if (index !== position && unMountOnExit)
             return (
               <div
+                ref={(element) => {
+                  if (element) refs.current[index] = element!;
+                }}
                 key={index}
                 className="h-full px-1 w-full flex flex-shrink-0"
               />
             );
 
           return (
-            <div key={index} className="h-full px-1 w-full flex flex-shrink-0">
+            <div
+              ref={(element) => {
+                if (element) refs.current[index] = element!;
+              }}
+              key={index}
+              className="h-full px-1 w-full flex flex-shrink-0"
+            >
               {child}
             </div>
           );

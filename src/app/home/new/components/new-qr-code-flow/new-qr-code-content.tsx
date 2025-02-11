@@ -1,13 +1,12 @@
 import { QrCodeBadge } from "~/components/qr-code-badge";
 import { ErrorAlert } from "~/components/ui/error-alert";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
 import { NewQrCodePhoneInput } from "./new-qr-code-inputs/new-qr-code-phone-input";
 import {
   NewQrCodeWifiInput,
   WifiSecurity,
 } from "./new-qr-code-inputs/new-qr-code-wifi-input";
+import { NewQrCodeTextInput } from "./new-qr-code-inputs/new-qrcode-text-input";
 
 export const NewQrCodeContent = ({
   isSelected,
@@ -68,40 +67,13 @@ export const NewQrCodeContent = ({
       );
 
     return (
-      <div className="flex flex-col gap-2 w-full">
-        <div className="mt-4">
-          <Label className="text-white ml-2" htmlFor="email">
-            {type === "email" ? "Email" : type === "link" ? "Link" : "Text"}
-          </Label>
-          <Input
-            className="my-2"
-            tabIndex={isSelected ? 0 : -1}
-            defaultValue={content}
-            onChange={(e) => setContent(e.target.value)}
-            // required
-            placeholder={
-              type === "email"
-                ? "name@mail.com"
-                : type === "link"
-                ? "https://"
-                : 'e.g. "Hello World"'
-            }
-            type={type === "email" ? "email" : type === "link" ? "url" : "text"}
-            name="content"
-          />
-          <ErrorAlert
-            className="mx-1"
-            message={
-              type === "email"
-                ? "Email is required"
-                : type === "link"
-                ? "Link is required"
-                : "Text is required"
-            }
-            inError={!!contentError}
-          />
-        </div>
-      </div>
+      <NewQrCodeTextInput
+        isSelected={isSelected}
+        content={content}
+        type={type}
+        contentError={contentError}
+        setContent={setContent}
+      />
     );
   };
 

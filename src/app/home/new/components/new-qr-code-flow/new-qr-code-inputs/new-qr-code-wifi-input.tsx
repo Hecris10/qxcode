@@ -1,4 +1,5 @@
 import { Collapsible } from "@ark-ui/react";
+import { useEffect, useRef } from "react";
 import { ErrorAlert } from "~/components/ui/error-alert";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -59,6 +60,20 @@ export const NewQrCodeWifiInput = ({
     passwordError?: string;
   };
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isSelected) {
+      timer = setTimeout(() => {
+        if (isSelected) {
+          inputRef.current?.focus();
+        }
+      }, 700);
+    }
+    return () => clearTimeout(timer);
+  }, [isSelected]);
+
   return (
     <div className="flex flex-col w-full gap-2">
       <div>
@@ -66,11 +81,11 @@ export const NewQrCodeWifiInput = ({
           SSID (Network Name)
         </Label>
         <Input
+          ref={inputRef}
           defaultValue={ssid}
           tabIndex={isSelected ? 0 : -1}
           onChange={(e) => onChange?.("ssid", e.target.value)}
           className="mt-1"
-          required
           placeholder="SSID"
           name="ssid"
         />
@@ -81,7 +96,6 @@ export const NewQrCodeWifiInput = ({
         </Label>
         <Select
           defaultValue={security}
-          required
           name="security"
           onValueChange={(value) => onChange("security", value)}
         >
