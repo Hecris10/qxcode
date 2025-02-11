@@ -19,7 +19,7 @@ import { apiUrl } from "~/services/api/api";
 export const QuantyCircle = ({ userToken }: { userToken: string }) => {
   const queryClient = useQueryClient();
   const pathName = usePathname();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [fetchTags.qrCodeQuantity],
     queryFn: async () => {
       try {
@@ -41,11 +41,7 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
   });
 
   useEffect(() => {
-    if (pathName === "/home") {
-      queryClient.invalidateQueries({
-        queryKey: [fetchTags.qrCodeQuantity],
-      });
-    }
+    refetch();
   }, [pathName]);
 
   const quantity = data || 0;
