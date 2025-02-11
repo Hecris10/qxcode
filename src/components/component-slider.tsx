@@ -41,7 +41,7 @@ export const ComponentSlider = ({
       if (newHeight) setHeight(newHeight);
     };
     calculeHeight();
-  }, [position]);
+  }, [position, autoHeight]);
 
   return (
     <div
