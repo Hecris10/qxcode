@@ -44,6 +44,7 @@ export const useNewQrCode = ({
   });
 
   const [errors, setErrors] = useState<FormError>({} as FormError);
+  const quantityExpired = useState(false);
 
   useLayoutEffect(() => {
     if (urlState.position < 0 || urlState.position > 2) router.push("/404");
@@ -145,5 +146,6 @@ export const useNewQrCode = ({
     errors,
     setError,
     setErrorRequired,
+    quantityExpired,
   };
 };

@@ -24,8 +24,8 @@ export const UserInfo = ({
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-white font-bold">{userName}</p>
-          <p className="text-slate-400">{userEmail}</p>
+          <p className="text-white font-bold text-sm">{userName}</p>
+          <p className="text-slate-400 text-sm">{userEmail}</p>
         </div>
       </div>
       <form className="my-auto ml-4" action={logOutUserAction}>

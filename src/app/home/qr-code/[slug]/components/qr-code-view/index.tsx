@@ -1,5 +1,6 @@
 "use client";
 import { Collapsible } from "@ark-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ import { Label } from "~/components/ui/label";
 import { SelectScrollable } from "~/components/ui/select-scrollable";
 import { Slider } from "~/components/ui/slider";
 import { Switch } from "~/components/ui/switch";
+import { fetchTags } from "~/config/tags";
 import { Logo } from "~/services/logos/logos.type";
 import { updatePartialQrCode } from "~/services/qrcodes/qrcodes";
 import { QrCode, QrCodePartial } from "~/services/qrcodes/qrcodes.type";
@@ -44,7 +46,7 @@ export const QrCodeView = ({
     backgroundColor: qrCode.backgroundColor || "#ffffff00",
     isControlled: qrCode.isControlled || false,
   });
-
+  const queryClient = useQueryClient();
   const [isPending, onSaveAction] = useTransition();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,6 +86,9 @@ export const QrCodeView = ({
 
       toast.success("QrCode updated successfully", {
         id: "saving",
+      });
+      queryClient.invalidateQueries({
+        queryKey: [fetchTags.qrCodeQuantity],
       });
     });
   };

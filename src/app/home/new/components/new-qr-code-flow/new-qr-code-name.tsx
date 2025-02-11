@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { QrCodeBadge } from "~/components/qr-code-badge";
 import { ErrorAlert } from "~/components/ui/error-alert";
 import { Input } from "~/components/ui/input";
@@ -18,6 +19,19 @@ export const NewQRCodeName = ({
 }) => {
   const onValueChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     onChange(e.target.value);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isSelected) {
+      timer = setTimeout(() => {
+        if (isSelected) {
+          inputRef.current?.focus();
+        }
+      }, 700);
+    }
+    return () => clearTimeout(timer);
+  }, [isSelected]);
 
   return (
     <div className="w-full">
@@ -28,6 +42,7 @@ export const NewQRCodeName = ({
           Choose a name for your QR code. This will help you identify it later.
         </p>
         <Input
+          ref={inputRef}
           tabIndex={isSelected ? 0 : -1}
           value={name}
           onChange={onValueChange}

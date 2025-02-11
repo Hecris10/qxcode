@@ -4,5 +4,5 @@ export const fetchTags = {
   auth: "auth",
   logos: "logos",
   qrCodeControllers: "qr-code-controllers",
-  qrCodeQuality: "qr-code-quality",
+  qrCodeQuantity: "qr-code-quantity",
 };

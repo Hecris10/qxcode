@@ -61,11 +61,14 @@ export const getQrCodeById = async (id: number) => {
   return response.json() as Promise<QrCode>;
 };
 
+export type NewQrCodeRequest = ServerRequest<
+  AllQrCodeProps & { quantityExpired: boolean }
+>;
+
 export const createNewQrCodeAction = async (qrCodeData: NewQrCode) => {
   const userToken = await getUserToken();
 
-  const errors: ServerRequest<AllQrCodeProps> =
-    {} as ServerRequest<AllQrCodeProps>;
+  const errors: NewQrCodeRequest = {} as NewQrCodeRequest;
 
   try {
     const response = await fetch(`${apiUrl}/qr-codes`, {
@@ -85,8 +88,19 @@ export const createNewQrCodeAction = async (qrCodeData: NewQrCode) => {
         return errors;
       }
 
-      errors.hasValidationErrors = true;
       const errorData = (await response.json()) as RequestError;
+
+      if (
+        errorData.message.includes(
+          "You have reached the maximum number of QR codes"
+        )
+      ) {
+        errors.serverError = true;
+        errors.quantityExpired = true;
+        return errors;
+      }
+
+      errors.hasValidationErrors = true;
 
       if (errorData.message.includes("Name")) errors.name = "Missing";
       if (errorData.message.includes("Type")) errors.type = "Missing";
@@ -110,8 +124,7 @@ export const createNewQrCodeAction = async (qrCodeData: NewQrCode) => {
     return errors;
   } catch (e) {
     console.error({ e });
-    const errors: ServerRequest<AllQrCodeProps> =
-      {} as ServerRequest<AllQrCodeProps>;
+    const errors: NewQrCodeRequest = {} as NewQrCodeRequest;
     errors.serverError = true;
     return errors;
   }

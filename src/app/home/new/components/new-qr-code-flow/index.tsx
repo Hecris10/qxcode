@@ -1,18 +1,21 @@
 "use client";
 import { ComponentSlider } from "~/components/component-slider";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useTransition } from "react";
 import { toast } from "sonner";
 import { FormButton } from "~/components/form-button";
 import { Button } from "~/components/ui/button";
+import { fetchTags } from "~/config/tags";
 import { useNewQrCode } from "~/hooks/useNewQrCode";
 import { generateWiFiString } from "~/lib/utils";
-import { ServerRequest } from "~/services/api/api";
-import { createNewQrCodeAction } from "~/services/qrcodes/qrcodes";
 import {
-  AllQrCodeProps,
+  createNewQrCodeAction,
+  NewQrCodeRequest,
+} from "~/services/qrcodes/qrcodes";
+import {
   NewQrCodeLink,
   NewQrCodeText,
   NewQrCodeWifi,
@@ -20,12 +23,14 @@ import {
 import { NewQrCodeContent } from "./new-qr-code-content";
 import { NewQRCodeName } from "./new-qr-code-name";
 import { NewQrCodeType } from "./new-qr-code-type";
+import { QuantityExpiredDialog } from "./quantity-experied-dialog";
 
 export const NewQrCodeFlow = ({
   searchParams,
 }: {
   searchParams: SearchParamsNotPromise;
 }) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [pending, formAction] = useTransition();
   const {
@@ -44,6 +49,7 @@ export const NewQrCodeFlow = ({
     security,
     setQrCodeContent,
     onChangeWifiValues,
+    quantityExpired: [quantityExpired, setQuantityExpired],
   } = useNewQrCode({
     params: searchParams,
     router,
@@ -75,17 +81,20 @@ export const NewQrCodeFlow = ({
     handleErrosSlide();
   }, [errors]);
 
-  console.log({ security });
-
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (position < 2) {
+      moveForward();
+      return;
+    }
+
     formAction(async () => {
       toast.loading("Saving...", {
         description: "Creating your QrCode",
         id: "new-qr-code",
       });
-      let res: ServerRequest<AllQrCodeProps> =
-        {} as ServerRequest<AllQrCodeProps>;
+      let res: NewQrCodeRequest = {} as NewQrCodeRequest;
 
       if (type === "wifi") {
         const newQrCode = {} as NewQrCodeWifi;
@@ -173,6 +182,10 @@ export const NewQrCodeFlow = ({
           id: "new-qr-code",
         });
 
+        queryClient.invalidateQueries({
+          queryKey: [fetchTags.qrCodeQuantity],
+        });
+
         // res.encryptedKey should be uri encoded
         router.push(`/home/qr-code/${res.encryptedKey || ""}`);
       }
@@ -208,6 +221,12 @@ export const NewQrCodeFlow = ({
         return;
       }
       if (res.serverError) {
+        if (res.quantityExpired) {
+          setQuantityExpired(true);
+          toast.dismiss("new-qr-code");
+          return;
+        }
+
         toast.error("Error!", {
           description: "An error occurred while creating your QrCode",
           id: "new-qr-code",
@@ -218,51 +237,56 @@ export const NewQrCodeFlow = ({
 
   return (
     <div>
-      {position > 0 && (
-        <Button
-          disabled={position <= 0}
-          type="button"
-          hidden={position <= 0}
-          variant="ghost"
-          className="m-0 lg:hidden"
-          onClick={moveBackward}
-        >
-          <ChevronLeft />
-        </Button>
-      )}
+      <Button
+        disabled={position <= 0}
+        type="button"
+        hidden={position <= 0}
+        variant="ghost"
+        className="disabled:opacity-0 m-0 lg:hidden"
+        onClick={moveBackward}
+      >
+        <ChevronLeft />
+      </Button>
 
       <form onSubmit={onSubmit} className="w-full">
         <ComponentSlider
           duration={250}
           transition="ease-in-out"
           position={position}
+          autoHeight
         >
-          <NewQrCodeType params={searchParams} isSelected={position === 0} />
-          <NewQRCodeName
-            isSelected={position === 1}
-            name={name}
-            type={type}
-            onChange={setQrCodeName}
-            error={errors.name}
-          />
-          <NewQrCodeContent
-            isSelected={position === 2}
-            content={content}
-            setContent={setQrCodeContent}
-            name={name}
-            type={type}
-            contentError={errors.content}
-            wifiValues={{
-              ssid: ssid,
-              security: security || "nopass",
-              password: password,
-            }}
-            onChangeWifiValues={onChangeWifiValues}
-            wifiError={{
-              securityError: errors.security,
-              passwordError: errors.password,
-            }}
-          />
+          <div className="w-full pb-1">
+            <NewQrCodeType params={searchParams} isSelected={position === 0} />
+          </div>
+          <div className="w-full min-h-[50svh]">
+            <NewQRCodeName
+              isSelected={position === 1}
+              name={name}
+              type={type}
+              onChange={setQrCodeName}
+              error={errors.name}
+            />
+          </div>
+          <div className="flex w-full min-h-[70svh]">
+            <NewQrCodeContent
+              isSelected={position === 2}
+              content={content}
+              setContent={setQrCodeContent}
+              name={name}
+              type={type}
+              contentError={errors.content}
+              wifiValues={{
+                ssid: ssid,
+                security: security || "nopass",
+                password: password,
+              }}
+              onChangeWifiValues={onChangeWifiValues}
+              wifiError={{
+                securityError: errors.security,
+                passwordError: errors.password,
+              }}
+            />
+          </div>
         </ComponentSlider>
 
         <div className="w-full gap-4 flex">
@@ -277,28 +301,21 @@ export const NewQrCodeFlow = ({
           >
             Back
           </Button>
-          {position < 2 ? (
-            <Button
-              key="forward"
-              type="button"
-              className="w-full"
-              onClick={moveForward}
-            >
-              {position === 2 ? "Save" : "Next"}
-            </Button>
-          ) : (
-            <FormButton
-              key="submit"
-              variant="button"
-              isLoading={pending}
-              type={"submit"}
-              buttonClassNames="w-full"
-            >
-              Save
-            </FormButton>
-          )}
+          <FormButton
+            key="submit"
+            variant="button"
+            isLoading={pending}
+            type={"submit"}
+            buttonClassNames="w-full"
+          >
+            {position === 2 ? "Save" : "Next"}
+          </FormButton>
         </div>
       </form>
+      <QuantityExpiredDialog
+        open={quantityExpired}
+        onOpenChange={setQuantityExpired}
+      />
     </div>
   );
 };
