@@ -4,6 +4,7 @@ import "react-color-palette/css";
 import "react-international-phone/style.css";
 import { cn } from "~/lib/utils";
 import "../globals.css";
+import HomeLayout from "./home/components/home-layout";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body className={cn(inter.className, "bg-dark")}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <HomeLayout>{children}</HomeLayout>
+        </Providers>
       </body>
     </html>
   );
