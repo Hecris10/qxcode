@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html suppressHydrationWarning>
-      <body className={cn(inter.className, "bg-dark")}>
+      <body className={cn(inter.className, fontSans.className, "bg-dark")}>
         <Providers>
           <LoginLayout>{children}</LoginLayout>
         </Providers>

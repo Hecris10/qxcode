@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { Inter as FontSans, Inter } from "next/font/google";
 import "react-color-palette/css";
 import "react-international-phone/style.css";
-import { cn } from "~/lib/utils";
-import "../globals.css";
-import HomeLayout from "./home/components/home-layout";
-import { Providers } from "./providers";
+import { ClientProviders } from "~/components/client-providers";
+
+import HomeLayout from "./components/home-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,12 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning>
-      <body className={cn(inter.className, "bg-dark")}>
-        <Providers>
-          <HomeLayout>{children}</HomeLayout>
-        </Providers>
-      </body>
-    </html>
+    <div>
+      <ClientProviders>
+        <HomeLayout>{children}</HomeLayout>
+      </ClientProviders>
+    </div>
   );
 }
