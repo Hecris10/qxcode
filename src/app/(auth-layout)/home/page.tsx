@@ -9,7 +9,7 @@ export default async function Home({ searchParams }: PageProps) {
   const params = await searchParams;
   const isGridMode = (await getQrCodeViewMode()) === "grid";
   return (
-    <div className="pt-6 home-layout">
+    <div className="home-layout">
       <div className="relative">
         <div className="absolute flex justify-between gap-3 left-0 w-full top-20 md:top-16">
           <Link

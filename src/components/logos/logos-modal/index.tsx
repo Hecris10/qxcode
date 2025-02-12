@@ -92,7 +92,7 @@ export const LogosModal = ({
             />
           </div>
         </DialogHeader>
-        <div className="h-full max-h-[35vh] overflow-y-auto ">
+        <div className="h-full max-h-[35vh] overflow-y-auto">
           <Suspense fallback={<LogosGridLoading />}>
             <section className="grid grid-cols-4 md:grid-cols-6 gap-4 py-4">
               {userLogos.map((logo) => (

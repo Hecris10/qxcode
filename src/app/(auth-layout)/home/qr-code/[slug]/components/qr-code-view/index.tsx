@@ -166,7 +166,7 @@ export const QrCodeView = ({
   };
 
   return (
-    <form className="h-full md:flex my-auto" onSubmit={onSubmit}>
+    <form className="h-auto pt-8 md:pt-0 md:flex my-auto" onSubmit={onSubmit}>
       <div className="max-w-4xl m-auto grid md:grid-cols-2 gap-8">
         <div id="grid1" className="space-y-2 md:col-span-1 md:row-span-1">
           <div className="flex items-center gap-2">
