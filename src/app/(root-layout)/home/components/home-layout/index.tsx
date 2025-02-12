@@ -17,7 +17,7 @@ export default function HomeLayout({
         <Suspense fallback={<Loading />}>
           <LargeSideBar />
         </Suspense>
-        <div className="home-layout w-full lg:h-[100svh] px-4">{children}</div>
+        <div className="home-layout w-full h-full px-4">{children}</div>
       </div>
     </div>
   );

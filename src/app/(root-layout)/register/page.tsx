@@ -14,8 +14,8 @@ export default async function Register() {
   const locale = await getLocale();
 
   return (
-    <div className="w-full h-full min-h-svh justify-center flex align-middle pb-2 lg:py-2">
-      <section className="w-full max-w-[400px]  text-white px-3 max-h-svh rounded-2xl m-auto">
+    <main className="mx-auto px-4 py-12">
+      <section className="w-full max-w-[400px] text-white px-3 rounded-2xl m-auto">
         <Link className="lg:hidden" href={"/"}>
           <ChevronLeft />
         </Link>
@@ -31,6 +31,6 @@ export default async function Register() {
           </p>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

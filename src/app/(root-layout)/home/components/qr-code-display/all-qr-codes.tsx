@@ -17,5 +17,5 @@ export const AllQrCodes = async ({
 
   if (isGridMode) return <QrCodeGrid qrCodes={qrCodes} />;
 
-  return <QrCodeList qrCodes={qrCodes} />;
+  return <QrCodeList qrCodes={[...qrCodes]} />;
 };
