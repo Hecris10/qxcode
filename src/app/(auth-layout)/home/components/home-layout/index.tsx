@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Spinner } from "~/components/ui/spinner";
 import { LargeSideBar } from "./large-sidebar";
 import { SmallLayout } from "./small-layout";
 
@@ -22,7 +23,8 @@ export default function HomeLayout({
   );
 }
 
-export const Loading = () => {
-  console.log("loading");
-  return <div>Loading...</div>;
-};
+export const Loading = () => (
+  <div>
+    <Spinner />
+  </div>
+);
