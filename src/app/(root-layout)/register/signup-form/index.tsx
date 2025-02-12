@@ -58,7 +58,10 @@ export const SignupForm = ({ locale }: { locale: string }) => {
     handleChange(e.target.name as keyof SignUpUserValidation, e.target.value);
 
   return (
-    <form action={formAction} className="flex flex-col w-full my-auto gap-1">
+    <form
+      action={formAction}
+      className="flex py-8 flex-col w-full my-auto gap-1"
+    >
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Nome

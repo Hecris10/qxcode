@@ -166,7 +166,7 @@ export const QrCodeView = ({
   };
 
   return (
-    <form className="h-full md:flex my-auto" onSubmit={onSubmit}>
+    <form className="h-auto pt-8 md:pt-0 md:flex my-auto" onSubmit={onSubmit}>
       <div className="max-w-4xl m-auto grid md:grid-cols-2 gap-8">
         <div id="grid1" className="space-y-2 md:col-span-1 md:row-span-1">
           <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ export const QrCodeView = ({
             <ComponentSlider position={tabsPosition} duration={300}>
               <div className="grid grid-cols-2 gap-4 w-full">
                 <div className="space-y-2 flex w-full flex-col">
-                  <Label>Background Color</Label>
+                  <Label className="text-sm">Background Color</Label>
                   <ColorPickerInput
                     name="backgroundColor"
                     defaultColor={code?.backgroundColor}
@@ -233,7 +233,7 @@ export const QrCodeView = ({
                   />
                 </div>
                 <div className="space-y-2 flex flex-col">
-                  <Label>Corners Color</Label>
+                  <Label className="text-sm">Corners Color</Label>
                   <ColorPickerInput
                     name="cornersColor"
                     defaultColor={code?.cornersColor}
@@ -242,7 +242,7 @@ export const QrCodeView = ({
                   />
                 </div>
                 <div className="space-y-2 flex flex-col col-span-2">
-                  <Label>Nodes Color</Label>
+                  <Label className="text-sm">Nodes Color</Label>
                   <ColorPickerInput
                     name="nodesColor"
                     defaultColor={code?.nodesColor}
@@ -254,7 +254,7 @@ export const QrCodeView = ({
 
               <div className="w-full space-y-3">
                 <div className="space-y-2">
-                  <Label>Padding</Label>
+                  <Label className="text-sm">Padding</Label>
                   <Slider
                     value={[code?.padding || 0]}
                     min={1}
@@ -268,7 +268,7 @@ export const QrCodeView = ({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Corners Shapes</Label>
+                    <Label className="text-sm">Corners Shapes</Label>
                     <SelectScrollable
                       name="cornerType"
                       defaultValue={code.cornerType}
@@ -278,7 +278,7 @@ export const QrCodeView = ({
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Dots shape</Label>
+                    <Label className="text-sm">Dots shape</Label>
                     <SelectScrollable
                       name="dotsType"
                       defaultValue={code.dotsType}
@@ -323,7 +323,7 @@ export const QrCodeView = ({
                 <Collapsible.Root open={!!code.logo}>
                   <Collapsible.Content className="space-y-2">
                     <div className="space-y-2 flex flex-col">
-                      <Label>Logo Background Color</Label>
+                      <Label className="text-sm">Logo Background Color</Label>
                       <ColorPickerInput
                         name="logoBackgroundColor"
                         defaultColor={code?.logoBackgroundColor}
@@ -333,7 +333,7 @@ export const QrCodeView = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Logo Padding</Label>
+                      <Label className="text-sm">Logo Padding</Label>
                       <Slider
                         value={[code?.logoPadding || 0]}
                         min={0}
@@ -346,7 +346,7 @@ export const QrCodeView = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Logo Border Radius</Label>
+                      <Label className="text-sm">Logo Border Radius</Label>
                       <Slider
                         value={[code.logoBorderRadius || 0]}
                         min={0}

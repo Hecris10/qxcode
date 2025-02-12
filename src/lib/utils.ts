@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { WifiSecurity } from "~/app/(auth-layout)/home/new/components/new-qr-code-flow/new-qr-code-inputs/new-qr-code-wifi-input";
+import { WifiSecurity } from "~/app/(root-layout)/home/new/components/new-qr-code-flow/new-qr-code-inputs/new-qr-code-wifi-input";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

@@ -9,7 +9,7 @@ export default async function Home({ searchParams }: PageProps) {
   const params = await searchParams;
   const isGridMode = (await getQrCodeViewMode()) === "grid";
   return (
-    <div className="pt-6 home-layout">
+    <main className="container mx-auto px-4 py-12">
       <div className="relative">
         <div className="absolute flex justify-between gap-3 left-0 w-full top-20 md:top-16">
           <Link
@@ -21,14 +21,14 @@ export default async function Home({ searchParams }: PageProps) {
           </Link>
           <QrCodeDisplayButton isGridMode={isGridMode} />
         </div>
-        <div className="w-full flex flex-col gap-28">
+        <div className="w-full flex flex-col h-full gap-28">
           <QrCodeSlider searchParams={params}>
             <AllQrCodes isGridMode={isGridMode} isControlled={false} />
             <AllQrCodes isGridMode={isGridMode} isControlled />
           </QrCodeSlider>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

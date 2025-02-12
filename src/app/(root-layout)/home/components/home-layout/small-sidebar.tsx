@@ -1,13 +1,11 @@
 "use client";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-import { MenuOptions } from "./menu-options";
-import { UserInfo } from "./user-info";
 
-export const SmallSidebar = ({ userToken }: { userToken: string }) => {
+export const SmallSidebar = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const onOpenChange = (value: boolean) => setIsOpen(value);
@@ -34,8 +32,7 @@ export const SmallSidebar = ({ userToken }: { userToken: string }) => {
         </Button>
       </SheetTrigger>
       <SheetContent className="lg:hidden" side="left">
-        <MenuOptions userToken={userToken} />
-        <UserInfo userImageSrc={""} userName={""} userEmail={""} />
+        {children}
       </SheetContent>
     </Sheet>
   );

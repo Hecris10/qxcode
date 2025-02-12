@@ -15,7 +15,7 @@ export default async function QrCodePage(props: PageProps) {
   const userLogos = getUserLogos();
 
   return (
-    <div className="pt-8 flex align-middle justify-center w-full px-6 home-layout">
+    <div className="flex align-middle justify-center w-full px-6 home-layout">
       <QrCodeView logos={userLogos} qrCode={qrCode} />
     </div>
   );

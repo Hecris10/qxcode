@@ -72,6 +72,7 @@ export const signupUser = async (e: FormData) => {
     if (!response.ok) {
       if (response.status === 409) {
         const data = await response.json();
+        console.error(data);
         if (data?.message?.includes("email")) errors.email = "AlreadyExists";
         if (data?.message?.includes("phone"))
           errors.phoneNumber = "AlreadyExists";
