@@ -2,12 +2,18 @@ import { encrypt } from "~/services/crypt";
 import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { QrCodeCardGridDisplay } from "./qr-code-card-grid-display";
 
-export const QrCodeCardGrid = ({ qrCode }: { qrCode: QrCode }) => {
+export const QrCodeCardGrid = async ({
+  qrCode,
+  locale,
+}: {
+  qrCode: QrCode;
+  locale: string;
+}) => {
   const encryptedId = encrypt(qrCode.id.toString());
   const encodedURI = encodeURIComponent(encryptedId);
   const url = `/home/qr-code/${encodedURI || ""}`;
 
-  return <QrCodeCardGridDisplay qrCode={qrCode} url={url} />;
+  return <QrCodeCardGridDisplay qrCode={qrCode} url={url} locale={locale} />;
 };
 
 {

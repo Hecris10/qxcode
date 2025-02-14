@@ -4,7 +4,7 @@ export default async function NewQrCodePage({ searchParams }: PageProps) {
   const params = await searchParams;
 
   return (
-    <div className="pt-6 px-6 home-layout flex flex-col lg:justify-center">
+    <div className="container mx-auto px-4 py-12 lg:py-28">
       <NewQrCodeFlow searchParams={params} />
     </div>
   );
