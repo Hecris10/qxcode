@@ -18,9 +18,11 @@ import { QrCodeListOption } from "../../qr-code-list-option";
 export const QrCodeCardGridDisplay = ({
   qrCode,
   url,
+  locale,
 }: {
   qrCode: QrCode;
   url: string;
+  locale: string;
 }) => {
   const [deleteDialog, setDeleteDialog] = useState(false);
 
@@ -50,7 +52,7 @@ export const QrCodeCardGridDisplay = ({
             {qrCode.name}
           </Link>
           <p className="text-md lg:text-sm my-auto text-gray-500">
-            {isoDateToLocale(qrCode.createdAt)}
+            {isoDateToLocale(qrCode.createdAt, locale)}
           </p>
           <div className="qr-code-grid-options absolute right-1">
             <QrCodeListOption
