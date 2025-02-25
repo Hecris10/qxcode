@@ -38,11 +38,13 @@ export const QrCodeSlider = ({
             setUrl({ ...urlState, view: "controlled-codes" });
           }
         }}
+
       />
       <ComponentSlider
         duration={200}
         transition="ease-in-out"
         position={urlState.view === "my-codes" ? 0 : 1}
+        unMountOnExit
       >
         {children}
       </ComponentSlider>

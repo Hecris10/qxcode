@@ -33,9 +33,9 @@ export const getUserQrCodes = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
     },
-    cache: "no-cache",
+    cache: "force-cache",
     next: {
-      tags: tags ? [fetchTags.qrCodes, ...tags] : [fetchTags.qrCodes],
+      tags: tags ? [fetchTags.qrCodes, `${baseUrl}`, ...tags] : [fetchTags.qrCodes, `${baseUrl}`],
     },
   });
 
@@ -54,7 +54,6 @@ export const getQrCodeById = async (id: number) => {
     cache: "force-cache",
     next: {
       tags: [fetchTags.qrCodes, `qr-code-${id}`],
-      revalidate: 600,
     },
   });
 
@@ -144,6 +143,9 @@ export const updateQrCode = async (qrCodeData: QrCode) => {
         Authorization: `Bearer ${userToken}`,
       },
       body: JSON.stringify(qrCodeData),
+      next: {
+        tags: [fetchTags.qrCodes, `qr-code-${qrCodeData.id}`],
+      }
     });
 
     if (!response.ok) {
@@ -224,6 +226,9 @@ export const updatePartialQrCode = async ({
         Authorization: `Bearer ${userToken}`,
       },
       body: JSON.stringify(qrCodeData),
+      next: {
+        tags: [fetchTags.qrCodes, `qr-code-${qrCode.id}`],
+      },
     });
 
     if (!response.ok) {
@@ -236,6 +241,7 @@ export const updatePartialQrCode = async ({
     }
 
     revalidateTag(`qr-code-${qrCode.id}`);
+    revalidateTag(fetchTags.qrCodes);
     if (redirectPath) redirect(redirectPath, RedirectType.replace);
     return errors;
   } catch (e) {
@@ -255,6 +261,9 @@ export const deleteQrCode = async (id: number) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
+    },
+    next: {
+      tags: [fetchTags.qrCodes, `qr-code-${id}`],
     },
   });
 
@@ -277,6 +286,9 @@ export const deleteQrCodeLogo = async (qrCodeId: number, logoId: number) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
+      },
+      next: {
+        tags: [fetchTags.qrCodes, `qr-code-${qrCodeId}`],
       },
     }
   );
@@ -311,6 +323,9 @@ export const addLogoToQrCode = async (qrCodeId: number, logoId: number) => {
       Authorization: `Bearer ${userToken}`,
     },
     body: JSON.stringify({ logoId }),
+    next: {
+      tags: [fetchTags.qrCodes, `qr-code-${qrCodeId}`],
+    },
   });
 
   if (!response.ok) {
@@ -331,6 +346,10 @@ export const getQrCodeNameById = async (id: number) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
+      },
+      cache: "force-cache",
+      next: {
+        tags: [`qr-code-${id}`],
       },
     });
 
