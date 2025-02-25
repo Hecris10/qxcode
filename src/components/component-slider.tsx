@@ -8,6 +8,8 @@ export const ComponentSlider = ({
   transition = "ease-linear",
   unMountOnExit = false,
   autoHeight = false,
+  minHeight,
+  className = ""
 }: {
   position: number;
   children: React.ReactNode[];
@@ -24,6 +26,8 @@ export const ComponentSlider = ({
     | "cubic-bezier";
   unMountOnExit?: boolean;
   autoHeight?: boolean;
+    minHeight?: number | string;
+    className?: string
 }) => {
   const refs = React.useRef<HTMLDivElement[]>([]);
   const isRendered = useRef(false);
@@ -45,8 +49,8 @@ export const ComponentSlider = ({
 
   return (
     <div
-      style={{ height }}
-      className={cn("relative h-auto w-full overflow-hidden")}
+      style={{ height, minHeight }}
+      className={cn("relative h-auto w-full overflow-hidden", className)}
     >
       <div
         className="flex transition-transform w-full"
@@ -64,6 +68,7 @@ export const ComponentSlider = ({
           if (index !== position && unMountOnExit)
             return (
               <div
+                style={{ height }}
                 ref={(element) => {
                   if (element) refs.current[index] = element!;
                 }}

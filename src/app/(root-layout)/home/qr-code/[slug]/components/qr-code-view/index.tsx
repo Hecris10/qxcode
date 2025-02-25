@@ -221,7 +221,11 @@ export const QrCodeView = ({
             <div></div>
           </Tabs>
           <div className="h-full flex flex-col">
-            <ComponentSlider position={tabsPosition} duration={300}>
+            <ComponentSlider
+              autoHeight
+              className="lg:min-h-[400px]"
+              minHeight={160}
+              unMountOnExit position={tabsPosition} duration={300}>
               <div className="grid grid-cols-2 gap-4 w-full">
                 <div className="space-y-2 flex w-full flex-col">
                   <Label className="text-sm">Background Color</Label>
