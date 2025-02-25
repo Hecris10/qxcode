@@ -16,9 +16,9 @@ export const getUserLogos = async () => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
     },
-    cache: "no-cache",
+    cache: "force-cache",
     next: {
-      tags: [fetchTags.logos],
+      tags: [fetchTags.logos,],
     },
   });
 
