@@ -4,7 +4,7 @@ import { Login } from "~/components/login";
 import { isUserLoggedIn } from "~/services/auth/auth-actions";
 
 export const metadata: Metadata = {
-  title: "Qxcode | Login",
+  title: "QX Code | Login",
   description: "Your codes last forever",
 };
 

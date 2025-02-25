@@ -6,7 +6,7 @@ import { getLocale } from "~/utils/server/locale";
 import { SignupForm } from "./signup-form";
 
 export const metadata: Metadata = {
-  title: "Qxcode | Register",
+  title: "QX Code | Register",
   description: "Your codes last forever",
 };
 

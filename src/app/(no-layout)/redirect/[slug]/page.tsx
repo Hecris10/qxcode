@@ -5,7 +5,7 @@ import { decrypt, EncryptedQrCodeLink } from "~/services/crypt";
 import { RedirectClient } from "./components/redirect-client";
 
 export const metadata: Metadata = {
-  title: "Qxcode",
+  title: "QX Code",
   description: "Your codes last forever",
 };
 
