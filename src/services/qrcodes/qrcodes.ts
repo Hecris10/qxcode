@@ -320,3 +320,29 @@ export const addLogoToQrCode = async (qrCodeId: number, logoId: number) => {
   revalidateTag(fetchTags.qrCodes);
   return true;
 };
+
+
+export const getQrCodeNameById = async (id: number) => {
+  const userToken = await getUserToken();
+
+  try {
+    const response = await fetch(`${apiUrl}/qr-codes/${id}/name`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      return ""
+    }
+
+    return await response.text();
+  }
+  catch (error) {
+    console.log(error);
+    return ""
+  }
+
+}

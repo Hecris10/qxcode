@@ -9,7 +9,20 @@ import { MainLoginForm } from "./main-login-form";
 export const Login = () => {
   return (
     <main className="container mx-auto px-4 py-12">
-      <div className="text-center mb-16">
+      <div className="text-center mb-16 relative">
+        <motion.div
+          className="absolute right-0 hidden lg:block"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Link
+            href="/register"
+            className="bg-blue-500 text-white p-3 rounded-md"
+          >
+            Sign up
+          </Link>
+        </motion.div>
         <motion.h1
           className="text-4xl md:text-5xl font-bold mb-4"
           initial={{ opacity: 0, y: 20 }}
@@ -30,18 +43,6 @@ export const Login = () => {
         >
           Create fully customizable QR codes that never expire
         </motion.p>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Link
-            href="/register"
-            className="bg-blue-600 p-3 rounded-md hover:bg-blue-700"
-          >
-            Start Generating Free QR Codes in Seconds!
-          </Link>
-        </motion.div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -118,6 +119,11 @@ export const Login = () => {
               Sign in to QxCode
             </h2>
             <MainLoginForm />
+            <div className="text-center mt-4">
+              <Link href="/register" className="text-slate-400">
+                Don't have an account? Click here to register
+              </Link>
+            </div>
           </Card>
         </motion.div>
       </div>

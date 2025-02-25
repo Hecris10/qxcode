@@ -14,7 +14,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Qxcode",
+  title: "QX Code",
   description: "Your codes last forever",
 };
 
