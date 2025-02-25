@@ -121,7 +121,7 @@ export const Login = () => {
             <MainLoginForm />
             <div className="text-center mt-4">
               <Link href="/register" className="text-slate-400">
-                Don't have an account? Click here to register
+                {`Don't have an account? Click here to register`}
               </Link>
             </div>
           </Card>
