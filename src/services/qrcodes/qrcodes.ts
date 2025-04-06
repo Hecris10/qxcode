@@ -16,6 +16,10 @@ import {
   PaginatedQrCodes,
   QrCode,
   QrCodePartial,
+  QrCodesScan,
+  QrCodesScansFilter,
+  QrCodeStats,
+  TopQrCode,
   UpdateQrCodeForm,
 } from "./qrcodes.type";
 
@@ -35,7 +39,9 @@ export const getUserQrCodes = async (
     },
     cache: "force-cache",
     next: {
-      tags: tags ? [fetchTags.qrCodes, `${baseUrl}`, ...tags] : [fetchTags.qrCodes, `${baseUrl}`],
+      tags: tags
+        ? [fetchTags.qrCodes, `${baseUrl}`, ...tags]
+        : [fetchTags.qrCodes, `${baseUrl}`],
     },
   });
 
@@ -145,7 +151,7 @@ export const updateQrCode = async (qrCodeData: QrCode) => {
       body: JSON.stringify(qrCodeData),
       next: {
         tags: [fetchTags.qrCodes, `qr-code-${qrCodeData.id}`],
-      }
+      },
     });
 
     if (!response.ok) {
@@ -336,7 +342,6 @@ export const addLogoToQrCode = async (qrCodeId: number, logoId: number) => {
   return true;
 };
 
-
 export const getQrCodeNameById = async (id: number) => {
   const userToken = await getUserToken();
 
@@ -354,14 +359,99 @@ export const getQrCodeNameById = async (id: number) => {
     });
 
     if (!response.ok) {
-      return ""
+      return "";
     }
 
     return await response.text();
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
-    return ""
+    return "";
   }
+};
 
-}
+//dashboard
+
+export const getQrCodeStats = async () => {
+  const userToken = await getUserToken();
+
+  try {
+    const response = await fetch(`${apiUrl}/qr-codes/stats`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      cache: "no-cache",
+      next: {
+        tags: [fetchTags.qrCodes],
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as QrCodeStats;
+  } catch (error) {
+    console.log(error);
+    return {} as QrCodeStats;
+  }
+};
+
+export const getQrCodeScans = async (filter: QrCodesScansFilter) => {
+  const userToken = await getUserToken();
+
+  const url = `${apiUrl}/qr-codes/scans-stats?${new URLSearchParams({ filter })}`;
+
+  console.log({ url });
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      cache: "no-cache",
+      next: {
+        tags: [fetchTags.qrCodes],
+      },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return (await response.json()) as QrCodesScan[];
+  } catch (error) {
+    console.log(error);
+    return [] as QrCodesScan[];
+  }
+};
+
+export const getTopQrCodesScan = async () => {
+  const userToken = await getUserToken();
+
+  try {
+    const response = await fetch(`${apiUrl}/qr-codes/top-scanned`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      cache: "no-cache",
+      next: {
+        tags: [fetchTags.qrCodes],
+      },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return (await response.json()) as TopQrCode[];
+  } catch (error) {
+    console.log(error);
+    return [] as TopQrCode[];
+  }
+};

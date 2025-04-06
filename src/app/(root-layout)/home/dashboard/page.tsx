@@ -1,27 +1,44 @@
-"use client"
+// Project: qr-code-generator
 
-import { DatePickerWithRange } from "@/components/date-range-picker"
-import { DeviceUsageChart } from "@/components/device-usage-chart"
-import { QrCodeGrid } from "@/components/qr-code-grid"
-import { QrCodeList } from "@/components/qr-code-list"
-import { RecentScansTable } from "@/components/recent-scans-table"
-import { ScanActivityChart } from "@/components/scan-activity-chart"
-import { ScanLocationMap } from "@/components/scan-location-map"
-import { StatCard } from "@/components/stat-card"
-import { TopQrCodes } from "@/components/top-qr-codes"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Download, Filter, Link, Plus, QrCode, Search, Smartphone } from "lucide-react"
-import { useState } from "react"
+import { DatePickerWithRange } from "~/components/date-range-picker";
+
+import { Download, Filter, Plus, Search } from "lucide-react";
+import Link from "next/link";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import {
+  getQrCodeScans,
+  getQrCodeStats,
+  getTopQrCodesScan,
+} from "~/services/qrcodes/qrcodes";
+import { DashboardScanLocationMap } from "./components/dahboard-scan-location-map";
+import { DashboardScansTable } from "./components/dashboaard-recent-scans-table";
+import { DashboardGrid } from "./components/dashboard-grid";
+import { DashboardList } from "./components/dashboard-list";
+import { DashboardScansSection } from "./components/dashboard-sectionts/dashboard-scans-sections";
+import { DashboardStatsSection } from "./components/dashboard-sectionts/dashboard-stats-section";
+import { DashboardTopScannedSection } from "./components/dashboard-sectionts/dashboard-top-scanned-section";
+import { DashboardUsageChart } from "./components/dashboard-usage-chart";
 
 export default function DashboardPage() {
-  const [dateRange, setDateRange] = useState({
-    from: new Date(2025, 3, 1),
-    to: new Date(2025, 4, 5),
-  })
+  const qrCodeStats = getQrCodeStats();
+  const qrCodeScans = getQrCodeScans("7_DAYS");
+  const getTopQrCodes = getTopQrCodesScan();
 
   return (
     <div className="container mx-auto p-6">
@@ -30,66 +47,18 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-gray-400">Manage and analyze your QR codes</p>
         </div>
-        <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4" />
-          Create QR Code
+        <Button className="h-10 py-2 w-full md:max-w-[200px]" asChild>
+          <Link href="/home/new" className="">
+            <Plus className="my-auto h-4 w-4" />
+            <p className="my-auto">Create QR Code</p>
+          </Link>
         </Button>
       </div>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-4">
-        <StatCard
-          title="Total QR Codes"
-          value="24"
-          icon={<QrCode className="h-5 w-5 text-blue-400" />}
-          trend="+3 this month"
-          trendUp={true}
-        />
-        <StatCard
-          title="Total Scans"
-          value="1,248"
-          icon={<Smartphone className="h-5 w-5 text-green-400" />}
-          trend="+12% from last month"
-          trendUp={true}
-        />
-        <StatCard
-          title="Active QR Codes"
-          value="22"
-          icon={<Link className="h-5 w-5 text-purple-400" />}
-          trend="92% active rate"
-          trendUp={true}
-        />
-        <StatCard
-          title="Expiring Soon"
-          value="2"
-          icon={<Calendar className="h-5 w-5 text-yellow-400" />}
-          trend="Expires in 7 days"
-          trendUp={false}
-        />
-      </div>
+      <DashboardStatsSection qrCodeStatus={qrCodeStats} />
 
       <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-full lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Scan Activity</CardTitle>
-              <CardDescription>QR code scans over time</CardDescription>
-            </div>
-            <Select defaultValue="30days">
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Select period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7days">Last 7 days</SelectItem>
-                <SelectItem value="30days">Last 30 days</SelectItem>
-                <SelectItem value="90days">Last 90 days</SelectItem>
-                <SelectItem value="year">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-          </CardHeader>
-          <CardContent>
-            <ScanActivityChart />
-          </CardContent>
-        </Card>
+        <DashboardScansSection qrCodeScans={qrCodeScans} />
 
         <Card>
           <CardHeader>
@@ -97,7 +66,7 @@ export default function DashboardPage() {
             <CardDescription>Most scanned QR codes</CardDescription>
           </CardHeader>
           <CardContent>
-            <TopQrCodes />
+            <DashboardTopScannedSection getTopQrCodes={getTopQrCodes} />
           </CardContent>
         </Card>
 
@@ -107,7 +76,7 @@ export default function DashboardPage() {
             <CardDescription>Scans by device type</CardDescription>
           </CardHeader>
           <CardContent>
-            <DeviceUsageChart />
+            <DashboardUsageChart />
           </CardContent>
         </Card>
 
@@ -117,7 +86,7 @@ export default function DashboardPage() {
             <CardDescription>Geographic distribution of scans</CardDescription>
           </CardHeader>
           <CardContent>
-            <ScanLocationMap />
+            <DashboardScanLocationMap />
           </CardContent>
         </Card>
       </div>
@@ -127,7 +96,9 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <CardTitle>Your QR Codes</CardTitle>
-              <CardDescription>Manage and track all your QR codes</CardDescription>
+              <CardDescription>
+                Manage and track all your QR codes
+              </CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
               <div className="flex items-center gap-2">
@@ -144,7 +115,9 @@ export default function DashboardPage() {
                     <SelectItem value="phone">Phone</SelectItem>
                   </SelectContent>
                 </Select>
-                <DatePickerWithRange date={dateRange} setDate={setDateRange} />
+                <DatePickerWithRange
+                  date={{ to: new Date(), from: new Date() }}
+                />
                 <Button variant="outline" size="icon">
                   <Filter className="h-4 w-4" />
                 </Button>
@@ -169,10 +142,10 @@ export default function DashboardPage() {
               </Button>
             </div>
             <TabsContent value="grid">
-              <QrCodeGrid />
+              <DashboardGrid />
             </TabsContent>
             <TabsContent value="list">
-              <QrCodeList />
+              <DashboardList />
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -184,10 +157,9 @@ export default function DashboardPage() {
           <CardDescription>Latest scans of your QR codes</CardDescription>
         </CardHeader>
         <CardContent>
-          <RecentScansTable />
+          <DashboardScansTable />
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

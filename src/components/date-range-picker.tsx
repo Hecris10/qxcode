@@ -2,27 +2,25 @@
 
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import type * as React from "react";
 import type { DateRange } from "react-day-picker";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Button } from "~/components/ui/button";
+import { Calendar } from "~/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
 
 interface DatePickerWithRangeProps {
   date: DateRange | undefined;
-  setDate: React.Dispatch<React.SetStateAction<DateRange>>;
+  // setDate: React.Dispatch<React.SetStateAction<DateRange>>;
   className?: string;
 }
 
 export function DatePickerWithRange({
   date,
-  setDate,
   className,
 }: DatePickerWithRangeProps) {
   return (
@@ -58,9 +56,9 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={(newDate) => {
-              if (newDate) setDate(newDate);
-            }}
+            // onSelect={(newDate) => {
+            //   if (newDate) setDate(newDate);
+            // }}
             numberOfMonths={2}
           />
         </PopoverContent>

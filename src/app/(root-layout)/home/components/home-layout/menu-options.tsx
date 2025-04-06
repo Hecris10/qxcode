@@ -52,7 +52,7 @@ export const MenuOptions = async () => {
           <Tooltip content="Dashboard">
             <Link
               className="flex w-full hover:bg-blue4 p-2 rounded-lg gap-3"
-              href="/home"
+              href="/home/dashboard"
             >
               <LayoutDashboard className="w-8 h-8 m-0" />
               <HorizontalCollapser isCollapsed={!open}>
