@@ -16,9 +16,9 @@ export const getUserLogos = async () => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
     },
-    cache: "force-cache",
+    cache: "no-cache",
     next: {
-      tags: [fetchTags.logos,],
+      tags: [fetchTags.logos],
     },
   });
 
@@ -32,7 +32,7 @@ export const uploadUserLogoAction = async (
     const user = await getAuthUser();
     if (!user) return null;
     const fileName = `logo-${user.id}-${file.name}`;
-    const blob = await put(fileName, file, {
+    const blob = await put(`/logos/${fileName}`, file, {
       access: "public",
     });
     const userToken = await getUserToken();

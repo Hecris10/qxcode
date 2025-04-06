@@ -31,6 +31,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.4.2",
     "jsonwebtoken": "^9.0.2",
     "lottie-react": "^2.4.1",
@@ -40,14 +41,17 @@
     "qrcode-with-logos": "^1.1.1",
     "react": "19.0.0",
     "react-color-palette": "^7.3.0",
+    "react-day-picker": "8.10.1",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.4.0",
     "react-international-phone": "^4.5.0",
+    "recharts": "^2.15.2",
     "sonner": "^1.7.3",
     "state-in-url": "^4.1.10",
     "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uniqolor": "^1.1.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

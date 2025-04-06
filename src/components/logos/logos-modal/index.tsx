@@ -34,6 +34,8 @@ export const LogosModal = ({
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
 
+  console.log({ userLogos });
+
   const onConfirmSelectLogo = () => {
     if (selectedLogo) {
       onSelect(selectedLogo);

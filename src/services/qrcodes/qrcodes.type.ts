@@ -93,3 +93,26 @@ export interface UpdateQrCodeForm {
   logoPadding?: number;
   qrCodeBorderRadius?: number;
 }
+
+export interface QrCodeStats {
+  totalQrCodes: number;
+  totalQrCodesDifference: number;
+  totalScans: number;
+  totalScansDifferencePercent: number;
+  activeQrCodes: number;
+  activeQrCodesDifferencePercent: number;
+  expiringThisWeek: number;
+  expiringDifferencePercent: number;
+}
+
+export type QrCodesScansFilter = "30_DAYS" | "7_DAYS" | "90_DAYS" | "LAST_YEAR";
+export type QrCodesScan = {
+  date: string;
+  scans: number;
+};
+
+export interface TopQrCode {
+  id: number;
+  name: string;
+  scanCount: number;
+}

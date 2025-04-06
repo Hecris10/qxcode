@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { Button } from "~/components/ui/button";
 import { getQrCodeViewMode } from "~/services/qrcodes/qrcodes";
 import { AllQrCodes } from "./components/qr-code-display/all-qr-codes";
 import { QrCodeDisplayButton } from "./components/qr-code-display/qr-code-display-button";
@@ -12,13 +13,12 @@ export default async function Home({ searchParams }: PageProps) {
     <main className="container mx-auto px-4 py-12">
       <div className="relative">
         <div className="absolute flex justify-between gap-3 left-0 w-full top-20 md:top-16">
-          <Link
-            href="/home/new"
-            className="bg-white text-black rounded-lg py-2 w-full md:max-w-[200px] flex align-middle justify-center gap-2"
-          >
-            <Plus className="my-auto h-4 w-4" />
-            <p className="my-auto">Create QR Code</p>
-          </Link>
+          <Button className="h-10 py-2 w-full md:max-w-[200px]" asChild>
+            <Link href="/home/new" className="">
+              <Plus className="my-auto h-4 w-4" />
+              <p className="my-auto">Create QR Code</p>
+            </Link>
+          </Button>
           <QrCodeDisplayButton isGridMode={isGridMode} />
         </div>
         <div className="w-full flex flex-col h-full gap-28">
