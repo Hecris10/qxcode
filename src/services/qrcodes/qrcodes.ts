@@ -57,7 +57,6 @@ export const getQrCodeById = async (id: number) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
     },
-    cache: "force-cache",
     next: {
       tags: [fetchTags.qrCodes, `qr-code-${id}`],
     },
@@ -210,6 +209,8 @@ export const updatePartialQrCode = async ({
       id: qrCode.id,
       content: qrCode.content,
     } as QrCode;
+
+    console.log({ qrCodeData });
 
     if (qrCode.type === "link" && qrCode.isControlled !== data.isControlled) {
       if (data.isControlled) {
