@@ -4,11 +4,12 @@ import { Link as LinkIcon, Mail, Phone, QrCode, Wifi } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "../logo";
 import { Card } from "../ui/card";
+import { GoogleLoginButton } from "./google-login-button";
 import { MainLoginForm } from "./main-login-form";
 
 export const Login = () => {
   return (
-    <main className="container mx-auto px-4 py-12">
+    <main className="container mx-auto  px-4 py-12">
       <div className="text-center mb-16 relative">
         <motion.div
           className="absolute right-0 hidden lg:block"
@@ -119,6 +120,7 @@ export const Login = () => {
               Sign in to QxCode
             </h2>
             <MainLoginForm />
+            <GoogleLoginButton />
             <div className="text-center mt-4">
               <Link href="/register" className="text-slate-400">
                 {`Don't have an account? Click here to register`}

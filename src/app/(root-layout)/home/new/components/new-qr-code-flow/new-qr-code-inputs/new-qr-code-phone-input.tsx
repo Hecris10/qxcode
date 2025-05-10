@@ -1,5 +1,5 @@
-import { Label } from "~/components/ui/label";
-import { PhoneNumberInput } from "~/components/ui/phone-number-input/phone-number-input";
+import { Label } from "@/components/ui/label";
+import { PhoneNumberInput } from "@/components/ui/phone-number-input/phone-number-input";
 
 export const NewQrCodePhoneInput = ({
   defaultValue,

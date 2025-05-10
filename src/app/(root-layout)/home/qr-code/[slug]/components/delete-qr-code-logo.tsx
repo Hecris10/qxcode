@@ -1,9 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { FormButton } from "@/components/form-button";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
-import { deleteQrCodeLogo } from "~/services/qrcodes/qrcodes";
 
 export const DeleteQrCodeLogoButton = ({
   qrCodeId,
@@ -11,39 +10,46 @@ export const DeleteQrCodeLogoButton = ({
   isLogoSet,
   onLogoDelete,
 }: {
-  qrCodeId: number;
-  logoId: number;
+  qrCodeId: string;
+  logoId: string;
   isLogoSet: boolean;
   onLogoDelete: () => Promise<void>;
 }) => {
-  const [isPendingDeleteQrCode, startTransition] = useTransition();
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["deleteQrCodeLogo", isLogoSet],
+    mutationFn: async (logoId: string) => {
+      if (!isLogoSet) return await onLogoDelete();
+      toast.loading("Deleting logo...", {
+        id: "delete-logo",
+      });
+      const res = await fetch(`/api/qr-code/${qrCodeId}/logo/${logoId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Error deleting logo");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Logo deleted successfully", {
+        id: "delete-logo",
+      });
+      onLogoDelete();
+    },
+    onError: (error) => {
+      toast.error("Error deleting logo", {
+        id: "delete-logo",
+      });
+    },
+  });
 
-  const onSubmit = () =>
-    toast.promise(onDeleteQrCodeLogo(), {
-      loading: "Deleting logo...",
-      success: () => {
-        return "The Logo has been deleted successfully";
-      },
-      error: "There was an error deleting the logo",
-    });
-
-  const onDeleteQrCodeLogo = async () => {
-    if (!isLogoSet) return await onLogoDelete();
-
-    startTransition(async () => {
-      const res = await deleteQrCodeLogo(qrCodeId, logoId);
-      if (!res) throw new Error("Error deleting logo");
-      await onLogoDelete();
-    });
-  };
+  const handleDeleteLogo = () => mutate(logoId);
 
   return (
     <FormButton
       buttonClassNames="w-full"
-      isLoading={isPendingDeleteQrCode}
+      isLoading={isPending}
       variant="destructive"
       type="button"
-      onClick={onSubmit}
+      onClick={handleDeleteLogo}
     >
       Remove logo
     </FormButton>

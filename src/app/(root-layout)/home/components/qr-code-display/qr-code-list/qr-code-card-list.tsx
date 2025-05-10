@@ -1,5 +1,4 @@
-import { encrypt } from "~/services/crypt";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
+import { QrCode } from "@/server/db/qr-code-schema.utils";
 import { QrCodeCardListDisplay } from "./qr-code-list-display";
 
 export const QrCodeCardList = ({
@@ -9,9 +8,7 @@ export const QrCodeCardList = ({
   qrCode: QrCode;
   locale: string;
 }) => {
-  const encryptedId = encrypt(qrCode.id.toString());
-  const encodedURI = encodeURIComponent(encryptedId);
-  const url = `/home/qr-code/${encodedURI || ""}`;
+  const url = `/home/qr-code/${qrCode.uuid || ""}`;
 
   return <QrCodeCardListDisplay qrCode={qrCode} url={url} locale={locale} />;
 };

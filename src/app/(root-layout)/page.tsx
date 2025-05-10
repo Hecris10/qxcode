@@ -1,7 +1,7 @@
+import { Login } from "@/components/login";
+import { getServerSession } from "@/server/actions/session-actions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Login } from "~/components/login";
-import { isUserLoggedIn } from "~/services/auth/auth-actions";
 
 export const metadata: Metadata = {
   title: "QX Code | Login",
@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Index() {
-  const auth = await isUserLoggedIn();
+  const auth = await getServerSession();
 
-  if (auth.isAuth) {
+  if (auth) {
     redirect("/home");
   }
 

@@ -1,3 +1,7 @@
+import { HorizontalCollapser } from "@/components/horizontal-collapser";
+import { Logo } from "@/components/logo";
+import { Tooltip } from "@/components/ui/tooltip";
+
 import {
   HelpCircle,
   Home,
@@ -6,18 +10,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { BsPerson } from "react-icons/bs";
-import { HorizontalCollapser } from "~/components/horizontal-collapser";
-import { Logo } from "~/components/logo";
-import { Tooltip } from "~/components/ui/tooltip";
-import { getUserToken } from "~/services/auth/get-user-token";
 import { QuantyCircle } from "./quantity-circle-chart";
 
 const open = true;
 
-export const MenuOptions = async () => {
-  const userToken = (await getUserToken()) || "";
+export const MenuOptions = () => {
   return (
-    <div className="flex flex-col gap-4 text-sm">
+    <div className="flex flex-col gap-4 text-sm ">
       <div className="flex w-full gap-3 mx-auto">
         <Logo className=" h-12 w-12 md:w-20 md:h-20 m-0" />
         <HorizontalCollapser isCollapsed={!open}>
@@ -89,7 +88,7 @@ export const MenuOptions = async () => {
           </Tooltip>
         </div>
         <div className="my-4">
-          <QuantyCircle userToken={userToken} />
+          <QuantyCircle />
         </div>
       </div>
     </div>

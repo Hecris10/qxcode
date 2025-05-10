@@ -1,43 +1,55 @@
-import { decrypt } from "~/services/crypt";
-import { getUserLogos } from "~/services/logos/userLogos";
-import { getQrCodeById, getQrCodeNameById } from "~/services/qrcodes/qrcodes";
-import { QrCodeView } from "./components/qr-code-view";
-import { Metadata, ResolvingMetadata } from "next";
+import { auth } from "@/lib/auth";
+import { db } from "@/server/prisma";
+import { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { QrCodeServerWrapper } from "./components/qr-code-server-wrapper";
 
-export async function generateMetadata(
-  props: PageProps
-): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  //check session
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session || !session.user) {
+    redirect("/");
+  }
+
   // read route params
   const params = await props.params;
   const slug = params.slug;
 
-  const decodedURI = decodeURIComponent(slug);
-  const decryptedId = decrypt(decodedURI);
-  const qrCodeName = await getQrCodeNameById(+decryptedId);
+  const uri = decodeURIComponent(slug);
+
+  const qrCode = await db.qRCode.findFirst({
+    where: {
+      uuid: uri,
+      userId: session.user.id,
+    },
+    select: {
+      name: true,
+    },
+  });
+  const name = qrCode?.name;
+  if (!name) {
+    redirect("/not-found");
+  }
 
   return {
-    title: `QX Code | ${qrCodeName}`,
-    description: `Your codes last forever - ${qrCodeName}`,
-  }
+    title: `QX Code | ${name}`,
+    description: `Your codes last forever - ${name}`,
+  };
 }
 
-
-
 export default async function QrCodePage(props: PageProps) {
-
   const params = await props.params;
   const slug = params.slug;
 
   const decodedURI = decodeURIComponent(slug);
 
-  const decryptedId = decrypt(decodedURI);
+  if (!decodedURI || !slug) {
+    redirect("/not-found");
+  }
 
-  const qrCode = await getQrCodeById(+decryptedId);
-  const userLogos = getUserLogos();
-
-  return (
-    <div className=" container mx-auto px-4 py-12 flex align-middle justify-center w-full home-layout">
-      <QrCodeView logos={userLogos} qrCode={qrCode} />
-    </div>
-  );
+  return <QrCodeServerWrapper uuid={decodedURI} />;
 }

@@ -1,8 +1,8 @@
+import { capitalizeText } from "@/utils/strings";
+import { QrCodeType } from "@prisma/client";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useLayoutEffect, useState } from "react";
 import { useUrlState } from "state-in-url/next";
-import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
-import { capitalizeText } from "~/utils/strings";
 
 type NewQrCodeFlowProps = {
   position: number;
@@ -12,9 +12,11 @@ type NewQrCodeFlowProps = {
   password?: string;
   ssid?: string;
   security?: string;
+  isControlled?: boolean;
 };
 
 export const newQrCodeDefault: NewQrCodeFlowProps = {
+  isControlled: false,
   name: "",
   type: "text",
   content: "",
@@ -25,6 +27,7 @@ export const newQrCodeDefault: NewQrCodeFlowProps = {
 };
 
 export type FormError = {
+  isControlled?: string;
   name?: string;
   type?: string;
   content?: string;
@@ -47,20 +50,27 @@ export const useNewQrCode = ({
   const quantityExpired = useState(false);
 
   useLayoutEffect(() => {
-    if (urlState.position < 0 || urlState.position > 2) router.push("/404");
+    if (urlState.position < 0 || urlState.position > 4) router.push("/404");
   }, [urlState.position, router]);
 
   const moveForward = () => {
     switch (urlState.position) {
       case 0:
+        if (!urlState.isControlled)
+          return setErrors({
+            ...errors,
+            isControlled: "Controlled is required!",
+          });
+        break;
+      case 1:
         if (!urlState.type)
           return setErrors({ ...errors, type: "Type is required!" });
         break;
-      case 1:
+      case 2:
         if (!urlState.name)
           return setErrors({ ...errors, name: "Name is required!" });
         break;
-      case 2:
+      case 3:
         if (!urlState.content)
           return setErrors({ ...errors, content: "Content is required!" });
 
@@ -73,7 +83,7 @@ export const useNewQrCode = ({
         break;
     }
 
-    urlState.position < 2 &&
+    urlState.position < 3 &&
       setUrl(() => ({ ...urlState, position: urlState.position + 1 }));
   };
   const moveBackward = () =>

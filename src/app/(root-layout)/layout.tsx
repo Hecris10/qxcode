@@ -1,11 +1,11 @@
+import { LoginLayout } from "@/components/login-layout";
+import { Providers } from "@/components/providers";
+import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter as FontSans, Inter } from "next/font/google";
 import "react-color-palette/css";
 import "react-international-phone/style.css";
-import { LoginLayout } from "~/components/login-layout";
-import { cn } from "~/lib/utils";
 import "../globals.css";
-import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html suppressHydrationWarning>
-      <body className={cn(inter.className, fontSans.className, "bg-dark")}>
+      <body className={cn(inter.className, fontSans.className, "bg-blue3")}>
         <Providers>
           <LoginLayout>{children}</LoginLayout>
         </Providers>

@@ -1,17 +1,14 @@
-import { encrypt } from "~/services/crypt";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
+import { QrCode } from "@/server/db/qr-code-schema.utils";
 import { QrCodeCardGridDisplay } from "./qr-code-card-grid-display";
 
-export const QrCodeCardGrid = async ({
+export const QrCodeCardGrid = ({
   qrCode,
   locale,
 }: {
   qrCode: QrCode;
   locale: string;
 }) => {
-  const encryptedId = encrypt(qrCode.id.toString());
-  const encodedURI = encodeURIComponent(encryptedId);
-  const url = `/home/qr-code/${encodedURI || ""}`;
+  const url = `/home/qr-code/${qrCode.uuid}`;
 
   return <QrCodeCardGridDisplay qrCode={qrCode} url={url} locale={locale} />;
 };

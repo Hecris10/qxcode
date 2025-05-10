@@ -1,8 +1,5 @@
 "use client";
-import { Collapsible, useFileUpload } from "@ark-ui/react";
-import { ReactNode, Suspense, use, useState, useTransition } from "react";
-import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
+import { FormButton } from "@/components/form-button";
 import {
   Dialog,
   DialogContent,
@@ -11,30 +8,31 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-import { FileUploader } from "~/components/ui/file-uploader";
-import { Logo } from "~/services/logos/logos.type";
-import { uploadUserLogoAction } from "~/services/logos/userLogos";
+} from "@/components/ui/dialog";
+import { FileUploader } from "@/components/ui/file-uploader";
+
+import { useGetUserLogos } from "@/hooks/logos/useGetUserLogos";
+import { useUploadQrLogo } from "@/hooks/logos/useUploadUserLogo";
+import { Logo } from "@/server/db/logo-schema.utilts";
+import { Collapsible, useFileUpload } from "@ark-ui/react";
+import { ReactNode, Suspense, useState } from "react";
+import { toast } from "sonner";
 import { SelectLogoItem } from "../selectable-logo-item";
 import { LogosGridLoading } from "./logos-grid/logos-grid-loading";
 
 export const LogosModal = ({
   children,
-  logos,
   onSelect,
   name,
 }: {
   children: ReactNode;
-  logos: Promise<Logo[]>;
   onSelect: (file: Logo) => void;
   name?: string;
 }) => {
-  const userLogos = use(logos);
+  const { logos } = useGetUserLogos();
+  const { uploadLogo, isPendingUploadingLogos } = useUploadQrLogo();
   const [selectedLogo, setSelectedLogo] = useState<Logo | null>(null);
-  const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-
-  console.log({ userLogos });
 
   const onConfirmSelectLogo = () => {
     if (selectedLogo) {
@@ -45,30 +43,33 @@ export const LogosModal = ({
 
   const fileUpload = useFileUpload({
     maxFiles: 1,
-    onFileAccept: (e) =>
-      startTransition(async () => {
-        const file = e.files[0];
-        //max file size is 1MB
-        if (file.size > 1000000) {
-          toast.error(
-            `File size is too large (${
-              (file.size / 1000000).toFixed(2) || 0
-            } MB), max file size is 1MB`,
-            {
-              duration: 5000,
-            }
-          );
-          return;
-        }
-        if (selectedLogo) setSelectedLogo(null);
-        toast.promise(uploadUserLogoAction(e.files[0]), {
-          loading: "Uploading...",
-          success: () => {
-            return `Your logo was uploaded successfully`;
-          },
-          error: "Error",
-        });
-      }),
+    onFileAccept: async (e) => {
+      const file = e.files[0];
+      //max file size is 1MB
+      if (!file) {
+        toast.error("No file selected");
+        return;
+      }
+      if (file.size > 1000000) {
+        toast.error(
+          `File size is too large (${
+            (file.size / 1000000).toFixed(2) || 0
+          } MB), max file size is 1MB`,
+          {
+            duration: 5000,
+          }
+        );
+        return;
+      }
+      if (selectedLogo) setSelectedLogo(null);
+
+      try {
+        uploadLogo(file);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        toast.error("Failed to upload file");
+      }
+    },
   });
 
   const onSelectLogo = (logo: Logo) =>
@@ -97,7 +98,7 @@ export const LogosModal = ({
         <div className="h-full max-h-[35vh] overflow-y-auto">
           <Suspense fallback={<LogosGridLoading />}>
             <section className="grid grid-cols-4 md:grid-cols-6 gap-4 py-4">
-              {userLogos.map((logo) => (
+              {logos.map((logo) => (
                 <SelectLogoItem
                   isSelected={selectedLogo?.id === logo.id}
                   key={`logo-${logo.id}`}
@@ -117,7 +118,7 @@ export const LogosModal = ({
             <Collapsible.Content>
               <FormButton
                 onClick={onConfirmSelectLogo}
-                isLoading={isPending}
+                isLoading={isPendingUploadingLogos}
                 loadingElement="Uploading..."
                 buttonClassNames="w-full bg-white text-black"
                 variant="button"

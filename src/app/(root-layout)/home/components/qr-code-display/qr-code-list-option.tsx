@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { QrCode } from "@/server/db/qr-code-schema.utils";
 import { Download, Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "~/components/ui/button";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
 import { QrCodeDropdownMenu } from "../qr-code-dropdown-menu";
 import { QrCodeDropDownOptions } from "../qr-code-dropdown-menu/qr-code-dropdown-menu.type";
 

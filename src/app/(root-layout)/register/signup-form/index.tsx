@@ -1,131 +1,150 @@
 "use client";
+import { FormButton } from "@/components/form-button";
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SingleDatePicker } from "@/components/ui/single-date-picker";
+import { authClient } from "@/lib/client";
 import { DateValue } from "@ark-ui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
-import { Label } from "@radix-ui/react-label";
+import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { Input } from "~/components/ui/input";
-import { PhoneNumberInput } from "~/components/ui/phone-number-input/phone-number-input";
-import { SingleDatePicker } from "~/components/ui/single-date-picker";
-
-import { useFormValues } from "~/hooks/useFormValues";
-import { ServerRequest } from "~/services/api/api";
-import { signupUser } from "~/services/user/user-actions";
-import { SignUpUserValidation } from "~/services/user/users";
-import { getDateMask } from "~/utils/dates";
 
 export const SignupForm = ({ locale }: { locale: string }) => {
   const todayDate = today(getLocalTimeZone());
-  const [response, setResponse] = useState<ServerRequest<SignUpUserValidation>>(
-    {} as ServerRequest<SignUpUserValidation>
-  );
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const { handleChange, getValue } = useFormValues<SignUpUserValidation>();
 
-  const formAction = async (e: FormData) => {
-    startTransition(async () => {
-      setResponse({} as ServerRequest<SignUpUserValidation>);
-      const res = await signupUser(e);
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      dateOfBirth: "",
+      phone: "",
+      password: "",
+      repeatPassword: "",
+    },
 
-      setResponse(res);
-      if (res.serverSucess) {
-        setTimeout(() => {
-          toast.success("", {
-            description: "Your account was created successfully",
-            duration: 5000,
-          });
-          router.push("/");
-        }, 1000);
-      }
-      if (res.serverError) {
-        toast.error("", {
-          description: "Something went wrong, please try again",
-          duration: 5000,
-        });
-      }
-    });
+    onSubmit: async ({ value }) => {
+      await authClient.signUp.email(
+        {
+          email: value.email,
+          password: value.password,
+          name: value.name,
+          // dateOfBirth: new Date(value.dateOfBirth).getTime(),
+          callbackURL: "/",
+        },
+        {
+          onSuccess: () => {
+            router.push("/home");
+          },
+          onError: (error) => {
+            console.log({ error });
+            toast.error(
+              error.error.message ||
+                "An error occurred while creating your account. Please try again."
+            );
+          },
+        }
+      );
+    },
+  });
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    form.handleSubmit();
   };
-
-  const getInputError = (field: keyof SignUpUserValidation) =>
-    response[field] as string;
-  const getInputValue = (key: keyof SignUpUserValidation) =>
-    getValue(key) as string;
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    handleChange(e.target.name as keyof SignUpUserValidation, e.target.value);
 
   return (
     <form
-      action={formAction}
+      onSubmit={onSubmit}
       className="flex py-8 flex-col w-full my-auto gap-1"
     >
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Nome
         </Label>
-        <Input
+        <form.Field
           name="name"
-          placeholder="Your complete name"
-          defaultValue={getInputValue("name")}
-          onChange={onInputChange}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={"Name is required"}
-          inError={getInputError("name") === "required"}
-        />
+          validators={{
+            onChange: ({ value }) => (!value ? "Name is required" : undefined),
+          }}
+        >
+          {(field) => (
+            <>
+              <Input
+                name={field.name}
+                placeholder="Your complete name"
+                defaultValue={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <ErrorAlert
+                className="mx-1"
+                message={field.state.meta.errors.join(", ")}
+                inError={!field.state.meta.isValid}
+              />
+            </>
+          )}
+        </form.Field>
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Birthdate
         </Label>
-        <SingleDatePicker
-          max={todayDate as unknown as DateValue}
-          locale={locale}
+        <form.Field
           name="dateOfBirth"
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={"Birthdate is required"}
-          inError={getInputError("dateOfBirth") == "required"}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={`Birthdate should be in format ${getDateMask(locale)} `}
-          inError={response.dateOfBirth === "Invalid"}
-        />
+          validators={{
+            onChange: ({ value }) =>
+              !value ? "Birthdate is required" : undefined,
+          }}
+        >
+          {(field) => (
+            <>
+              <SingleDatePicker
+                max={todayDate as unknown as DateValue}
+                locale={locale}
+                name={field.name}
+                onDateChange={(value) => field.handleChange(value)}
+              />
+              <ErrorAlert
+                className="mx-1"
+                message={field.state.meta.errors.join(", ")}
+                inError={!field.state.meta.isValid}
+              />
+            </>
+          )}
+        </form.Field>
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Email
         </Label>
-        <Input
+        <form.Field
           name="email"
-          autoComplete="current-email"
-          placeholder="Your email address"
-          defaultValue={getInputValue("email")}
-          onChange={onInputChange}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message="Invalid format"
-          inError={getInputError("email") === "invalid"}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message="Email is required"
-          inError={getInputError("email") === "required"}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message="This Email already exists"
-          inError={getInputError("email") === "AlreadyExists"}
-        />
+          validators={{
+            onChange: ({ value }) => (!value ? "Email is required" : undefined),
+          }}
+        >
+          {(field) => (
+            <>
+              <Input
+                name={field.name}
+                autoComplete="current-email"
+                placeholder="Your email address"
+                defaultValue={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <ErrorAlert
+                className="mx-1"
+                message={field.state.meta.errors.join(", ")}
+                inError={!field.state.meta.isValid}
+              />
+            </>
+          )}
+        </form.Field>
       </div>
-      <div className="flex flex-col gap-1">
+      {/* <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="email">
           Phone number
         </Label>
@@ -140,50 +159,79 @@ export const SignupForm = ({ locale }: { locale: string }) => {
           message="This Phone Number already exists"
           inError={getInputError("phoneNumber") === "AlreadyExists"}
         />
-      </div>
+      </div> */}
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="password">
           Password
         </Label>
-        <Input
+        <form.Field
           name="password"
-          autoComplete="current-password"
-          placeholder="Your password"
-          type="password"
-          defaultValue={getInputValue("password")}
-          onChange={onInputChange}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={"Password is required"}
-          inError={getInputError("password") === "required"}
-        />
+          validators={{
+            onChange: ({ value }) =>
+              !value ? "Password is required" : undefined,
+          }}
+        >
+          {(field) => (
+            <>
+              <Input
+                name={field.name}
+                autoComplete="current-password"
+                placeholder="Your password"
+                type="password"
+                defaultValue={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <ErrorAlert
+                className="mx-1"
+                message={field.state.meta.errors.join(", ")}
+                inError={!field.state.meta.isValid}
+              />
+            </>
+          )}
+        </form.Field>
       </div>
       <div className="flex flex-col gap-1">
         <Label className="text-white ml-2" htmlFor="password">
           Repat password
         </Label>
-        <Input
+        <form.Field
+          asyncDebounceMs={200}
           name="repeatPassword"
-          autoComplete="current-password"
-          placeholder="Your password"
-          type="password"
-          defaultValue={getInputValue("repeatPassword")}
-          onChange={onInputChange}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={"Password is required"}
-          inError={getInputError("repeatPassword") === "required"}
-        />
-        <ErrorAlert
-          className="mx-1"
-          message={"Passwords don't match"}
-          inError={getInputError("repeatPassword") === "NoMatch"}
-        />
+          validators={{
+            onChange: ({ value, fieldApi }) => {
+              if (value !== fieldApi.form.getFieldValue("password")) {
+                return "Passwords do not match";
+              }
+            },
+            onBlur: ({ value, fieldApi }) => {
+              if (value !== fieldApi.form.getFieldValue("password")) {
+                return "Passwords do not match";
+              }
+            },
+          }}
+        >
+          {(field) => (
+            <>
+              <Input
+                name={field.name}
+                autoComplete="current-password"
+                placeholder="Your password"
+                type="password"
+                defaultValue={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <ErrorAlert
+                className="mx-1"
+                message={field.state.meta.errors.join(", ")}
+                inError={!field.state.meta.isValid}
+              />
+            </>
+          )}
+        </form.Field>
       </div>
+
       <FormButton
-        isLoading={isPending}
+        isLoading={form.state.isSubmitting}
         loadingElement="Loading..."
         buttonClassNames="bg-slate-800 mt-4"
       >

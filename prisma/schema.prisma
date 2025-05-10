@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  dateOfBirth   Int?
+  sessions      Session[]
+  accounts      Account[]
+  QRCodes       QRCode[]
+  LogoImages    Logo[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+enum QrCodeType {
+  link
+  wifi
+  text
+  email
+  phone
+}
+
+model QRCode {
+  id                  String             @id @default(cuid())
+  uuid                String             @unique
+  name                String
+  type                QrCodeType         @default(text)
+  content             String
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  text                String? // Optional for text
+  ssid                String? // Optional for WiFi
+  password            String? // Optional for WiFi
+  security            String? // Optional for WiFi
+  link                String?            @default("") // Optional for links 
+  logoId              String? // Optional for logo
+  userId              String
+  user                User               @relation(fields: [userId], references: [id])
+  logo                Logo?              @relation(fields: [logoId], references: [id])
+  backgroundColor     String?            @default("#ffffff") // Optional for background color
+  padding             Float? // Optional for padding
+  logoBackgroundColor String?            @default("#00000000") // Optional for logo background color
+  logoPadding         Float? // Optional for logo padding
+  logoBorderRadius    Float? // Optional for logo border radius
+  cornerType          String?            @default("square") // Optional for corner type
+  dotsType            String?            @default("square") // Optional for dot type
+  cornersColor        String?            @default("#000000") // Optional for corners color
+  nodesColor          String?            @default("#000000") // Optional for nodes color
+  isControlled        Boolean?           @default(false) // Optional for controlled
+  expirationDate      DateTime? // Optional for expiration date
+  qrCodeControllers   QrCodeController[]
+}
+
+model ErrorLog {
+  id         String   @id @default(cuid())
+  statusCode Int?
+  message    String?
+  userId     Int?
+  timestamp  DateTime @default(now())
+  path       String?
+  method     String?
+}
+
+model Logo {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  QRCode    QRCode[]
+}
+
+model QrCodeController {
+  id               String   @id @default(cuid())
+  qrCodeId         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  qrCode           QRCode   @relation(fields: [qrCodeId], references: [id])
+  ip               String
+  userAgent        String
+  ip2              String
+  locale           String
+  referrer         String
+  screenResolution String
+  timestamp        DateTime
+  pageUrl          String
+}

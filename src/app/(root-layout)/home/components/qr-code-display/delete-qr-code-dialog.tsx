@@ -1,9 +1,5 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Trash } from "lucide-react";
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
-import { Button } from "~/components/ui/button";
+import { FormButton } from "@/components/form-button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,45 +7,56 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog";
-import { fetchTags } from "~/config/tags";
+} from "@/components/ui/dialog";
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
 
 export const DeleteQrCodeDialog = ({
   open,
   onOpenChange,
-  onConfirm,
+  qrCodeId,
 }: {
+  qrCodeId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => Promise<boolean>;
 }) => {
   const [pending, formAction] = useTransition();
   const queryClient = useQueryClient();
-  const onDelete = () => {
-    formAction(async () => {
-      try {
-        toast.loading("Deleting QR code...", {
-          id: "delete-qr-code",
-          icon: <Trash className="text-red-500" />,
-        });
-        const res = await onConfirm();
-        onOpenChange(false);
-        toast.success("QR code deleted", {
-          id: "delete-qr-code",
-        });
-        queryClient.invalidateQueries({
-          queryKey: [fetchTags.qrCodeQuantity],
-        });
-      } catch (e) {
-        console.log(e);
-        toast.error("Error deleting QR code", {
-          id: "delete-qr-code",
-        });
-      }
-    });
-  };
+  const router = useRouter();
+  const { mutate } = useMutation({
+    mutationKey: [fetchTags.qrCodes, fetchTags.qrCodeQuantity],
+    mutationFn: async ({ id }: { id: string }) => {
+      toast.loading("Deleting QR code...", {
+        id: "deleteQrCode",
+      });
+      const rest = await client.qrCode.delete.$post({ id });
+      const data = await rest.json();
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("QR code deleted successfully", {
+        id: "deleteQrCode",
+      });
+      queryClient.invalidateQueries({
+        queryKey: [fetchTags.qrCodes],
+        exact: false,
+      });
+      onOpenChange(false);
+    },
+  });
 
   if (!open) return null;
+
+  const onDelete = async () => {
+    if (qrCodeId) {
+      mutate({ id: qrCodeId });
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -81,7 +88,6 @@ export const DeleteQrCodeDialog = ({
               type="button"
               isLoading={pending}
               onClick={onDelete}
-              buttonClassNames="text-red-500"
             >
               Confirm
             </FormButton>

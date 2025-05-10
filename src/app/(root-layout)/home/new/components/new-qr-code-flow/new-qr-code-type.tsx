@@ -1,29 +1,27 @@
 "use client";
+import { SelectableCard } from "@/components/selectable-card";
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { useNewQrCode } from "@/hooks/useNewQrCode";
+import { capitalizeText } from "@/utils/strings";
 import { AtSign, Link, Phone, TypeOutline, Wifi } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { useNewQrCode } from "~/hooks/useNewQrCode";
-import { cn } from "~/lib/utils";
-import { capitalizeText } from "~/utils/strings";
 
 const types = [
   {
     type: "text",
-    icon: TypeOutline,
+    Icon: TypeOutline,
     description: "Create a QR code for a text message.",
   },
-  { type: "link", icon: Link, description: "Create a QR code for a link." },
-  { type: "wifi", icon: Wifi, description: "Create a QR code for a wifi." },
+  { type: "link", Icon: Link, description: "Create a QR code for a link." },
+  { type: "wifi", Icon: Wifi, description: "Create a QR code for a wifi." },
   {
     type: "email",
-    icon: AtSign,
+    Icon: AtSign,
     description: "Create a QR code for an email.",
   },
   {
     type: "phone",
-    icon: Phone,
+    Icon: Phone,
     description: "Create a QR code for a phone number.",
   },
 ];
@@ -58,31 +56,16 @@ export const NewQrCodeType = ({
       </div>
       <div className="grid p-1 w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {types.map((selectedType) => (
-          <Button
-            tabIndex={isSelected ? 0 : -1}
-            data-selected={selectedType.type === type}
-            type="button"
-            onClick={() => onClick(selectedType.type)}
-            className={cn(
-              "h-full w-full p-0 m-0 border border-transparent transition-all duration-200 ease-linear",
-              "data-[selected=true] data-[selected=true]:border-gray-200 data-[selected=true]:bg-slate-800"
-            )}
+          <SelectableCard
             key={selectedType.type}
-            variant="ghost"
-          >
-            <Card className="w-full h-full">
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {capitalizeText(selectedType.type)}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {
-                  <selectedType.icon className="text-center mx-auto w-14 h-14" />
-                }
-              </CardContent>
-            </Card>
-          </Button>
+            onClick={() => onClick(selectedType.type)}
+            isSelected={isSelected}
+            dataSelected={selectedType.type === type}
+            icon={
+              <selectedType.Icon className="text-center mx-auto w-14 h-14" />
+            }
+            title={capitalizeText(selectedType.type)}
+          />
         ))}
       </div>
       <ErrorAlert
@@ -92,7 +75,7 @@ export const NewQrCodeType = ({
       />
       <div className="m-4">
         {selectedType !== -1 ? (
-          <p className="text-gray-400 ">{types[selectedType].description}</p>
+          <p className="text-gray-400 ">{types[selectedType]?.description}</p>
         ) : null}
       </div>
     </div>

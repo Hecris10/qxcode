@@ -1,4 +1,3 @@
-import { TriangleAlert } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,7 +6,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "~/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
+import { TriangleAlert } from "lucide-react";
 
 export const QuantityExpiredDialog = ({
   open,

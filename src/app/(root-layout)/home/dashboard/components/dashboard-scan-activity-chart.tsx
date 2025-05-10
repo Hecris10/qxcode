@@ -1,5 +1,8 @@
 "use client";
 
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
 import {
   Line,
   LineChart,
@@ -8,10 +11,30 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { QrCodesScan } from "~/services/qrcodes/qrcodes.type";
 
-export function DashboardScanActivityChart({ data }: { data: QrCodesScan[] }) {
-  console.log({ data });
+export function DashboardScanActivityChart() {
+  const { data, isLoading } = useQuery({
+    queryKey: [fetchTags.qrCodeScans, fetchTags.qrCodeStats],
+    queryFn: async () => {
+      try {
+        const res = await client.qrCode.getQrCodesScans.$get({
+          filter: "LAST_YEAR",
+        });
+        if (!res.ok) throw new Error("Failed to fetch QR code stats");
+        return res.json();
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+  });
+
+  if (!data)
+    return <div className="h-10 w-full animate-pulse rounded-md bg-gray-800" />;
+
+  if (isLoading)
+    return <div className="h-10 w-full animate-pulse rounded-md bg-gray-800" />;
+
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -48,13 +71,13 @@ export function DashboardScanActivityChart({ data }: { data: QrCodesScan[] }) {
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-400">Date</span>
                         <span className="font-bold text-white">
-                          {payload[0].payload.date}
+                          {payload[0]?.payload.date}
                         </span>
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-400">Scans</span>
                         <span className="font-bold text-blue-400">
-                          {payload[0].value}
+                          {payload[0]?.value}
                         </span>
                       </div>
                     </div>

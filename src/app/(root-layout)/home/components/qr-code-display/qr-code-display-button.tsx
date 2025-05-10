@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { setQrCodeViewMode } from "@/server/actions/cookies-actions";
 import { Grid, List } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Tooltip } from "~/components/ui/tooltip";
-import { cn } from "~/lib/utils";
-import { setQrCodeViewMode } from "~/services/qrcodes/qrcodes";
 
 export const QrCodeDisplayButton = ({
   isGridMode,

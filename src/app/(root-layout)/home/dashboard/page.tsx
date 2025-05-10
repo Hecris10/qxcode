@@ -1,31 +1,27 @@
 // Project: qr-code-generator
 
-import { DatePickerWithRange } from "~/components/date-range-picker";
+import { DatePickerWithRange } from "@/components/date-range-picker";
 
-import { Download, Filter, Plus, Search } from "lucide-react";
-import Link from "next/link";
-import { Button } from "~/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import {
-  getQrCodeScans,
-  getQrCodeStats,
-  getTopQrCodesScan,
-} from "~/services/qrcodes/qrcodes";
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { Download, Filter, Plus, Search } from "lucide-react";
+import Link from "next/link";
 import { DashboardScanLocationMap } from "./components/dahboard-scan-location-map";
 import { DashboardScansTable } from "./components/dashboaard-recent-scans-table";
 import { DashboardGrid } from "./components/dashboard-grid";
@@ -36,10 +32,6 @@ import { DashboardTopScannedSection } from "./components/dashboard-sectionts/das
 import { DashboardUsageChart } from "./components/dashboard-usage-chart";
 
 export default function DashboardPage() {
-  const qrCodeStats = getQrCodeStats();
-  const qrCodeScans = getQrCodeScans("7_DAYS");
-  const getTopQrCodes = getTopQrCodesScan();
-
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -48,17 +40,17 @@ export default function DashboardPage() {
           <p className="text-gray-400">Manage and analyze your QR codes</p>
         </div>
         <Button className="h-10 py-2 w-full md:max-w-[200px]" asChild>
-          <Link href="/home/new" className="">
+          <Link href="/home/new">
             <Plus className="my-auto h-4 w-4" />
             <p className="my-auto">Create QR Code</p>
           </Link>
         </Button>
       </div>
 
-      <DashboardStatsSection qrCodeStatus={qrCodeStats} />
+      <DashboardStatsSection />
 
       <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <DashboardScansSection qrCodeScans={qrCodeScans} />
+        <DashboardScansSection />
 
         <Card>
           <CardHeader>
@@ -66,7 +58,7 @@ export default function DashboardPage() {
             <CardDescription>Most scanned QR codes</CardDescription>
           </CardHeader>
           <CardContent>
-            <DashboardTopScannedSection getTopQrCodes={getTopQrCodes} />
+            <DashboardTopScannedSection />
           </CardContent>
         </Card>
 

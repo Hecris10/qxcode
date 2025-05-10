@@ -38,7 +38,7 @@ export function DashboardUsageChart() {
                         <div className="flex flex-col">
                           <span className="text-xs text-gray-400">Device</span>
                           <span className="font-bold text-white">
-                            {payload[0].name}
+                            {payload[0]?.name}
                           </span>
                         </div>
                         <div className="flex flex-col">
@@ -47,9 +47,9 @@ export function DashboardUsageChart() {
                           </span>
                           <span
                             className="font-bold"
-                            style={{ color: payload[0].payload.color }}
+                            style={{ color: payload[0]?.payload?.color }}
                           >
-                            {payload[0].value}%
+                            {payload[0]?.value}%
                           </span>
                         </div>
                       </div>
