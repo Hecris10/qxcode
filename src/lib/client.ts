@@ -11,8 +11,8 @@ function getBaseUrl() {
   }
 
   // 👇 Use Vercel URL in production
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  if (process.env.BETTER_AUTH_URL) {
+    return `https://${process.env.BETTER_AUTH_URL}`;
   }
 
   // 👇 Default to localhost
