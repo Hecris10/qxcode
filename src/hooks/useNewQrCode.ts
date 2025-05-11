@@ -54,14 +54,11 @@ export const useNewQrCode = ({
   }, [urlState.position, router]);
 
   const moveForward = () => {
-    switch (urlState.position) {
-      case 0:
-        if (!urlState.isControlled)
-          return setErrors({
-            ...errors,
-            isControlled: "Controlled is required!",
-          });
-        break;
+    const state = urlState;
+
+    if (state.isControlled) state.type = "link";
+
+    switch (state.position) {
       case 1:
         if (!urlState.type)
           return setErrors({ ...errors, type: "Type is required!" });
@@ -82,13 +79,25 @@ export const useNewQrCode = ({
         }
         break;
     }
-
-    urlState.position < 3 &&
-      setUrl(() => ({ ...urlState, position: urlState.position + 1 }));
+    if (urlState.position === 0 && urlState.isControlled) {
+      return setUrl(() => ({ ...state, position: 2 }));
+    }
+    if (urlState.position < 3)
+      return setUrl(() => ({ ...state, position: urlState.position + 1 }));
   };
-  const moveBackward = () =>
-    urlState.position > 0 &&
-    setUrl(() => ({ ...urlState, position: urlState.position - 1 }));
+
+  const moveBackward = () => {
+    if (urlState.position <= 0) return;
+
+    const state = urlState;
+
+    if (state.isControlled) state.type = "link";
+
+    if (state.position === 2 && state.isControlled) {
+      return setUrl(() => ({ ...state, position: 0 }));
+    }
+    setUrl(() => ({ ...state, position: state.position - 1 }));
+  };
 
   const setQrCodeType = (type: string) => {
     setUrl(() => ({ ...urlState, type: type as QrCodeType }));
@@ -142,6 +151,10 @@ export const useNewQrCode = ({
     setError(key, `${capitalizeText(key)} is required!`);
   };
 
+  const toggleControlled = () => {
+    setUrl(() => ({ ...urlState, isControlled: !urlState.isControlled }));
+  };
+
   return {
     ...urlState,
     setUrl,
@@ -151,6 +164,7 @@ export const useNewQrCode = ({
     setQrCodeName,
     onChangeWifiValues,
     setQrCodeContent,
+    toggleControlled,
     moveForward,
     moveBackward,
     errors,

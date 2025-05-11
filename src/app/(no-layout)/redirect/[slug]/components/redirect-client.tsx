@@ -52,7 +52,7 @@ export const RedirectClient = ({
     };
 
     onRedirect();
-  }, []);
+  }, [ip, ip2, locale, router, timeStamp, userAgent, uuid]);
 
   return <RedirectLoading />;
 };

@@ -1,7 +1,7 @@
+import { env } from "hono/adapter";
+import uniqolor from "uniqolor";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-
-import uniqolor from "uniqolor";
 import { updateQrCodeInputSchema } from "../db/qr-code-schema.utils";
 import { j, privateProcedure } from "../jstack";
 
@@ -23,9 +23,17 @@ export const qrCodeRouter = j.router({
     )
     .mutation(async ({ ctx, c, input }) => {
       const { db, auth } = ctx;
+      const { BETTER_AUTH_URL } = env(c);
+      const uuid = uuidv4();
+
+      console.log({ input });
+
+      if (input.isControlled && input.type === "link") {
+        input.content = `${BETTER_AUTH_URL}/?redirect=${uuid}`;
+      }
 
       const newQrCode = await db.qRCode.create({
-        data: { ...input, userId: auth?.session?.user.id!, uuid: uuidv4() },
+        data: { ...input, userId: auth?.session?.user.id!, uuid },
       });
       if (!newQrCode) {
         throw new Error("QrCode not created");

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { fetchTags } from "@/config/tags";
 import { useNewQrCode } from "@/hooks/useNewQrCode";
 import { client } from "@/lib/client";
-import { generateWiFiString } from "@/lib/utils";
+import { cn, generateWiFiString } from "@/lib/utils";
 import { QrCodeInput } from "@/server/db/qr-code-schema.utils";
 import { QrCodeType } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
@@ -27,7 +27,6 @@ export const NewQrCodeFlow = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-
   const {
     position,
     type,
@@ -37,9 +36,9 @@ export const NewQrCodeFlow = ({
     setPosition,
     moveForward,
     errors,
-    setErrorRequired,
     setQrCodeName,
     ssid,
+    isControlled,
     password,
     security,
     setQrCodeContent,
@@ -53,7 +52,6 @@ export const NewQrCodeFlow = ({
   const { mutate, isPending } = useMutation({
     mutationKey: [fetchTags.qrCodes, fetchTags.qrCodeQuantity],
     mutationFn: async (reqBody: QrCodeInput) => {
-      console.log("here");
       toast.loading("Creating new QrCode...", {
         id: "creating-qr-code",
       });
@@ -79,15 +77,11 @@ export const NewQrCodeFlow = ({
 
   useEffect(() => {
     const handleErrosSlide = () => {
-      if (errors.isControlled) {
-        return setPosition(0);
-      }
-
-      if (errors.type) {
+      if (errors.type && position !== 1) {
         return setPosition(1);
       }
 
-      if (errors.name) {
+      if (errors.name && position !== 2) {
         return setPosition(2);
       }
       if (errors.content) {
@@ -95,17 +89,17 @@ export const NewQrCodeFlow = ({
       }
 
       // @ts-ignore
-      if (errors.ssid) {
+      if (errors.ssid && position !== 3) {
         return setPosition(3);
       }
       // @ts-ignore
-      if (errors.password) {
+      if (errors.password && position !== 3) {
         return setPosition(3);
       }
     };
 
     handleErrosSlide();
-  }, [errors]);
+  }, [errors, position, setPosition]);
 
   useLayoutEffect(() => {
     toast.dismiss("create-qr-code");
@@ -114,12 +108,15 @@ export const NewQrCodeFlow = ({
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (position < 3) {
       moveForward();
       return;
     }
 
     let reqBody: QrCodeInput = {} as QrCodeInput;
+
+    reqBody.isControlled = isControlled || false;
 
     if ((type as QrCodeType) === "wifi") {
       reqBody = {
@@ -140,6 +137,7 @@ export const NewQrCodeFlow = ({
       return mutate(reqBody);
     } else if (type === "link") {
       const newQrCode = {} as QrCodeInput;
+      newQrCode.isControlled = isControlled || false;
 
       newQrCode.name = name;
       newQrCode.type = type;
@@ -149,6 +147,8 @@ export const NewQrCodeFlow = ({
       return mutate(newQrCode);
     } else {
       const newQrCode = {} as QrCodeInput;
+      newQrCode.isControlled = isControlled || false;
+
       if (type === "phone") {
         newQrCode.content = `tel:${content}`;
       } else if (type === "email") {
@@ -179,14 +179,13 @@ export const NewQrCodeFlow = ({
 
       <form onSubmit={onSubmit} className="w-full">
         <ComponentSlider
-          duration={250}
-          transition="ease-in-out"
+          duration={350}
+          transition="ease-in"
           position={position}
-          autoHeight
           unMountOnExit
         >
           <div className="w-full min-h-[50svh]">
-            <NewQrCodeControlled />
+            <NewQrCodeControlled params={searchParams} />
           </div>
           <div className="w-full pb-1">
             <NewQrCodeType params={searchParams} isSelected={position === 1} />
@@ -200,7 +199,7 @@ export const NewQrCodeFlow = ({
               error={errors.name}
             />
           </div>
-          <div className="flex w-full pb-3 mb-10">
+          <div className="flex w-full min-h-[50svh] pb-3 mb-10">
             <NewQrCodeContent
               isSelected={position === 3}
               content={content}
@@ -240,7 +239,10 @@ export const NewQrCodeFlow = ({
             variant="button"
             isLoading={isPending}
             type={"submit"}
-            buttonClassNames="w-full lg:w-[90%]"
+            buttonClassNames={cn(
+              "w-full lg:w-[90%]",
+              position === 0 && "lg:w-full"
+            )}
           >
             {position === 3 ? "Save" : "Next"}
           </FormButton>

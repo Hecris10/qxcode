@@ -41,7 +41,11 @@ export const SelectableCard = ({
       </CardHeader>
       <CardContent>
         {icon}
-        {description && <CardDescription>{description}</CardDescription>}
+        {description && (
+          <CardDescription className="text-sm text-wrap">
+            {description}
+          </CardDescription>
+        )}
       </CardContent>
     </Card>
   </Button>
