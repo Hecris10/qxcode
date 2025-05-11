@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 import { Trash2Icon } from "lucide-react";
 import { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
-import { Button } from "~/components/ui/button";
-import { Spinner } from "~/components/ui/spinner";
-import { cn } from "~/lib/utils";
 
 export const FormButton = ({
   children,

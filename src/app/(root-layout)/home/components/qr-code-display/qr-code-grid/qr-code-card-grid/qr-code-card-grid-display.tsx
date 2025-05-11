@@ -1,17 +1,17 @@
 "use client";
-import Link from "next/link";
-import { useRef, useState } from "react";
-import { QrCodeBadge } from "~/components/qr-code-badge";
-import { QrCodeContainer } from "~/components/qr-code-container";
+import { QrCodeBadge } from "@/components/qr-code-badge";
+import { QrCodeContainer } from "@/components/qr-code-container";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "~/components/ui/card";
-import { deleteQrCode } from "~/services/qrcodes/qrcodes";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
-import { isoDateToLocale } from "~/utils/date";
+} from "@/components/ui/card";
+
+import { QrCode, QrCodeDotType } from "@/server/db/qr-code-schema.utils";
+import { QrCodeCornerType } from "@/utils/qr-code.utils";
+import Link from "next/link";
+import { useRef, useState } from "react";
 import { DeleteQrCodeDialog } from "../../delete-qr-code-dialog";
 import { QrCodeListOption } from "../../qr-code-list-option";
 
@@ -41,7 +41,7 @@ export const QrCodeCardGridDisplay = ({
       <DeleteQrCodeDialog
         open={deleteDialog}
         onOpenChange={setDeleteDialog}
-        onConfirm={() => deleteQrCode(qrCode.id)}
+        qrCodeId={qrCode.id}
       />
       <Card className="overflow-hidden bg-blue2 qr-code-grid-card hover:shadow-lg hover:shadow-blue1 transition-all duration-300 ease-in-out">
         <CardHeader className="relative">
@@ -52,7 +52,7 @@ export const QrCodeCardGridDisplay = ({
             {qrCode.name}
           </Link>
           <p className="text-md lg:text-sm my-auto text-gray-500">
-            {isoDateToLocale(qrCode.createdAt, locale)}
+            {qrCode.createdAt?.toLocaleDateString(locale)}
           </p>
           <div className="qr-code-grid-options absolute right-1">
             <QrCodeListOption
@@ -75,10 +75,10 @@ export const QrCodeCardGridDisplay = ({
             logoBackground={qrCode.logoBackgroundColor}
             logoBorderRadius={qrCode.logoBorderRadius}
             name={qrCode.name}
-            qrCodeCornerType={qrCode.cornerType}
-            qrCodeDotType={qrCode.dotsType}
-            cornersColor={qrCode.cornersColor}
-            nodesColor={qrCode.nodesColor}
+            qrCodeCornerType={qrCode.cornerType as QrCodeCornerType}
+            qrCodeDotType={qrCode.dotsType as QrCodeDotType}
+            cornersColor={qrCode.cornersColor as string}
+            nodesColor={qrCode.nodesColor as string}
           />
         </CardContent>
         <CardFooter className={`gap-2"}`}>

@@ -1,8 +1,8 @@
+import { FormButton } from "@/components/form-button";
+import { cn } from "@/lib/utils";
 import { Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
-import { cn } from "~/lib/utils";
 
 export const ButtonQrCodeDownload = ({
   onDownload,

@@ -1,4 +1,4 @@
-import { QrCodeBasicLottie } from "~/components/lotties/qr-code-basic-lottie";
+import { QrCodeBasicLottie } from "@/components/lotties/qr-code-basic-lottie";
 
 export const NoQrCode = () => (
   <div className="flex h-full w-full flex-col items-center justify-center min-h-[400px]">

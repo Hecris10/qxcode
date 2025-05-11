@@ -1,7 +1,7 @@
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useEffect, useRef } from "react";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 
 export const NewQrCodeTextInput = ({
   isSelected,
@@ -46,8 +46,8 @@ export const NewQrCodeTextInput = ({
             type === "email"
               ? "name@mail.com"
               : type === "link"
-                ? "https://"
-                : 'e.g. "Hello World"'
+              ? "https://"
+              : 'e.g. "Hello World"'
           }
           type={type === "email" ? "email" : type === "link" ? "url" : "text"}
           name="content"
@@ -58,8 +58,8 @@ export const NewQrCodeTextInput = ({
             type === "email"
               ? "Email is required"
               : type === "link"
-                ? "Link is required"
-                : "Text is required"
+              ? "Link is required"
+              : "Text is required"
           }
           inError={!!contentError}
         />

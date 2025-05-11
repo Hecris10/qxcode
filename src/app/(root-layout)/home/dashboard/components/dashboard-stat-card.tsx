@@ -2,8 +2,8 @@
 
 import type React from "react";
 
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { Card, CardContent } from "~/components/ui/card";
 
 interface StatCardProps {
   title: string;
@@ -28,7 +28,9 @@ export function DashboardStatCard({
             {icon}
           </div>
           <div
-            className={`flex items-center gap-1 text-xs ${trendUp ? "text-green-500" : "text-red-500"}`}
+            className={`flex items-center gap-1 text-xs ${
+              trendUp ? "text-green-500" : "text-red-500"
+            }`}
           >
             {trendUp ? (
               <ArrowUp className="h-3 w-3" />

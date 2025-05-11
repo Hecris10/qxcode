@@ -1,50 +1,51 @@
 "use client";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { useFormValues } from "~/hooks/useFormValues";
-import { ServerRequest } from "~/services/api/api";
-import { ILoginUser } from "~/services/auth/auth";
-import { loginUserAction } from "~/services/auth/auth-actions";
+import { FormButton } from "@/components/form-button";
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/client";
+import { useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const MainLoginForm = () => {
-  const { handleChange, getValue } = useFormValues<ILoginUser>();
-  const [response, setResponse] = useState<ServerRequest<ILoginUser>>(
-    {} as ServerRequest<ILoginUser>
-  );
-  const [isPending, startTransition] = useTransition();
-  const formAction = async (e: FormData) => {
-    startTransition(async () => {
-      handleChange("email", e.get("email") as string);
-      handleChange("password", e.get("password") as string);
+  const router = useRouter();
+  const [customError, setCustomError] = useState<string | null>(null);
+  const form = useForm({
+    defaultValues: { email: "", password: "" },
+    onSubmit: async ({ value }) => {
+      setCustomError(null);
+      await authClient.signIn.email(
+        {
+          ...value,
+          callbackURL: "/home",
+        },
+        {
+          onSuccess: () => {
+            router.push("/home");
+          },
+          onError: (error) => {
+            setCustomError(error.error.message);
+          },
+        }
+      );
+    },
+  });
 
-      setResponse({} as ServerRequest<ILoginUser>);
+  form.state.isSubmitting;
 
-      const res = await loginUserAction(e);
-      setResponse(res);
-
-      if (res.serverError)
-        toast.error("", {
-          description: "Something went wrong, please try again",
-          duration: 5000,
-        });
-    });
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await form.handleSubmit();
   };
 
-  const getInputError = (field: keyof ILoginUser) => response[field] as string;
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    handleChange(e.target.name as keyof ILoginUser, e.target.value);
-  const getInputValue = (key: keyof ILoginUser) => getValue(key) as string;
-
   return (
-    <form action={formAction} className="flex flex-col w-full gap-3">
+    <form onSubmit={onSubmit} className="flex flex-col w-full gap-3">
       <ErrorAlert
         className="mx-1"
-        message="Email or passoword is incorrect"
-        inError={getInputError("email") === "NotFound"}
+        message={customError ?? ""}
+        inError={!!customError}
       />
       <div className="flex flex-col gap-1">
         <div>
@@ -52,50 +53,73 @@ export const MainLoginForm = () => {
             <Label className="text-white ml-2" htmlFor="email">
               Email
             </Label>
-            <Input
-              autoComplete="current-email"
+            <form.Field
               name="email"
-              placeholder="Your email address"
-              defaultValue={getInputValue("email")}
-              onChange={onInputChange}
-            />
+              validators={{
+                onChange: ({ value }) => {
+                  setCustomError(null);
+                  if (!value) "Email is required";
+                  return undefined;
+                },
+              }}
+            >
+              {(field) => (
+                <>
+                  <Input
+                    type="email"
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <ErrorAlert
+                    className="mx-1"
+                    message={field.state.meta.errors.join(", ")}
+                    inError={!field.state.meta.isValid}
+                  />
+                </>
+              )}
+            </form.Field>
           </div>
-
-          <ErrorAlert
-            className="mx-1"
-            message="Email is required"
-            inError={getInputError("email") === "required"}
-          />
-          <ErrorAlert
-            className="mx-1"
-            message="Email is the wrong format. The correct format is: username@email.com"
-            inError={getInputError("email") === "Invalid"}
-          />
         </div>
         <div>
           <div className="flex flex-col gap-1 mb-2">
             <Label className="text-white ml-2" htmlFor="password">
               Password
             </Label>
-            <Input
-              autoComplete="current-password"
+            <form.Field
               name="password"
-              placeholder="Your password"
-              type="password"
-              defaultValue={getInputValue("password")}
-              onChange={onInputChange}
-            />
+              validators={{
+                onChange: ({ value }) => {
+                  setCustomError(null);
+                  if (!value) return "Password is required";
+                  return undefined;
+                },
+              }}
+            >
+              {(field) => (
+                <>
+                  <Input
+                    type="password"
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <ErrorAlert
+                    className="mx-1"
+                    message={field.state.meta.errors.join(", ")}
+                    inError={!field.state.meta.isValid}
+                  />
+                </>
+              )}
+            </form.Field>
           </div>
-          <ErrorAlert
-            className="mx-1"
-            message={"Password is required"}
-            inError={getInputError("password") === "required"}
-          />
         </div>
       </div>
       <FormButton
         buttonClassNames="mt-4"
-        isLoading={isPending}
+        isLoading={form.state.isSubmitting}
         loadingElement="Signing in..."
       >
         Sign in

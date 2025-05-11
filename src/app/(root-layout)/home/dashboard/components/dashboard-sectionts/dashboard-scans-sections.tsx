@@ -1,30 +1,22 @@
-import { Suspense, use } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { QrCodesScan } from "~/services/qrcodes/qrcodes.type";
+} from "@/components/ui/select";
+
+import { Suspense } from "react";
 import { DashboardScanActivityChart } from "../dashboard-scan-activity-chart";
 
-export const DashboardScansSection = ({
-  qrCodeScans,
-}: {
-  qrCodeScans: Promise<QrCodesScan[] | null>;
-}) => {
-  const scans = use(qrCodeScans);
-
-  console.log({ scans });
-
+export const DashboardScansSection = () => {
   return (
     <Card className="col-span-full lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -50,7 +42,7 @@ export const DashboardScansSection = ({
             <div className="h-10 w-full animate-pulse rounded-md bg-gray-800" />
           }
         >
-          <DashboardScanActivityChart data={scans ?? ([] as QrCodesScan[])} />
+          <DashboardScanActivityChart />
         </Suspense>
       </CardContent>
     </Card>

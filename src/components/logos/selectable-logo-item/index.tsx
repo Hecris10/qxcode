@@ -1,5 +1,5 @@
+import { Logo } from "@/server/db/logo-schema.utilts";
 import Image from "next/image";
-import { Logo } from "~/services/logos/logos.type";
 
 export const SelectLogoItem = ({
   logo,

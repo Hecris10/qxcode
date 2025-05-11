@@ -1,7 +1,7 @@
+import { cn } from "@/lib/utils";
+import { QrCodeType } from "@/server/db/qr-code-schema.utils";
+import { capitalizeText } from "@/utils/strings";
 import { FileType, Link2, Mail, Phone, Wifi } from "lucide-react";
-import { cn } from "~/lib/utils";
-import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
-import { capitalizeText } from "~/utils/strings";
 import { Badge } from "./ui/badge";
 
 export const QrCodeBadge = ({

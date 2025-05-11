@@ -1,8 +1,9 @@
+import { Logo } from "@/components/logo";
+
+import { getLocale } from "@/server/actions/headers-actions";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
-import { Logo } from "~/components/logo";
-import { getLocale } from "~/utils/server/locale";
 import { SignupForm } from "./signup-form";
 
 export const metadata: Metadata = {
@@ -14,8 +15,8 @@ export default async function Register() {
   const locale = await getLocale();
 
   return (
-    <main className="mx-auto px-4 py-12">
-      <section className="w-full max-w-[400px] text-white px-3 rounded-2xl m-auto">
+    <main className="mx-auto w-scrs px-4 py-12">
+      <section className="w-full md:min-w-[400px] text-white px-3 rounded-2xl m-auto">
         <Link className="lg:hidden" href={"/"}>
           <ChevronLeft />
         </Link>

@@ -1,16 +1,26 @@
 "use client";
 
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
 import { Calendar, Link as IconLink, QrCode, Smartphone } from "lucide-react";
-import { Suspense, use } from "react";
-import { QrCodeStats } from "~/services/qrcodes/qrcodes.type";
+import { Suspense } from "react";
 import { DashboardStatCard } from "../dashboard-stat-card";
 
-export const DashboardStatsSection = ({
-  qrCodeStatus,
-}: {
-  qrCodeStatus: Promise<QrCodeStats | null>;
-}) => {
-  const stats = use(qrCodeStatus);
+export const DashboardStatsSection = () => {
+  const { data: stats } = useQuery({
+    queryKey: [fetchTags.qrCodeQuantity, fetchTags.qrCodeStats],
+    queryFn: async () => {
+      try {
+        const res = await client.qrCode.getQrCodeStats.$get();
+        if (!res.ok) throw new Error("Failed to fetch QR code stats");
+        return res.json();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+  });
 
   return (
     <div className="mb-6 grid gap-4 md:grid-cols-4">
@@ -30,7 +40,13 @@ export const DashboardStatsSection = ({
           title="Total Scans"
           value={stats?.totalScans.toString() ?? "0"}
           icon={<Smartphone className="h-5 w-5 text-green-400" />}
-          trend={`${stats?.totalScans === 0 || !stats?.totalScans ? "" : stats?.totalScans > 0 ? "+" : "-"}${stats?.totalScans ?? "0"} from last month`}
+          trend={`${
+            stats?.totalScans === 0 || !stats?.totalScans
+              ? ""
+              : stats?.totalScans > 0
+              ? "+"
+              : "-"
+          }${stats?.totalScans ?? "0"} from last month`}
           trendUp={!!stats && stats.totalScans > 0}
         />
         <DashboardStatCard

@@ -1,8 +1,8 @@
+import { QrCodeBadge } from "@/components/qr-code-badge";
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { Input } from "@/components/ui/input";
+import { QrCodeType } from "@/server/db/qr-code-schema.utils";
 import { useEffect, useRef } from "react";
-import { QrCodeBadge } from "~/components/qr-code-badge";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { Input } from "~/components/ui/input";
-import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
 
 export const NewQRCodeName = ({
   type,

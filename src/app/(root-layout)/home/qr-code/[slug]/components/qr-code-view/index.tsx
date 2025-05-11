@@ -1,41 +1,40 @@
 "use client";
-import { Collapsible } from "@ark-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
-import { useRef, useState, useTransition } from "react";
-import { toast } from "sonner";
-import { ComponentSlider } from "~/components/component-slider";
-import { FormButton } from "~/components/form-button";
-import { LogosModal } from "~/components/logos/logos-modal";
-import { QrCodeBadge } from "~/components/qr-code-badge";
-import { QrCodeContainer } from "~/components/qr-code-container";
-import { Button } from "~/components/ui/button";
-import { ColorPickerInput } from "~/components/ui/color-picker";
-import { Label } from "~/components/ui/label";
-import { SelectScrollable } from "~/components/ui/select-scrollable";
-import { Slider } from "~/components/ui/slider";
-import { Switch } from "~/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { fetchTags } from "~/config/tags";
-import { Logo } from "~/services/logos/logos.type";
-import { updatePartialQrCode } from "~/services/qrcodes/qrcodes";
-import { QrCode, QrCodePartial } from "~/services/qrcodes/qrcodes.type";
+import { FormButton } from "@/components/form-button";
+import { LogosModal } from "@/components/logos/logos-modal";
+import { QrCodeBadge } from "@/components/qr-code-badge";
+import { QrCodeContainer } from "@/components/qr-code-container";
+import { Button } from "@/components/ui/button";
+import { ColorPickerInput } from "@/components/ui/color-picker";
+import { Label } from "@/components/ui/label";
+import { SelectScrollable } from "@/components/ui/select-scrollable";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { fetchTags } from "@/config/tags";
+import { ComponentSlider } from "react-slide-switch";
+
+import { useGetUserLogos } from "@/hooks/logos/useGetUserLogos";
+import { client } from "@/lib/client";
+import { Logo } from "@/server/db/logo-schema.utilts";
+import {
+  QrCode,
+  QrCodeDotType,
+  UpdateQrCodeInput,
+} from "@/server/db/qr-code-schema.utils";
 import {
   QrCodeCornerType,
   qrCodeCornerTypesOptions,
-  QrCodeDotType,
   qrCodeDotTypesOptions,
-} from "~/services/qrcodes/qrcodes.utils";
+} from "@/utils/qr-code.utils";
+import { Collapsible } from "@ark-ui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { ButtonQrCodeDownload } from "../button-qr-code-download";
 import { DeleteQrCodeLogoButton } from "../delete-qr-code-logo";
 
-export const QrCodeView = ({
-  qrCode,
-  logos,
-}: {
-  qrCode: QrCode;
-  logos: Promise<Logo[]>;
-}) => {
+export const QrCodeView = ({ qrCode }: { qrCode: QrCode }) => {
   const [code, setCode] = useState<QrCode>({
     ...qrCode,
     padding: qrCode.padding || 0,
@@ -48,30 +47,55 @@ export const QrCodeView = ({
     backgroundColor: qrCode.backgroundColor || "#ffffff00",
     isControlled: qrCode.isControlled || false,
   });
-
+  const {} = useGetUserLogos();
   const [tabsPosition, setTabsPosition] = useState(0);
   const queryClient = useQueryClient();
-  const [isPending, onSaveAction] = useTransition();
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: [fetchTags.qrCodes],
+    mutationFn: async (data: UpdateQrCodeInput) => {
+      toast.loading("Saving...", {
+        id: "saving",
+      });
+      const res = await client.qrCode.update.$post(data);
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast.success("QrCode updated successfully", {
+        id: "saving",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [fetchTags.qrCodeQuantity, fetchTags.qrCodes],
+      });
+    },
+    onError: (error) => {
+      console.log({ error });
+      toast.error("Error updating QrCode", {
+        id: "saving",
+      });
+    },
+  });
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
     const data = new FormData(e.currentTarget);
     const qrCodeDataEntries = Object.fromEntries(data.entries());
 
-    const reqBody: QrCodePartial = {
-      logoId: qrCodeDataEntries.logoId ? +qrCodeDataEntries.logoId : undefined,
+    const reqBody: UpdateQrCodeInput = {
+      ...qrCode,
+      logoId: (qrCodeDataEntries.logoId as string) || null,
       backgroundColor: qrCodeDataEntries.backgroundColor as string,
-      padding: qrCodeDataEntries.padding
-        ? +qrCodeDataEntries.padding
-        : undefined,
+      padding: qrCodeDataEntries.padding ? +qrCodeDataEntries.padding : null,
       logoBackgroundColor: qrCodeDataEntries.logoBackgroundColor as string,
       logoBorderRadius: qrCodeDataEntries.logoBorderRadius
         ? +qrCodeDataEntries.logoBorderRadius
-        : undefined,
+        : null,
       logoPadding: qrCodeDataEntries.logoPadding
         ? +qrCodeDataEntries.logoPadding
-        : undefined,
+        : null,
       cornersColor: qrCodeDataEntries.cornersColor as string,
       nodesColor: qrCodeDataEntries.nodesColor as string,
       cornerType: qrCodeDataEntries.cornerType as QrCodeCornerType,
@@ -79,22 +103,7 @@ export const QrCodeView = ({
       isControlled: Boolean(qrCodeDataEntries.isControlled),
     };
 
-    onSaveAction(async () => {
-      toast.loading("Saving...", {
-        id: "saving",
-      });
-      await updatePartialQrCode({
-        data: reqBody,
-        qrCode,
-      });
-
-      toast.success("QrCode updated successfully", {
-        id: "saving",
-      });
-      queryClient.invalidateQueries({
-        queryKey: [fetchTags.qrCodeQuantity],
-      });
-    });
+    mutate(reqBody);
   };
 
   const downloadRef = useRef<{ onDowload: () => Promise<void> }>({
@@ -187,18 +196,18 @@ export const QrCodeView = ({
             code={qrCode?.content || ""}
             padding={code.padding}
             backgroundColor={code.backgroundColor}
-            logoSrc={code?.logo?.url}
-            logoPadding={code.logoPadding}
+            logoSrc={code.logo?.url || ""}
+            logoPadding={code.logoPadding || 0}
             logoBackground={code.logoBackgroundColor}
             logoBorderRadius={code.logoBorderRadius}
-            qrCodeCornerType={code.cornerType}
-            qrCodeDotType={code.dotsType}
-            cornersColor={code.cornersColor}
-            nodesColor={code.nodesColor}
+            qrCodeCornerType={code.cornerType! as QrCodeCornerType}
+            qrCodeDotType={code.dotsType as QrCodeDotType}
+            cornersColor={code.cornersColor as string}
+            nodesColor={code.nodesColor as string}
           />
           <div className="flex items-center justify-between">
             <Label htmlFor="controlled">Is Controlled</Label>
-            <Switch name="isControlled" defaultChecked={code.isControlled} />
+            <Switch name="isControlled" defaultChecked={!!code.isControlled} />
           </div>
           <ButtonQrCodeDownload className="w-auto" onDownload={onDownload} />
         </div>
@@ -279,7 +288,7 @@ export const QrCodeView = ({
                     <Label className="text-sm">Corners Shapes</Label>
                     <SelectScrollable
                       name="cornerType"
-                      defaultValue={code.cornerType}
+                      defaultValue={code.cornerType!}
                       onChange={onSelectCornerType}
                       options={qrCodeCornerTypesOptions}
                     />
@@ -289,7 +298,7 @@ export const QrCodeView = ({
                     <Label className="text-sm">Dots shape</Label>
                     <SelectScrollable
                       name="dotsType"
-                      defaultValue={code.dotsType}
+                      defaultValue={code.dotsType!}
                       onChange={onSelectDotType}
                       options={qrCodeDotTypesOptions}
                     />
@@ -305,7 +314,7 @@ export const QrCodeView = ({
                   {!code?.logo?.url?.length && (
                     <p className="text-slate-400 my-2">No logo selected.</p>
                   )}
-                  <LogosModal logos={logos} onSelect={onSelectLogo}>
+                  <LogosModal onSelect={onSelectLogo}>
                     <Button className="w-full">
                       <Plus />{" "}
                       {code?.logo?.url?.length ? "Change logo" : "Add a logo"}
@@ -315,7 +324,7 @@ export const QrCodeView = ({
                     <Collapsible.Content className="w-full">
                       <DeleteQrCodeLogoButton
                         qrCodeId={code.id}
-                        logoId={code.logo?.id || 0}
+                        logoId={code.logo?.id as string}
                         isLogoSet={!!qrCode.logo}
                         onLogoDelete={onDeleteQrCodeLogo}
                       />

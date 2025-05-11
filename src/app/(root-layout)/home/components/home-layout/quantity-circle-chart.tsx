@@ -1,36 +1,26 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
-import { useEffect } from "react";
-import { Button } from "~/components/ui/button";
-
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Skeleton } from "~/components/ui/skeleton";
-import { fetchTags } from "~/config/tags";
-import { apiUrl } from "~/services/api/api";
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 
-export const QuantyCircle = ({ userToken }: { userToken: string }) => {
+export const QuantyCircle = () => {
   const pathName = usePathname();
   const { data, isLoading, refetch } = useQuery({
     queryKey: [fetchTags.qrCodeQuantity],
     queryFn: async () => {
       try {
-        const res = await fetch(`${apiUrl}/qr-codes/count`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
-
-        return res.json() as Promise<number>;
+        const res = await client.qrCode.getCountUserControlledQrCodes.$get();
+        const data = await res.json();
+        return data.count;
       } catch (e) {
         console.error(e);
         return 0;
@@ -38,10 +28,6 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
     },
     refetchInterval: 1000 * 45,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [pathName]);
 
   const quantity = data || 0;
   const capacity = 15;
@@ -103,9 +89,9 @@ export const QuantyCircle = ({ userToken }: { userToken: string }) => {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
+      {/* <CardFooter className="flex-col gap-2 text-sm">
         <Button className="w-full">Upgrade plan</Button>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 };

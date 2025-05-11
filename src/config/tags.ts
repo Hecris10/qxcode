@@ -5,4 +5,7 @@ export const fetchTags = {
   logos: "logos",
   qrCodeControllers: "qr-code-controllers",
   qrCodeQuantity: "qr-code-quantity",
+  qrCodeStats: "qr-code-stats",
+  topQrCodes: "top-qr-codes",
+  qrCodeScans: "qr-code-scans",
 };

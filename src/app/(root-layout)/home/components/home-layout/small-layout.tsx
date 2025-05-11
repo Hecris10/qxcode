@@ -1,30 +1,30 @@
-import { MdLogout } from "react-icons/md";
-import { Logo } from "~/components/logo";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Logo } from "@/components/logo";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { isUserLoggedIn, logOutUserAction } from "~/services/auth/auth-actions";
-import { getNameInitials } from "~/utils/strings";
+} from "@/components/ui/dropdown-menu";
+import { getServerSession } from "@/server/actions/session-actions";
+import { getNameInitials } from "@/utils/strings";
 import { MenuOptions } from "./menu-options";
+import { SignOutButton } from "./sign-out-button";
 import { SmallSidebar } from "./small-sidebar";
 import { UserInfo } from "./user-info";
 
 export const SmallLayout = async () => {
-  const auth = await isUserLoggedIn();
+  const auth = await getServerSession();
 
-  if (!auth.isAuth) return null;
+  if (!auth) return null;
   const userName = auth.user.name;
   const userEmail = auth.user.email;
   const imgSrc = "";
 
-  const userInitials = getNameInitials(userName);
+  const userInitials = getNameInitials(userName) || "U";
 
   return (
-    <div className="w-full border-b lg:hidden border-slate-700 shadow-lg py-1 px-2 flex items-center justify-between gap-3 text-white">
+    <div className="w-full border-b  lg:hidden border-slate-700 shadow-lg py-1 px-2 flex items-center justify-between gap-3 text-white">
       <SmallSidebar>
         <MenuOptions />
         <UserInfo
@@ -53,14 +53,7 @@ export const SmallLayout = async () => {
           {/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
     <DropdownMenuSeparator /> */}
           <DropdownMenuItem className="hover:bg-slate-700">
-            <form action={logOutUserAction}>
-              <button
-                type="submit"
-                className="gap-4 flex my-auto align-middle "
-              >
-                <MdLogout className="w-6 h-6 font-bold my-auto" /> Log out
-              </button>
-            </form>
+            <SignOutButton />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

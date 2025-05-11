@@ -1,11 +1,10 @@
 "use client";
+import { QrCodeBadge } from "@/components/qr-code-badge";
+import { QrCodeContainer } from "@/components/qr-code-container";
+import { QrCode, QrCodeDotType } from "@/server/db/qr-code-schema.utils";
+import { QrCodeCornerType } from "@/utils/qr-code.utils";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { QrCodeBadge } from "~/components/qr-code-badge";
-import { QrCodeContainer } from "~/components/qr-code-container";
-import { deleteQrCode } from "~/services/qrcodes/qrcodes";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
-import { isoDateToLocale } from "~/utils/date";
 import { DeleteQrCodeDialog } from "../delete-qr-code-dialog";
 import { QrCodeListOption } from "../qr-code-list-option";
 
@@ -34,7 +33,7 @@ export const QrCodeCardListDisplay = ({
       <DeleteQrCodeDialog
         open={deleteDialog}
         onOpenChange={setDeleteDialog}
-        onConfirm={() => deleteQrCode(qrCode.id)}
+        qrCodeId={qrCode.id}
       />
       <section className="w-full bg-slate-900 flex justify-between align-middle rounded-lg shadow-lg p-3">
         <div className="flex gap-8 my-auto">
@@ -44,15 +43,15 @@ export const QrCodeCardListDisplay = ({
             code={qrCode?.content || ""}
             padding={qrCode?.padding}
             backgroundColor={qrCode?.backgroundColor}
-            logoSrc={qrCode?.logo?.url || undefined}
+            logoSrc={qrCode.logo?.url || undefined}
             logoPadding={qrCode?.logoPadding || 0}
             logoBackground={qrCode.logoBackgroundColor}
             logoBorderRadius={qrCode.logoBorderRadius}
             name={qrCode.name}
-            qrCodeCornerType={qrCode.cornerType}
-            qrCodeDotType={qrCode.dotsType}
-            cornersColor={qrCode.cornersColor}
-            nodesColor={qrCode.nodesColor}
+            qrCodeCornerType={qrCode.cornerType as QrCodeCornerType}
+            qrCodeDotType={qrCode.dotsType as QrCodeDotType}
+            cornersColor={qrCode.cornersColor || ""}
+            nodesColor={qrCode.nodesColor || ""}
           />
           <div className="my-auto">
             <QrCodeBadge type={qrCode.type} />
@@ -63,7 +62,7 @@ export const QrCodeCardListDisplay = ({
               {qrCode.name}
             </Link>
             <p className="text-base lg:text-sm my-auto text-gray-500">
-              {isoDateToLocale(qrCode.createdAt, locale)}
+              {qrCode.createdAt?.toLocaleDateString(locale)}
             </p>
           </div>
         </div>

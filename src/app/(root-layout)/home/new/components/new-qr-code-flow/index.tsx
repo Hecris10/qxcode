@@ -1,26 +1,21 @@
 "use client";
-import { ComponentSlider } from "~/components/component-slider";
+import { ComponentSlider } from "react-slide-switch";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { FormButton } from "@/components/form-button";
+import { Button } from "@/components/ui/button";
+import { fetchTags } from "@/config/tags";
+import { useNewQrCode } from "@/hooks/useNewQrCode";
+import { client } from "@/lib/client";
+import { cn, generateWiFiString } from "@/lib/utils";
+import { QrCodeInput } from "@/server/db/qr-code-schema.utils";
+import { QrCodeType } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { FormEvent, useEffect, useLayoutEffect } from "react";
 import { toast } from "sonner";
-import { FormButton } from "~/components/form-button";
-import { Button } from "~/components/ui/button";
-import { fetchTags } from "~/config/tags";
-import { useNewQrCode } from "~/hooks/useNewQrCode";
-import { generateWiFiString } from "~/lib/utils";
-import {
-  createNewQrCodeAction,
-  NewQrCodeRequest,
-} from "~/services/qrcodes/qrcodes";
-import {
-  NewQrCodeLink,
-  NewQrCodeText,
-  NewQrCodeWifi,
-} from "~/services/qrcodes/qrcodes.type";
 import { NewQrCodeContent } from "./new-qr-code-content";
+import { NewQrCodeControlled } from "./new-qr-code-controlled";
 import { NewQRCodeName } from "./new-qr-code-name";
 import { NewQrCodeType } from "./new-qr-code-type";
 import { QuantityExpiredDialog } from "./quantity-experied-dialog";
@@ -30,9 +25,8 @@ export const NewQrCodeFlow = ({
 }: {
   searchParams: SearchParamsNotPromise;
 }) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
-  const [pending, formAction] = useTransition();
+  const pathname = usePathname();
   const {
     position,
     type,
@@ -42,9 +36,9 @@ export const NewQrCodeFlow = ({
     setPosition,
     moveForward,
     errors,
-    setErrorRequired,
     setQrCodeName,
     ssid,
+    isControlled,
     password,
     security,
     setQrCodeContent,
@@ -55,184 +49,119 @@ export const NewQrCodeFlow = ({
     router,
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationKey: [fetchTags.qrCodes, fetchTags.qrCodeQuantity],
+    mutationFn: async (reqBody: QrCodeInput) => {
+      toast.loading("Creating new QrCode...", {
+        id: "creating-qr-code",
+      });
+      const res = await client.qrCode.create.$post(reqBody);
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      toast.dismiss("creating-qr-code");
+      toast.success("Your QrCode was created sucessfully", {
+        description: "Redirecting...",
+        id: "create-qr-code",
+      });
+      router.push(`/home/qr-code/${data.uuid}`);
+    },
+    onError: () => {
+      toast.dismiss("creating-qr-code");
+      toast.error("There was an error while creating your QrCode", {
+        description: "Please try again",
+        id: "create-qr-code",
+      });
+    },
+  });
+
   useEffect(() => {
     const handleErrosSlide = () => {
-      if (errors.type) {
-        return setPosition(0);
-      }
-
-      if (errors.name) {
+      if (errors.type && position !== 1) {
         return setPosition(1);
       }
-      if (errors.content) {
+
+      if (errors.name && position !== 2) {
         return setPosition(2);
+      }
+      if (errors.content) {
+        return setPosition(3);
       }
 
       // @ts-ignore
-      if (errors.ssid) {
-        return setPosition(2);
+      if (errors.ssid && position !== 3) {
+        return setPosition(3);
       }
       // @ts-ignore
-      if (errors.password) {
-        return setPosition(2);
+      if (errors.password && position !== 3) {
+        return setPosition(3);
       }
     };
 
     handleErrosSlide();
-  }, [errors]);
+  }, [errors, position, setPosition]);
+
+  useLayoutEffect(() => {
+    toast.dismiss("create-qr-code");
+  }, [pathname]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
-    if (position < 2) {
+    if (position < 3) {
       moveForward();
       return;
     }
 
-    formAction(async () => {
-      toast.loading("Saving...", {
-        description: "Creating your QrCode",
-        id: "new-qr-code",
+    let reqBody: QrCodeInput = {} as QrCodeInput;
+
+    reqBody.isControlled = isControlled || false;
+
+    if ((type as QrCodeType) === "wifi") {
+      reqBody = {
+        ...reqBody,
+        name,
+        type,
+        ssid: ssid as string,
+        password: password as string,
+        text: "",
+        link: "",
+      };
+
+      reqBody.content = generateWiFiString({
+        name: ssid,
+        password,
+        security,
       });
-      let res: NewQrCodeRequest = {} as NewQrCodeRequest;
+      return mutate(reqBody);
+    } else if (type === "link") {
+      const newQrCode = {} as QrCodeInput;
+      newQrCode.isControlled = isControlled || false;
 
-      if (type === "wifi") {
-        const newQrCode = {} as NewQrCodeWifi;
+      newQrCode.name = name;
+      newQrCode.type = type;
+      newQrCode.link = content;
+      newQrCode.content = content;
 
-        if (!name) {
-          res.hasValidationErrors = true;
-          res.name = "Missing";
-        }
+      return mutate(newQrCode);
+    } else {
+      const newQrCode = {} as QrCodeInput;
+      newQrCode.isControlled = isControlled || false;
 
-        if (!type) {
-          res.hasValidationErrors = true;
-          res.type = "Missing";
-        }
-
-        if (!password) {
-          res.hasValidationErrors = true;
-          res.password = "Missing";
-        }
-
-        if (!security) {
-          res.hasValidationErrors = true;
-          res.security = "Missing";
-        }
-
-        if (!res.hasValidationErrors) {
-          newQrCode.name = name;
-          newQrCode.type = type;
-          newQrCode.ssid = ssid || "";
-          newQrCode.password = password || "";
-          newQrCode.security = security || "nopass";
-          newQrCode.content = generateWiFiString({
-            name: ssid,
-            password,
-            security,
-          });
-
-          res = await createNewQrCodeAction(newQrCode);
-        }
-      } else if (type === "link") {
-        const newQrCode = {} as NewQrCodeLink;
-
-        newQrCode.name = name;
-        newQrCode.type = type;
-        newQrCode.link = content;
-        newQrCode.content = content;
-
-        res = await createNewQrCodeAction(newQrCode);
+      if (type === "phone") {
+        newQrCode.content = `tel:${content}`;
+      } else if (type === "email") {
+        newQrCode.content = `mailto:${content}`;
       } else {
-        const newQrCode = {} as NewQrCodeText;
-
-        if (!name) {
-          res.hasValidationErrors = true;
-          res.name = "Missing";
-        }
-
-        if (!type) {
-          res.hasValidationErrors = true;
-          res.type = "Missing";
-        }
-
-        if (!content) {
-          res.hasValidationErrors = true;
-          res.content = "Missing";
-        }
-
-        if (!res.hasValidationErrors) {
-          newQrCode.name = name;
-          newQrCode.type = type;
-          newQrCode.text = content;
-          newQrCode.content = content;
-
-          if (type === "phone") {
-            newQrCode.content = `tel:${content}`;
-          } else if (type === "email") {
-            newQrCode.content = `mailto:${content}`;
-          }
-
-          res = await createNewQrCodeAction(newQrCode);
-        }
+        newQrCode.content = content;
       }
 
-      if (res.serverSucess) {
-        toast.success("Success!", {
-          description: "Your QrCode was created sucessfully",
-          id: "new-qr-code",
-        });
+      newQrCode.name = name;
+      newQrCode.type = type;
 
-        queryClient.invalidateQueries({
-          queryKey: [fetchTags.qrCodeQuantity],
-        });
-
-        // res.encryptedKey should be uri encoded
-        router.push(`/home/qr-code/${res.encryptedKey || ""}`);
-      }
-
-      if (res.hasValidationErrors) {
-        toast.error("Error!", {
-          description: "Verify the fields and try again",
-          id: "new-qr-code",
-        });
-
-        if (res.type === "Missing" || !type) {
-          setErrorRequired("type");
-          setPosition(0);
-        }
-
-        if (res.name === "Missing" || !name) {
-          setErrorRequired("name");
-          setPosition(1);
-        }
-
-        if (res.content === "Missing" || !content) {
-          setErrorRequired("content");
-          setPosition(2);
-        }
-        if (res.security === "Missing") {
-          setErrorRequired("security");
-          setPosition(2);
-        }
-        if (res.password === "Missing") {
-          setErrorRequired("password");
-          setPosition(2);
-        }
-        return;
-      }
-      if (res.serverError) {
-        if (res.quantityExpired) {
-          setQuantityExpired(true);
-          toast.dismiss("new-qr-code");
-          return;
-        }
-
-        toast.error("Error!", {
-          description: "An error occurred while creating your QrCode",
-          id: "new-qr-code",
-        });
-      }
-    });
+      return mutate(newQrCode);
+    }
   };
 
   return (
@@ -250,27 +179,29 @@ export const NewQrCodeFlow = ({
 
       <form onSubmit={onSubmit} className="w-full">
         <ComponentSlider
-          duration={250}
-          transition="ease-in-out"
+          duration={350}
+          transition="ease-in"
           position={position}
-          autoHeight
           unMountOnExit
         >
+          <div className="w-full min-h-[50svh]">
+            <NewQrCodeControlled params={searchParams} />
+          </div>
           <div className="w-full pb-1">
-            <NewQrCodeType params={searchParams} isSelected={position === 0} />
+            <NewQrCodeType params={searchParams} isSelected={position === 1} />
           </div>
           <div className="w-full min-h-[50svh]">
             <NewQRCodeName
-              isSelected={position === 1}
+              isSelected={position === 2}
               name={name}
               type={type}
               onChange={setQrCodeName}
               error={errors.name}
             />
           </div>
-          <div className="flex w-full mb-10">
+          <div className="flex w-full min-h-[50svh] pb-3 mb-10">
             <NewQrCodeContent
-              isSelected={position === 2}
+              isSelected={position === 3}
               content={content}
               setContent={setQrCodeContent}
               name={name}
@@ -290,26 +221,30 @@ export const NewQrCodeFlow = ({
           </div>
         </ComponentSlider>
 
-        <div className="w-full gap-4 flex">
+        <div className="gap-4 flex justify-between">
           <Button
-            variant={position === 2 ? "ghost" : "default"}
-            data-islaststap={position === 2}
+            variant="ghost"
+            data-islaststap={position === 3}
             data-isfirststap={position === 0}
             type="button"
-            className="w-full data-[islaststap=true]:w-auto data-[isfirststap=true]:hidden hidden lg:flex"
+            className="data-[islaststap=true]:w-auto data-[isfirststap=true]:hidden hidden lg:flex"
             onClick={moveBackward}
             disabled={position <= 0}
           >
             Back
           </Button>
+
           <FormButton
             key="submit"
             variant="button"
-            isLoading={pending}
+            isLoading={isPending}
             type={"submit"}
-            buttonClassNames="w-full"
+            buttonClassNames={cn(
+              "w-full lg:w-[90%]",
+              position === 0 && "lg:w-full"
+            )}
           >
-            {position === 2 ? "Save" : "Next"}
+            {position === 3 ? "Save" : "Next"}
           </FormButton>
         </div>
       </form>

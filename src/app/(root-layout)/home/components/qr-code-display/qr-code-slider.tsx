@@ -1,9 +1,9 @@
 "use client";
 
+import { TabsTransition } from "@/components/ui/tabs-transition";
 import { ReactNode } from "react";
+import { ComponentSlider } from "react-slide-switch";
 import { useUrlState } from "state-in-url/next";
-import { ComponentSlider } from "~/components/component-slider";
-import { TabsTransition } from "~/components/ui/tabs-transition";
 
 export type QrCodeView = "my-codes" | "controlled-codes";
 
@@ -38,7 +38,6 @@ export const QrCodeSlider = ({
             setUrl({ ...urlState, view: "controlled-codes" });
           }
         }}
-
       />
       <ComponentSlider
         duration={200}

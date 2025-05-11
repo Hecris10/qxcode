@@ -1,6 +1,5 @@
-import { MdLogout } from "react-icons/md";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { logOutUserAction } from "~/services/auth/auth-actions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SignOutButton } from "./sign-out-button";
 
 export const UserInfo = async ({
   userName,
@@ -26,11 +25,12 @@ export const UserInfo = async ({
         <p className="text-slate-400 text-sm">{userEmail}</p>
       </div>
     </div>
-    <form className="my-auto ml-4" action={logOutUserAction}>
+    <SignOutButton />
+    {/* <form className="my-auto ml-4" action={logOutUserAction}>
       <button type="submit" className="w-full gap-4 my-auto align-middle flex">
         <MdLogout className="w-6 h-6 font-bold text-red-400 my-auto" />
         <span className="lg:hidden">Log out</span>
       </button>
-    </form>
+    </form> */}
   </div>
 );

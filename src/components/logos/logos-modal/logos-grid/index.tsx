@@ -1,7 +1,7 @@
 "use client";
 
+import { Logo } from "@/server/db/logo-schema.utilts";
 import { use, useState } from "react";
-import { Logo } from "~/services/logos/logos.type";
 import { SelectLogoItem } from "../../selectable-logo-item";
 
 export const LogosGrid = ({ logos }: { logos: Promise<Logo[]> }) => {

@@ -1,6 +1,5 @@
 "use client";
-import { Fragment } from "react";
-import { QrCodeBadge } from "~/components/qr-code-badge";
+import { QrCodeBadge } from "@/components/qr-code-badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +8,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import { Fragment } from "react";
 import { QrCodeDropDownProps } from "./qr-code-dropdown-menu.type";
 
 export const QrCodeDropdownMenu = ({
@@ -22,7 +22,7 @@ export const QrCodeDropdownMenu = ({
     <DropdownMenuTrigger className="p-0" asChild>
       {children}
     </DropdownMenuTrigger>
-    <DropdownMenuContent className="w-56">
+    <DropdownMenuContent className="w-56 bg-blue3">
       <DropdownMenuLabel className="w-full flex justify-between">
         {name} <QrCodeBadge type={qrCode.type} />
       </DropdownMenuLabel>

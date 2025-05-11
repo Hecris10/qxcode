@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useTransition } from "react";
-import { Spinner } from "~/components/ui/spinner";
-import { EncryptedQrCodeLink } from "~/services/crypt";
-import { createQrCodeControllerAction } from "~/services/qr-code-controller/qr-code-controller-actions";
-
+import { client } from "@/lib/client";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { RedirectLoading } from "./redirect-loading";
 export const RedirectClient = ({
-  linkData,
+  uuid,
   ip,
   userAgent,
   ip2,
   locale,
   timeStamp,
 }: {
-  linkData: EncryptedQrCodeLink;
+  uuid: string;
   ip: string | null;
   userAgent: string | null;
   ip2: string | null;
@@ -21,7 +20,7 @@ export const RedirectClient = ({
   timeStamp: Date;
 }) => {
   const resRequested = useRef(false);
-  const [, action] = useTransition();
+  const router = useRouter();
 
   useEffect(() => {
     const screenResolution = `${window.screen.width}x${window.screen.height}`;
@@ -31,7 +30,6 @@ export const RedirectClient = ({
     const onRedirect = async () => {
       if (resRequested.current) return;
       const reqBody = {
-        linkData,
         ip: ip || "",
         ip2: ip2 || "",
         userAgent: userAgent || "",
@@ -40,24 +38,21 @@ export const RedirectClient = ({
         screenResolution,
         timestamp: timeStamp,
         pageUrl,
-        qrCodeId: linkData.id,
+        uuid,
       };
+      const res = await client.controlled.create.$post(reqBody);
+      const data = await res.json();
 
-      action(async () => {
-        createQrCodeControllerAction(reqBody);
-      });
+      if (!data || !data.redirectUrl) {
+        router.push("/404");
+        return;
+      }
+      router.push(data.redirectUrl);
       resRequested.current = true;
     };
 
     onRedirect();
-  }, []);
+  }, [ip, ip2, locale, router, timeStamp, userAgent, uuid]);
 
-  return (
-    <div className="w-full flex align-middle min-h-screen bg-blue4">
-      <div className="flex gap-4 mx-4 my-3">
-        {" "}
-        Redirecting... <Spinner />
-      </div>
-    </div>
-  );
+  return <RedirectLoading />;
 };

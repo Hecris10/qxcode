@@ -1,10 +1,13 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/client";
 import { FaGoogle } from "react-icons/fa";
-import { Button } from "~/components/ui/button";
 
 export const GoogleLoginButton = () => {
-  const onClick = () => {};
+  const onClick = async () => {
+    await authClient.signIn.social({ provider: "google" });
+  };
 
   return (
     <Button

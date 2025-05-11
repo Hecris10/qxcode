@@ -1,8 +1,6 @@
 "use client";
 
-import { format } from "date-fns";
-import { Globe, Smartphone } from "lucide-react";
-import { Badge } from "~/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,7 +8,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
+} from "@/components/ui/table";
+import { format } from "date-fns";
+import { Globe, Smartphone } from "lucide-react";
 
 // Mock data for recent scans
 const recentScans = [

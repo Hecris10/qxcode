@@ -1,4 +1,4 @@
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
+import { QrCode } from "@/server/db/qr-code-schema.utils";
 import { QrCodeCardGrid } from "./qr-code-card-grid";
 
 export const QrCodeGrid = ({

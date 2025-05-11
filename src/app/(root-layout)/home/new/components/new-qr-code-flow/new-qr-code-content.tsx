@@ -1,6 +1,6 @@
-import { QrCodeBadge } from "~/components/qr-code-badge";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { QrCodeType } from "~/services/qrcodes/qrcodes.type";
+import { QrCodeBadge } from "@/components/qr-code-badge";
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { QrCodeType } from "@/server/db/qr-code-schema.utils";
 import { NewQrCodePhoneInput } from "./new-qr-code-inputs/new-qr-code-phone-input";
 import {
   NewQrCodeWifiInput,

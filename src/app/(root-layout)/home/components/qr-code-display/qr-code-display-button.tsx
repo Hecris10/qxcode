@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { setQrCodeViewMode } from "@/server/actions/cookies-actions";
 import { Grid, List } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Tooltip } from "~/components/ui/tooltip";
-import { cn } from "~/lib/utils";
-import { setQrCodeViewMode } from "~/services/qrcodes/qrcodes";
 
 export const QrCodeDisplayButton = ({
   isGridMode,
@@ -32,15 +32,16 @@ export const QrCodeDisplayButton = ({
         <Button
           variant="outline"
           size="icon"
+          className="h-10 py-2"
           onClick={() => setIsGridView(!isGridView)}
           aria-label={
             isGridView ? "Switch to list view" : "Switch to grid view"
           }
         >
           {isGridView ? (
-            <List className="h-4 w-4" />
+            <List className="my-auto h-4 w-4" />
           ) : (
-            <Grid className="h-4 w-4" />
+            <Grid className="my-auto h-4 w-4" />
           )}
         </Button>
       </Tooltip>

@@ -1,5 +1,5 @@
+import { QrCode } from "@/server/db/qr-code-schema.utils";
 import { ReactNode } from "react";
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
 
 export interface QrCodeDropDownOptions {
   name: string;

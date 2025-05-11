@@ -1,23 +1,36 @@
 "use client";
+
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
 import { QrCode } from "lucide-react";
-import uniqolor from "uniqolor";
-import { TopQrCode } from "~/services/qrcodes/qrcodes.type";
 
 // Mock data for top QR codes
 
-export function DashboardTopQrCodes({
-  topScanned,
-}: {
-  topScanned: TopQrCode[];
-}) {
-  const data = topScanned.map((item) => {
-    const { color } = uniqolor(item.name);
-    return {
-      name: item.name,
-      scans: item.scanCount,
-      fill: color,
-    };
+export function DashboardTopQrCodes() {
+  const { data, isLoading } = useQuery({
+    queryKey: [fetchTags.qrCodeQuantity, fetchTags.topQrCodes],
+    queryFn: async () => {
+      try {
+        const res = await client.qrCode.getTopQrCodes.$get({ limit: 20 });
+        if (!res.ok) throw new Error("Failed to fetch top QR codes");
+        return res.json();
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
   });
+
+  if (!data)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p className="text-sm text-muted-foreground">No data</p>
+      </div>
+    );
+
+  if (isLoading)
+    return <div className="h-10 w-full animate-pulse rounded-md bg-gray-800" />;
 
   return (
     <div className="space-y-4">
@@ -36,12 +49,14 @@ export function DashboardTopQrCodes({
                 className="h-full rounded-full"
                 style={{
                   backgroundColor: item.fill,
-                  width: `${(item.scans / data[0].scans) * 100}%`,
+                  width: `${
+                    (item.scanCount / (data[0]?.scanCount || 1)) * 100
+                  }%`,
                 }}
               />
             </div>
           </div>
-          <p className="text-sm font-medium">{item.scans}</p>
+          <p className="text-sm font-medium">{item.scanCount}</p>
         </div>
       ))}
     </div>

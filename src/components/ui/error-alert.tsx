@@ -1,6 +1,6 @@
+import { cn } from "@/lib/utils";
 import { Collapsible } from "@ark-ui/react";
 import { GoAlertFill } from "react-icons/go";
-import { cn } from "~/lib/utils";
 
 export const ErrorAlert = ({
   message,

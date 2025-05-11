@@ -22,14 +22,18 @@ export const SingleDatePicker = ({
     <DatePicker.Root
       name={name}
       locale={locale}
-      onValueChange={(e) => onDateChange && onDateChange(e.valueAsString[0])}
+      onValueChange={(e) => {
+        if (onDateChange && e) {
+          onDateChange(e?.valueAsString[0] || "");
+        }
+      }}
       max={max}
       min={min}
     >
       <DatePicker.Control className="w-full flex relative gap-2 align-middle">
         <DatePicker.Input maxLength={10} />
         <DatePicker.Trigger className="absolute right-3 top-[7px]">
-          <BsFillCalendarFill className="w-7 h-7 text-slate-500  hover:text-slate-400 my-auto" />
+          <BsFillCalendarFill className="w-7 h-7 fill-slate-500  hover:f-slate-400 my-auto" />
         </DatePicker.Trigger>
         {/* <DatePicker.ClearTrigger>Clear</DatePicker.ClearTrigger> */}
       </DatePicker.Control>

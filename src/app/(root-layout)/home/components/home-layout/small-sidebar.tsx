@@ -1,9 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 
 export const SmallSidebar = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +31,7 @@ export const SmallSidebar = ({ children }: { children: ReactNode }) => {
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="lg:hidden" side="left">
+      <SheetContent className="lg:hidden bg-blue2" side="left">
         {children}
       </SheetContent>
     </Sheet>

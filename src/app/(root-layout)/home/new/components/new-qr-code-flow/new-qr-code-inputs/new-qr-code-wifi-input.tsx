@@ -1,8 +1,6 @@
-import { Collapsible } from "@ark-ui/react";
-import { useEffect, useRef } from "react";
-import { ErrorAlert } from "~/components/ui/error-alert";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { ErrorAlert } from "@/components/ui/error-alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,7 +9,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
+} from "@/components/ui/select";
+import { Collapsible } from "@ark-ui/react";
+import { useEffect, useRef } from "react";
 
 export type WifiSecurity = (typeof wifiSecurity)[number]["value"];
 

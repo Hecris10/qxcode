@@ -1,4 +1,4 @@
-import { QrCode } from "~/services/qrcodes/qrcodes.type";
+import { QrCode } from "@/server/db/qr-code-schema.utils";
 import { QrCodeCardList } from "./qr-code-card-list";
 
 export const QrCodeList = ({

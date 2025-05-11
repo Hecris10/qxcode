@@ -1,11 +1,10 @@
 "use client";
+import { cn } from "@/lib/utils";
+import { QrCodeDotType } from "@/server/db/qr-code-schema.utils";
+import { QrCodeCornerType } from "@/utils/qr-code.utils";
+
 import QrCodeWithLogo from "qrcode-with-logos";
 import { RefObject, useEffect, useRef } from "react";
-import { cn } from "~/lib/utils";
-import {
-  QrCodeCornerType,
-  QrCodeDotType,
-} from "~/services/qrcodes/qrcodes.utils";
 
 export const QrCodeContainer = ({
   ref,
@@ -30,12 +29,12 @@ export const QrCodeContainer = ({
   }>;
   code: string;
   className?: string;
-  logoSrc?: string;
-  padding?: number;
-  backgroundColor?: string;
-  logoBackground?: string;
+  logoSrc?: string | null;
+  padding?: number | null;
+  backgroundColor?: string | null;
+  logoBackground?: string | null;
   logoPadding?: number;
-  logoBorderRadius?: number;
+  logoBorderRadius?: number | null;
   qrCodeCornerType: QrCodeCornerType;
   qrCodeDotType: QrCodeDotType;
   name: string;
@@ -52,10 +51,10 @@ export const QrCodeContainer = ({
         content: code,
         width: 380,
         nodeQrCodeOptions: {
-          margin: padding,
+          margin: padding || 0,
           color: {
-            dark: backgroundColor,
-            light: backgroundColor,
+            dark: backgroundColor || undefined,
+            light: backgroundColor || undefined,
           },
           errorCorrectionLevel: "H",
         },
@@ -67,14 +66,16 @@ export const QrCodeContainer = ({
           type: qrCodeCornerType,
           color: cornersColor,
         },
-        logo: logoSrc && {
-          src: logoSrc || "",
-          logoRadius: logoBorderRadius,
-          borderRadius: logoBorderRadius,
-          bgColor: logoBackground,
-          borderColor: logoBackground,
-          borderWidth: logoPadding,
-        },
+        logo: logoSrc
+          ? {
+              src: logoSrc || "",
+              logoRadius: logoBorderRadius || undefined,
+              borderRadius: logoBorderRadius || undefined,
+              bgColor: logoBackground || undefined,
+              borderColor: logoBackground || undefined,
+              borderWidth: logoPadding,
+            }
+          : undefined,
         canvas: canvasRef.current,
       });
       qrCode.current.getCanvas().then((canvas) => {

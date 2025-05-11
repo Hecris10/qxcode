@@ -1,11 +1,11 @@
 "use client";
+import { cn } from "@/lib/utils";
 import {
   ColorPicker,
   ColorService,
   IColor,
   useColor,
 } from "react-color-palette";
-import { cn } from "~/lib/utils";
 import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
@@ -15,7 +15,7 @@ export const ColorPickerInput = ({
   className,
   onChange,
 }: {
-  defaultColor?: string;
+  defaultColor?: string | null;
   name?: string;
   className?: string;
   onChange?: (newColor: string) => void;
@@ -66,7 +66,12 @@ export const ColorPickerInput = ({
           </div>
         </PopoverContent>
       </Popover>
-      <input name={name} readOnly value={color.hex} className="hidden" />
+      <input
+        name={name}
+        readOnly
+        value={color.hex}
+        className="hidden h-0 w-0"
+      />
     </>
   );
 };
