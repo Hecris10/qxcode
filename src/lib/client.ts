@@ -4,11 +4,19 @@ import { createAuthClient } from "better-auth/react"; // make sure to import fro
 import { createClient } from "jstack";
 import { auth } from "./auth";
 
-
 function getBaseUrl() {
-  // 👇 Adjust for wherever you deploy
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  return `http://localhost:3000`
+  // 👇 Use browser URL if client-side
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+
+  // 👇 Use Vercel URL in production
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // 👇 Default to localhost
+  return `http://localhost:3000`;
 }
 
 /**
@@ -19,10 +27,9 @@ export const client = createClient<AppRouter>({
   baseUrl: `${getBaseUrl()}/api`,
   // you can pass client configuration here
   // plugins: [inferAdditionalFields<typeof auth>()],
-})
-
+});
 
 export const authClient = createAuthClient({
   //you can pass client configuration here
   plugins: [inferAdditionalFields<typeof auth>()],
-})
+});
