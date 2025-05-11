@@ -29,7 +29,7 @@ export const qrCodeRouter = j.router({
       console.log({ input });
 
       if (input.isControlled && input.type === "link") {
-        input.content = `${BETTER_AUTH_URL}/?redirect=${uuid}`;
+        input.content = `${BETTER_AUTH_URL}/redirect/${uuid}`;
       }
 
       const newQrCode = await db.qRCode.create({

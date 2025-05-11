@@ -47,6 +47,7 @@ export const RedirectClient = ({
         router.push("/404");
         return;
       }
+      console.log({ data });
       router.push(data.redirectUrl);
       resRequested.current = true;
     };
