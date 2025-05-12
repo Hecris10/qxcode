@@ -26,7 +26,7 @@ export function DashboardScanActivityChart() {
         console.error(error);
         return [];
       }
-    },
+    },  
   });
 
   if (!data)

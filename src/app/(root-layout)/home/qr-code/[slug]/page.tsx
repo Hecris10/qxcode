@@ -20,23 +20,21 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const slug = params.slug;
 
   const uri = decodeURIComponent(slug);
-
-  const res = await client.qrCode.getById.$get({
-    id: uri,
+  const res = await client.qrCode.getName.$get({
+    uuid: uri,
   });
 
-  if (!res.ok) redirect("/not-found");
+  const data = await res.json();
 
-  const qrCode = await res.json();
+  if (!data.name) redirect("/not-found");
 
-  const name = qrCode?.name;
-  if (!name) {
+  if (!data.name) {
     redirect("/not-found");
   }
 
   return {
-    title: `QX Code | ${name}`,
-    description: `Your codes last forever - ${name}`,
+    title: `QX Code | ${data.name}`,
+    description: `Your codes last forever - ${data.name}`,
   };
 }
 

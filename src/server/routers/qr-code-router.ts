@@ -3,7 +3,7 @@ import uniqolor from "uniqolor";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { updateQrCodeInputSchema } from "../db/qr-code-schema.utils";
-import { j, privateProcedure } from "../jstack";
+import { j, privateProcedure, publicProcedure } from "../jstack";
 
 export const qrCodeRouter = j.router({
   create: privateProcedure
@@ -154,14 +154,13 @@ export const qrCodeRouter = j.router({
       if (!code || !code.link) throw new Error("QrCode link not found");
       return c.superjson({ link: code.link });
     }),
-  getName: privateProcedure
-    .input(z.object({ id: z.string() }))
+  getName: publicProcedure
+    .input(z.object({ uuid: z.string() }))
     .query(async ({ ctx, c, input }) => {
-      const { db, auth } = ctx;
+      const { db } = ctx;
       const qrCodeName = await db.qRCode.findFirst({
         where: {
-          id: input.id,
-          userId: auth?.session?.user.id!,
+          uuid: input.uuid,
         },
         select: {
           name: true,
