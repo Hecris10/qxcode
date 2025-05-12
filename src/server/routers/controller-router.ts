@@ -19,21 +19,27 @@ export const controlledRouter = j.router({
     .mutation(async ({ ctx, c, input }) => {
       const { db } = ctx;
 
+      const { uuid, ...rest } = input;
+
       const relatedQrCode = await db.qRCode.findFirst({
         where: {
           uuid: input.uuid,
         },
         select: {
           id: true,
+          link: true,
         },
       });
-      if (!relatedQrCode) {
+      if (!relatedQrCode || !relatedQrCode.link) {
         return c.superjson(null);
       }
 
+      console.log({ input });
+
       const newController = await db.qrCodeController.create({
         data: {
-          ...input,
+          ...rest,
+          pageUrl: relatedQrCode.link,
           qrCodeId: relatedQrCode.id,
         },
       });

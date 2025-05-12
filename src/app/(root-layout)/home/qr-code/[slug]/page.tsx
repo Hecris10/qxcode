@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/server/prisma";
+import { client } from "@/lib/client";
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -21,15 +21,14 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
   const uri = decodeURIComponent(slug);
 
-  const qrCode = await db.qRCode.findFirst({
-    where: {
-      uuid: uri,
-      userId: session.user.id,
-    },
-    select: {
-      name: true,
-    },
+  const res = await client.qrCode.getById.$get({
+    id: uri,
   });
+
+  if (!res.ok) redirect("/not-found");
+
+  const qrCode = await res.json();
+
   const name = qrCode?.name;
   if (!name) {
     redirect("/not-found");
