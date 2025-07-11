@@ -28,7 +28,7 @@ import { DashboardGrid } from "./components/dashboard-grid";
 import { DashboardList } from "./components/dashboard-list";
 import { DashboardScansSection } from "./components/dashboard-sectionts/dashboard-scans-sections";
 import { DashboardStatsSection } from "./components/dashboard-sectionts/dashboard-stats-section";
-import { DashboardTopScannedSection } from "./components/dashboard-sectionts/dashboard-top-scanned-section";
+import { DashboardTopQrCodes } from "./components/dashboard-top-qr-codes";
 import { DashboardUsageChart } from "./components/dashboard-usage-chart";
 
 export default function DashboardPage() {
@@ -58,7 +58,7 @@ export default function DashboardPage() {
             <CardDescription>Most scanned QR codes</CardDescription>
           </CardHeader>
           <CardContent>
-            <DashboardTopScannedSection />
+            <DashboardTopQrCodes />
           </CardContent>
         </Card>
 

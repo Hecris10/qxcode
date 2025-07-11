@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "QrCodeType" AS ENUM ('link', 'wifi', 'text', 'email', 'phone');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" TEXT NOT NULL,
@@ -59,9 +62,10 @@ CREATE TABLE "verification" (
 
 -- CreateTable
 CREATE TABLE "QRCode" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
+    "uuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
+    "type" "QrCodeType" NOT NULL DEFAULT 'text',
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -69,8 +73,8 @@ CREATE TABLE "QRCode" (
     "ssid" TEXT,
     "password" TEXT,
     "security" TEXT,
-    "link" TEXT,
-    "logoId" INTEGER,
+    "link" TEXT DEFAULT '',
+    "logoId" TEXT,
     "userId" TEXT NOT NULL,
     "backgroundColor" TEXT DEFAULT '#ffffff',
     "padding" DOUBLE PRECISION,
@@ -83,13 +87,14 @@ CREATE TABLE "QRCode" (
     "nodesColor" TEXT DEFAULT '#000000',
     "isControlled" BOOLEAN DEFAULT false,
     "expirationDate" TIMESTAMP(3),
+    "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "QRCode_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ErrorLog" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "statusCode" INTEGER,
     "message" TEXT,
     "userId" INTEGER,
@@ -101,21 +106,21 @@ CREATE TABLE "ErrorLog" (
 );
 
 -- CreateTable
-CREATE TABLE "LogoImage" (
-    "id" SERIAL NOT NULL,
+CREATE TABLE "Logo" (
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "LogoImage_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Logo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "QrCodeController" (
-    "id" SERIAL NOT NULL,
-    "qrCodeId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "qrCodeId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "ip" TEXT NOT NULL,
@@ -136,6 +141,9 @@ CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "QRCode_uuid_key" ON "QRCode"("uuid");
+
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -146,10 +154,10 @@ ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "QRCode" ADD CONSTRAINT "QRCode_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "QRCode" ADD CONSTRAINT "QRCode_logoId_fkey" FOREIGN KEY ("logoId") REFERENCES "LogoImage"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "QRCode" ADD CONSTRAINT "QRCode_logoId_fkey" FOREIGN KEY ("logoId") REFERENCES "Logo"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LogoImage" ADD CONSTRAINT "LogoImage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Logo" ADD CONSTRAINT "Logo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "QrCodeController" ADD CONSTRAINT "QrCodeController_qrCodeId_fkey" FOREIGN KEY ("qrCodeId") REFERENCES "QRCode"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

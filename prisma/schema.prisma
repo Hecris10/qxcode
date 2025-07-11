@@ -106,6 +106,7 @@ model QRCode {
   nodesColor          String?            @default("#000000") // Optional for nodes color
   isControlled        Boolean?           @default(false) // Optional for controlled
   expirationDate      DateTime? // Optional for expiration date
+  deletedAt           DateTime? // Optional for soft delete
   qrCodeControllers   QrCodeController[]
 }
 

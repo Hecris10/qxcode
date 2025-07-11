@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "QRCode" ALTER COLUMN "link" SET DEFAULT '';

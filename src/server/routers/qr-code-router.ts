@@ -26,14 +26,18 @@ export const qrCodeRouter = j.router({
       const { BETTER_AUTH_URL } = env(c);
       const uuid = uuidv4();
 
-      console.log({ input });
-
       if (input.isControlled && input.type === "link") {
         input.content = `${BETTER_AUTH_URL}/redirect/${uuid}`;
       }
 
+
       const newQrCode = await db.qRCode.create({
-        data: { ...input, userId: auth?.session?.user.id!, uuid },
+        data: {
+          ...input,
+          userId: auth?.session?.user.id!,
+          uuid,
+          deletedAt: null,
+        },
       });
       if (!newQrCode) {
         throw new Error("QrCode not created");
@@ -51,6 +55,7 @@ export const qrCodeRouter = j.router({
         where: {
           userId: userId,
           isControlled: input.isControlled,
+          deletedAt: null,
         },
         include: {
           logo: true,
@@ -70,6 +75,7 @@ export const qrCodeRouter = j.router({
         where: {
           id: input.id,
           userId: auth?.session?.user.id!,
+          deletedAt: null,
         },
         include: {
           logo: true,
@@ -85,10 +91,13 @@ export const qrCodeRouter = j.router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, c, input }) => {
       const { db, auth } = ctx;
-      const deletedQrCode = await db.qRCode.delete({
+      const deletedQrCode = await db.qRCode.update({
         where: {
           id: input.id,
           userId: auth?.session?.user.id!,
+        },
+        data: {
+          deletedAt: new Date(),
         },
       });
       if (!deletedQrCode) {
@@ -122,6 +131,7 @@ export const qrCodeRouter = j.router({
         where: {
           logoId: input.logoId,
           userId: auth?.session?.user.id!,
+          deletedAt: null,
         },
         include: {
           logo: true,
@@ -141,6 +151,7 @@ export const qrCodeRouter = j.router({
         where: {
           uuid: input.uuid,
           userId: auth?.session?.user.id!,
+          deletedAt: null,
         },
         select: {
           link: true,
@@ -161,6 +172,7 @@ export const qrCodeRouter = j.router({
       const qrCodeName = await db.qRCode.findFirst({
         where: {
           uuid: input.uuid,
+          deletedAt: null,
         },
         select: {
           name: true,
@@ -180,6 +192,7 @@ export const qrCodeRouter = j.router({
         where: {
           userId: auth?.session?.user.id!,
           isControlled: true,
+          deletedAt: null,
         },
       });
 
@@ -197,6 +210,7 @@ export const qrCodeRouter = j.router({
         where: {
           userId: auth?.session?.user.id!,
           isControlled: true,
+          deletedAt: null,
         },
         select: {
           id: true,
@@ -256,12 +270,13 @@ export const qrCodeRouter = j.router({
     ] = await Promise.all([
       // Total QR codes
       db.qRCode.count({
-        where: { userId },
+        where: { userId, deletedAt: null },
       }),
       // Total QR codes last month
       db.qRCode.count({
         where: {
           userId,
+          deletedAt: null,
           createdAt: {
             gte: lastMonth,
             lt: now,
@@ -273,6 +288,7 @@ export const qrCodeRouter = j.router({
         where: {
           qrCode: {
             userId,
+            deletedAt: null,
           },
         },
       }),
@@ -281,6 +297,7 @@ export const qrCodeRouter = j.router({
         where: {
           qrCode: {
             userId,
+            deletedAt: null,
           },
           createdAt: {
             gte: lastMonth,
@@ -293,6 +310,7 @@ export const qrCodeRouter = j.router({
         where: {
           userId,
           isControlled: true,
+          deletedAt: null,
         },
       }),
       // Active QR codes last month
@@ -304,6 +322,7 @@ export const qrCodeRouter = j.router({
             gte: lastMonth,
             lt: now,
           },
+          deletedAt: null,
         },
       }),
     ]);
@@ -325,6 +344,7 @@ export const qrCodeRouter = j.router({
       db.qRCode.count({
         where: {
           userId,
+          deletedAt: null,
           expirationDate: {
             gte: startOfThisWeek,
             lte: endOfThisWeek,
@@ -334,6 +354,7 @@ export const qrCodeRouter = j.router({
       db.qRCode.count({
         where: {
           userId,
+          deletedAt: null,
           expirationDate: {
             gte: startOfThisWeek,
             lte: endOfThisWeek,
@@ -395,7 +416,7 @@ export const qrCodeRouter = j.router({
       const scans = await db.qrCodeController.groupBy({
         by: ["createdAt"],
         where: {
-          qrCode: { userId },
+          qrCode: { userId, deletedAt: null },
           createdAt: {
             gte: startDate,
             lte: now,
