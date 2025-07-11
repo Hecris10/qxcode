@@ -210,7 +210,6 @@ export const qrCodeRouter = j.router({
         where: {
           userId: auth?.session?.user.id!,
           isControlled: true,
-          deletedAt: null,
         },
         select: {
           id: true,
@@ -270,13 +269,12 @@ export const qrCodeRouter = j.router({
     ] = await Promise.all([
       // Total QR codes
       db.qRCode.count({
-        where: { userId, deletedAt: null },
+        where: { userId },
       }),
       // Total QR codes last month
       db.qRCode.count({
         where: {
           userId,
-          deletedAt: null,
           createdAt: {
             gte: lastMonth,
             lt: now,
@@ -288,7 +286,6 @@ export const qrCodeRouter = j.router({
         where: {
           qrCode: {
             userId,
-            deletedAt: null,
           },
         },
       }),
@@ -297,7 +294,6 @@ export const qrCodeRouter = j.router({
         where: {
           qrCode: {
             userId,
-            deletedAt: null,
           },
           createdAt: {
             gte: lastMonth,
@@ -310,7 +306,6 @@ export const qrCodeRouter = j.router({
         where: {
           userId,
           isControlled: true,
-          deletedAt: null,
         },
       }),
       // Active QR codes last month
@@ -344,7 +339,6 @@ export const qrCodeRouter = j.router({
       db.qRCode.count({
         where: {
           userId,
-          deletedAt: null,
           expirationDate: {
             gte: startOfThisWeek,
             lte: endOfThisWeek,
@@ -354,7 +348,6 @@ export const qrCodeRouter = j.router({
       db.qRCode.count({
         where: {
           userId,
-          deletedAt: null,
           expirationDate: {
             gte: startOfThisWeek,
             lte: endOfThisWeek,
@@ -416,7 +409,7 @@ export const qrCodeRouter = j.router({
       const scans = await db.qrCodeController.groupBy({
         by: ["createdAt"],
         where: {
-          qrCode: { userId, deletedAt: null },
+          qrCode: { userId },
           createdAt: {
             gte: startDate,
             lte: now,
