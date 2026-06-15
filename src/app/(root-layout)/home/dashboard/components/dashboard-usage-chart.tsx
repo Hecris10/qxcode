@@ -1,23 +1,60 @@
 "use client";
 
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
 import { Laptop, Smartphone, Tablet } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-// Mock data for device usage
-const data = [
-  { name: "Mobile", value: 65, color: "#3b82f6", icon: Smartphone },
-  { name: "Desktop", value: 25, color: "#10b981", icon: Laptop },
-  { name: "Tablet", value: 10, color: "#f59e0b", icon: Tablet },
-];
+const deviceMeta: Record<
+  string,
+  { color: string; icon: typeof Smartphone }
+> = {
+  Mobile: { color: "#3b82f6", icon: Smartphone },
+  Desktop: { color: "#10b981", icon: Laptop },
+  Tablet: { color: "#f59e0b", icon: Tablet },
+};
 
 export function DashboardUsageChart() {
+  const { data, isLoading } = useQuery({
+    queryKey: [fetchTags.deviceUsage, fetchTags.qrCodeStats],
+    queryFn: async () => {
+      try {
+        const res = await client.qrCode.getDeviceUsage.$get();
+        if (!res.ok) throw new Error("Failed to fetch device usage");
+        return res.json();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+  });
+
+  if (isLoading)
+    return <div className="h-[240px] w-full animate-pulse rounded-md bg-gray-800" />;
+
+  if (!data || data.total === 0)
+    return (
+      <div className="flex h-[240px] w-full items-center justify-center">
+        <p className="text-sm text-muted-foreground">No scan data yet</p>
+      </div>
+    );
+
+  const chartData = data.usage
+    .filter((item) => item.count > 0)
+    .map((item) => ({
+      ...item,
+      color: deviceMeta[item.name]?.color ?? "#6b7280",
+      icon: deviceMeta[item.name]?.icon ?? Smartphone,
+    }));
+
   return (
     <div className="flex flex-col items-center">
       <div className="h-[200px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={chartData}
               cx="50%"
               cy="50%"
               innerRadius={60}
@@ -25,7 +62,7 @@ export function DashboardUsageChart() {
               paddingAngle={2}
               dataKey="value"
             >
-              {data.map((entry, index) => (
+              {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
@@ -62,8 +99,8 @@ export function DashboardUsageChart() {
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-4 flex justify-center gap-4">
-        {data.map((item, index) => {
+      <div className="mt-4 flex flex-wrap justify-center gap-4">
+        {chartData.map((item, index) => {
           const Icon = item.icon;
           return (
             <div key={index} className="flex items-center gap-1.5">

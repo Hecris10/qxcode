@@ -1,7 +1,5 @@
 // Project: qr-code-generator
 
-import { DatePickerWithRange } from "@/components/date-range-picker";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,22 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Download, Filter, Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { DashboardScanLocationMap } from "./components/dahboard-scan-location-map";
 import { DashboardScansTable } from "./components/dashboaard-recent-scans-table";
-import { DashboardGrid } from "./components/dashboard-grid";
-import { DashboardList } from "./components/dashboard-list";
+import { DashboardQrCodesSection } from "./components/dashboard-sectionts/dashboard-qr-codes-section";
 import { DashboardScansSection } from "./components/dashboard-sectionts/dashboard-scans-sections";
 import { DashboardStatsSection } from "./components/dashboard-sectionts/dashboard-stats-section";
 import { DashboardTopQrCodes } from "./components/dashboard-top-qr-codes";
@@ -83,65 +71,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <CardTitle>Your QR Codes</CardTitle>
-              <CardDescription>
-                Manage and track all your QR codes
-              </CardDescription>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <Select defaultValue="all">
-                  <SelectTrigger className="w-36">
-                    <SelectValue placeholder="QR Code Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="text">Text</SelectItem>
-                    <SelectItem value="url">URL</SelectItem>
-                    <SelectItem value="wifi">WiFi</SelectItem>
-                    <SelectItem value="email">Email</SelectItem>
-                    <SelectItem value="phone">Phone</SelectItem>
-                  </SelectContent>
-                </Select>
-                <DatePickerWithRange
-                  date={{ to: new Date(), from: new Date() }}
-                />
-                <Button variant="outline" size="icon">
-                  <Filter className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="relative flex-1 md:min-w-[200px]">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
-                <Input placeholder="Search QR codes..." className="pl-8" />
-              </div>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="grid">
-            <div className="mb-4 flex items-center justify-between">
-              <TabsList>
-                <TabsTrigger value="grid">Grid</TabsTrigger>
-                <TabsTrigger value="list">List</TabsTrigger>
-              </TabsList>
-              <Button variant="outline" size="sm" className="gap-1">
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
-            </div>
-            <TabsContent value="grid">
-              <DashboardGrid />
-            </TabsContent>
-            <TabsContent value="list">
-              <DashboardList />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      <DashboardQrCodesSection />
 
       <Card className="mt-6">
         <CardHeader>

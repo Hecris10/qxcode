@@ -11,110 +11,86 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import {
   Copy,
-  Download,
   LinkIcon,
+  Mail,
   MoreHorizontal,
   Pencil,
+  Phone,
   QrCode,
   Smartphone,
   Trash,
   Wifi,
 } from "lucide-react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import type { DashboardQrCode } from "./dashboard-sectionts/dashboard-qr-codes-section";
 
-// Mock data for QR codes
-const qrCodes = [
-  {
-    id: 1,
-    name: "My Portfolio",
-    type: "url",
-    url: "https://helamanewerton.vercel.app/",
-    createdAt: new Date(2025, 3, 5),
-    scans: 342,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 2,
-    name: "Company Website",
-    type: "url",
-    url: "https://example.com",
-    createdAt: new Date(2025, 3, 1),
-    scans: 128,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 3,
-    name: "Office WiFi",
-    type: "wifi",
-    url: "SSID: Office Network",
-    createdAt: new Date(2025, 2, 15),
-    scans: 56,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 4,
-    name: "Contact Info",
-    type: "text",
-    url: "John Doe, CEO",
-    createdAt: new Date(2025, 2, 10),
-    scans: 89,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 5,
-    name: "Product Manual",
-    type: "url",
-    url: "https://docs.example.com/manual",
-    createdAt: new Date(2025, 1, 28),
-    scans: 215,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 6,
-    name: "Event Registration",
-    type: "url",
-    url: "https://events.example.com/register",
-    createdAt: new Date(2025, 1, 15),
-    scans: 178,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-];
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "link":
+      return <LinkIcon className="h-4 w-4" />;
+    case "wifi":
+      return <Wifi className="h-4 w-4" />;
+    case "email":
+      return <Mail className="h-4 w-4" />;
+    case "phone":
+      return <Phone className="h-4 w-4" />;
+    default:
+      return <QrCode className="h-4 w-4" />;
+  }
+};
 
-export function DashboardGrid() {
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case "link":
+      return "bg-blue-500/10 text-blue-500";
+    case "wifi":
+      return "bg-green-500/10 text-green-500";
+    case "email":
+      return "bg-amber-500/10 text-amber-500";
+    case "phone":
+      return "bg-pink-500/10 text-pink-500";
+    default:
+      return "bg-purple-500/10 text-purple-500";
+  }
+};
+
+export function DashboardGrid({
+  qrCodes,
+  onDelete,
+}: {
+  qrCodes: DashboardQrCode[];
+  onDelete: (id: string) => void;
+}) {
+  if (qrCodes.length === 0)
+    return (
+      <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+        No QR codes match your filters
+      </div>
+    );
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {qrCodes.map((qrCode) => (
-        <QrCodeCard key={qrCode.id} qrCode={qrCode} />
+        <QrCodeCard key={qrCode.id} qrCode={qrCode} onDelete={onDelete} />
       ))}
     </div>
   );
 }
 
-function QrCodeCard({ qrCode }: { qrCode: (typeof qrCodes)[0] }) {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "url":
-        return <LinkIcon className="h-4 w-4" />;
-      case "wifi":
-        return <Wifi className="h-4 w-4" />;
-      case "text":
-        return <QrCode className="h-4 w-4" />;
-      default:
-        return <QrCode className="h-4 w-4" />;
-    }
-  };
+function QrCodeCard({
+  qrCode,
+  onDelete,
+}: {
+  qrCode: DashboardQrCode;
+  onDelete: (id: string) => void;
+}) {
+  const router = useRouter();
+  const displayUrl = qrCode.link || qrCode.content;
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "url":
-        return "bg-blue-500/10 text-blue-500";
-      case "wifi":
-        return "bg-green-500/10 text-green-500";
-      case "text":
-        return "bg-purple-500/10 text-purple-500";
-      default:
-        return "bg-gray-500/10 text-gray-500";
-    }
+  const copyLink = () => {
+    navigator.clipboard.writeText(displayUrl);
+    toast.success("Copied to clipboard");
   };
 
   return (
@@ -128,20 +104,21 @@ function QrCodeCard({ qrCode }: { qrCode: (typeof qrCodes)[0] }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/home/qr-code/${qrCode.uuid}`)}
+            >
               <Pencil className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={copyLink}>
               <Copy className="mr-2 h-4 w-4" />
-              Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Download className="mr-2 h-4 w-4" />
-              Download
+              Copy link
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500">
+            <DropdownMenuItem
+              className="text-red-500"
+              onClick={() => onDelete(qrCode.id)}
+            >
               <Trash className="mr-2 h-4 w-4" />
               Delete
             </DropdownMenuItem>
@@ -155,27 +132,29 @@ function QrCodeCard({ qrCode }: { qrCode: (typeof qrCodes)[0] }) {
             <span className="ml-1 capitalize">{qrCode.type}</span>
           </Badge>
           <span className="text-xs text-gray-400">
-            {formatDistanceToNow(qrCode.createdAt, { addSuffix: true })}
+            {formatDistanceToNow(new Date(qrCode.createdAt), {
+              addSuffix: true,
+            })}
           </span>
         </div>
         <h3 className="mb-1 text-lg font-medium">{qrCode.name}</h3>
-        <p className="mb-4 truncate text-sm text-gray-400">{qrCode.url}</p>
+        <p className="mb-4 truncate text-sm text-gray-400">{displayUrl}</p>
         <div className="flex justify-center">
-          <div className="relative h-32 w-32 overflow-hidden rounded-md bg-white p-2">
-            <Image
-              src={qrCode.image || "/placeholder.svg"}
-              alt={qrCode.name}
-              fill
-              className="object-contain"
-            />
+          <div className="flex h-32 w-32 items-center justify-center rounded-md bg-white">
+            <QrCode className="h-20 w-20 text-gray-900" />
           </div>
         </div>
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-1 text-sm">
             <Smartphone className="h-4 w-4 text-gray-400" />
-            <span>{qrCode.scans.toLocaleString()} scans</span>
+            <span>{qrCode.scanCount.toLocaleString()} scans</span>
           </div>
-          <Button variant="ghost" size="sm" className="h-8 gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-1"
+            onClick={copyLink}
+          >
             <LinkIcon className="h-3 w-3" />
             Link
           </Button>

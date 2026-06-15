@@ -19,101 +19,63 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import {
-  BarChart2,
   Copy,
-  Download,
   Link,
+  Mail,
   MoreHorizontal,
   Pencil,
+  Phone,
   QrCode,
   Smartphone,
   Trash,
   Wifi,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import type { DashboardQrCode } from "./dashboard-sectionts/dashboard-qr-codes-section";
 
-// Mock data for QR codes (same as in QrCodeGrid)
-const qrCodes = [
-  {
-    id: 1,
-    name: "My Portfolio",
-    type: "url",
-    url: "https://helamanewerton.vercel.app/",
-    createdAt: new Date(2025, 3, 5),
-    scans: 342,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 2,
-    name: "Company Website",
-    type: "url",
-    url: "https://example.com",
-    createdAt: new Date(2025, 3, 1),
-    scans: 128,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 3,
-    name: "Office WiFi",
-    type: "wifi",
-    url: "SSID: Office Network",
-    createdAt: new Date(2025, 2, 15),
-    scans: 56,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 4,
-    name: "Contact Info",
-    type: "text",
-    url: "John Doe, CEO",
-    createdAt: new Date(2025, 2, 10),
-    scans: 89,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 5,
-    name: "Product Manual",
-    type: "url",
-    url: "https://docs.example.com/manual",
-    createdAt: new Date(2025, 1, 28),
-    scans: 215,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 6,
-    name: "Event Registration",
-    type: "url",
-    url: "https://events.example.com/register",
-    createdAt: new Date(2025, 1, 15),
-    scans: 178,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-];
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "link":
+      return <Link className="h-4 w-4" />;
+    case "wifi":
+      return <Wifi className="h-4 w-4" />;
+    case "email":
+      return <Mail className="h-4 w-4" />;
+    case "phone":
+      return <Phone className="h-4 w-4" />;
+    default:
+      return <QrCode className="h-4 w-4" />;
+  }
+};
 
-export function DashboardList() {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "url":
-        return <Link className="h-4 w-4" />;
-      case "wifi":
-        return <Wifi className="h-4 w-4" />;
-      case "text":
-        return <QrCode className="h-4 w-4" />;
-      default:
-        return <QrCode className="h-4 w-4" />;
-    }
-  };
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case "link":
+      return "bg-blue-500/10 text-blue-500";
+    case "wifi":
+      return "bg-green-500/10 text-green-500";
+    case "email":
+      return "bg-amber-500/10 text-amber-500";
+    case "phone":
+      return "bg-pink-500/10 text-pink-500";
+    default:
+      return "bg-purple-500/10 text-purple-500";
+  }
+};
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "url":
-        return "bg-blue-500/10 text-blue-500";
-      case "wifi":
-        return "bg-green-500/10 text-green-500";
-      case "text":
-        return "bg-purple-500/10 text-purple-500";
-      default:
-        return "bg-gray-500/10 text-gray-500";
-    }
+export function DashboardList({
+  qrCodes,
+  onDelete,
+}: {
+  qrCodes: DashboardQrCode[];
+  onDelete: (id: string) => void;
+}) {
+  const router = useRouter();
+
+  const copyLink = (value: string) => {
+    navigator.clipboard.writeText(value);
+    toast.success("Copied to clipboard");
   };
 
   return (
@@ -129,75 +91,102 @@ export function DashboardList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {qrCodes.map((qrCode) => (
-            <TableRow key={qrCode.id}>
-              <TableCell className="font-medium">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded bg-gray-800">
-                    <QrCode className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <div>{qrCode.name}</div>
-                    <div className="truncate text-xs text-gray-400 max-w-[200px]">
-                      {qrCode.url}
-                    </div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className={getTypeColor(qrCode.type)}>
-                  {getTypeIcon(qrCode.type)}
-                  <span className="ml-1 capitalize">{qrCode.type}</span>
-                </Badge>
-              </TableCell>
-              <TableCell>{format(qrCode.createdAt, "MMM d, yyyy")}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  <Smartphone className="h-4 w-4 text-gray-400" />
-                  <span>{qrCode.scans.toLocaleString()}</span>
-                </div>
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <BarChart2 className="h-4 w-4" />
-                    <span className="sr-only">View analytics</span>
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Link className="h-4 w-4" />
-                    <span className="sr-only">Copy link</span>
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Duplicate
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Download className="mr-2 h-4 w-4" />
-                        Download
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-red-500">
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+          {qrCodes.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={5}
+                className="h-24 text-center text-sm text-muted-foreground"
+              >
+                No QR codes match your filters
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            qrCodes.map((qrCode) => {
+              const displayUrl = qrCode.link || qrCode.content;
+              return (
+                <TableRow key={qrCode.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded bg-gray-800">
+                        <QrCode className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <div>{qrCode.name}</div>
+                        <div className="max-w-[200px] truncate text-xs text-gray-400">
+                          {displayUrl}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={getTypeColor(qrCode.type)}
+                    >
+                      {getTypeIcon(qrCode.type)}
+                      <span className="ml-1 capitalize">{qrCode.type}</span>
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(qrCode.createdAt), "MMM d, yyyy")}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Smartphone className="h-4 w-4 text-gray-400" />
+                      <span>{qrCode.scanCount.toLocaleString()}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => copyLink(displayUrl)}
+                      >
+                        <Link className="h-4 w-4" />
+                        <span className="sr-only">Copy link</span>
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() =>
+                              router.push(`/home/qr-code/${qrCode.uuid}`)
+                            }
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => copyLink(displayUrl)}>
+                            <Copy className="mr-2 h-4 w-4" />
+                            Copy link
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-red-500"
+                            onClick={() => onDelete(qrCode.id)}
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
     </div>
