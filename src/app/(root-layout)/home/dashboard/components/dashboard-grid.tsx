@@ -24,6 +24,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { DashboardQrCode } from "./dashboard-sectionts/dashboard-qr-codes-section";
+import Link from "next/link";
 
 const getTypeIcon = (type: string) => {
   switch (type) {
@@ -137,7 +138,9 @@ function QrCodeCard({
             })}
           </span>
         </div>
-        <h3 className="mb-1 text-lg font-medium">{qrCode.name}</h3>
+        <h3 className="mb-1 text-lg font-medium hover:underline hover:text-muted-foreground">
+          <Link href={`/home/qr-code/${qrCode.uuid}`}>{qrCode.name}</Link>
+        </h3>
         <p className="mb-4 truncate text-sm text-gray-400">{displayUrl}</p>
         <div className="flex justify-center">
           <div className="flex h-32 w-32 items-center justify-center rounded-md bg-white">

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +22,7 @@ import {
 import { format } from "date-fns";
 import {
   Copy,
-  Link,
+  Link as LinkIcon,
   Mail,
   MoreHorizontal,
   Pencil,
@@ -37,7 +39,7 @@ import type { DashboardQrCode } from "./dashboard-sectionts/dashboard-qr-codes-s
 const getTypeIcon = (type: string) => {
   switch (type) {
     case "link":
-      return <Link className="h-4 w-4" />;
+      return <LinkIcon className="h-4 w-4" />;
     case "wifi":
       return <Wifi className="h-4 w-4" />;
     case "email":
@@ -111,7 +113,9 @@ export function DashboardList({
                         <QrCode className="h-4 w-4" />
                       </div>
                       <div>
-                        <div>{qrCode.name}</div>
+                        <div>
+                          <Link href={`/home/qr-code/${qrCode.uuid}`} className="hover:underline hover:text-muted-foreground">{qrCode.name}</Link>
+                        </div>
                         <div className="max-w-[200px] truncate text-xs text-gray-400">
                           {displayUrl}
                         </div>
@@ -144,7 +148,7 @@ export function DashboardList({
                         className="h-8 w-8"
                         onClick={() => copyLink(displayUrl)}
                       >
-                        <Link className="h-4 w-4" />
+                        <LinkIcon className="h-4 w-4" />
                         <span className="sr-only">Copy link</span>
                       </Button>
                       <DropdownMenu>

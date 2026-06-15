@@ -2,7 +2,7 @@ import { getServerSession } from "@/server/actions/session-actions";
 import { db } from "@/server/prisma";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { QrCodeView } from "./qr-code-view";
+import { QrCodeDetailView } from "./qr-code-detail-view";
 
 export const QrCodeServerWrapper = async ({ uuid }: { uuid: string }) => {
   const session = await getServerSession();
@@ -32,9 +32,7 @@ export const QrCodeServerWrapper = async ({ uuid }: { uuid: string }) => {
         </div>
       }
     >
-      <div className=" container mx-auto px-4 py-12 flex align-middle justify-center w-full ">
-        <QrCodeView qrCode={qrCode} />
-      </div>
+      <QrCodeDetailView qrCode={qrCode} />
     </Suspense>
   );
 };
