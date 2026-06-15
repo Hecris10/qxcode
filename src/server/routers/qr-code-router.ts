@@ -633,4 +633,142 @@ export const qrCodeRouter = j.router({
 
       return c.superjson({ total, locations });
     }),
+
+  // Full analytics for a single QR code (the detail page Analytics tab).
+  // Ownership-checked; aggregates that code's QrCodeController rows into
+  // totals, a time series for the selected period, device / location
+  // breakdowns and the most recent scans.
+  getQrCodeAnalytics: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        filter: z
+          .enum(["7_DAYS", "30_DAYS", "90_DAYS", "LAST_YEAR"])
+          .optional()
+          .default("30_DAYS"),
+      })
+    )
+    .query(async ({ ctx, c, input }) => {
+      const { db, auth } = ctx;
+      const userId = auth.session.user.id;
+
+      const qrCode = await db.qRCode.findFirst({
+        where: { id: input.id, userId },
+        select: { id: true, name: true, isControlled: true },
+      });
+      if (!qrCode) {
+        throw new Error("QrCode not found");
+      }
+
+      const scans = await db.qrCodeController.findMany({
+        where: { qrCodeId: qrCode.id },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          createdAt: true,
+          ip: true,
+          ip2: true,
+          userAgent: true,
+          locale: true,
+          referrer: true,
+        },
+      });
+
+      const totalScans = scans.length;
+
+      const deviceCounts: Record<DeviceType, number> = {
+        Mobile: 0,
+        Desktop: 0,
+        Tablet: 0,
+      };
+      const locationCounts = new Map<string, number>();
+      for (const scan of scans) {
+        deviceCounts[parseUserAgent(scan.userAgent).deviceType]++;
+        const country = localeToCountry(scan.locale);
+        locationCounts.set(country, (locationCounts.get(country) ?? 0) + 1);
+      }
+
+      const deviceUsage = (["Mobile", "Desktop", "Tablet"] as DeviceType[]).map(
+        (name) => ({
+          name,
+          count: deviceCounts[name],
+          value:
+            totalScans > 0
+              ? Math.round((deviceCounts[name] / totalScans) * 100)
+              : 0,
+        })
+      );
+
+      const locations = Array.from(locationCounts.entries())
+        .map(([location, count]) => ({
+          location,
+          count,
+          percent: totalScans > 0 ? Math.round((count / totalScans) * 100) : 0,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+
+      const recentScans = scans.slice(0, 10).map((scan) => {
+        const { deviceType, os, browser } = parseUserAgent(scan.userAgent);
+        return {
+          id: scan.id,
+          timestamp: scan.createdAt,
+          ip: scan.ip || scan.ip2 || "-",
+          location: localeToCountry(scan.locale),
+          device: os !== "Unknown" ? os : deviceType,
+          browser,
+          referrer: formatReferrer(scan.referrer),
+        };
+      });
+
+      // Time series for the selected period, ascending by date.
+      const now = new Date();
+      const startDate = new Date();
+      switch (input.filter) {
+        case "7_DAYS":
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case "30_DAYS":
+          startDate.setDate(now.getDate() - 30);
+          break;
+        case "90_DAYS":
+          startDate.setMonth(now.getMonth() - 3);
+          break;
+        case "LAST_YEAR":
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+      }
+      const dateFormatter =
+        input.filter === "LAST_YEAR"
+          ? (date: Date) =>
+              new Intl.DateTimeFormat("en-US", { month: "short" }).format(date)
+          : (date: Date) =>
+              new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+              }).format(date);
+
+      const grouped: Record<string, number> = {};
+      // scans is sorted desc; reverse to a copy for ascending date order.
+      for (const scan of [...scans].reverse()) {
+        if (scan.createdAt >= startDate && scan.createdAt <= now) {
+          const key = dateFormatter(scan.createdAt);
+          grouped[key] = (grouped[key] ?? 0) + 1;
+        }
+      }
+      const scansOverTime = Object.entries(grouped).map(([date, count]) => ({
+        date,
+        scans: count,
+      }));
+
+      return c.superjson({
+        qrCodeName: qrCode.name,
+        isControlled: qrCode.isControlled,
+        totalScans,
+        deviceUsage,
+        locations,
+        recentScans,
+        scansOverTime,
+      });
+    }),
 });

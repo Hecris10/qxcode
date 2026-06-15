@@ -119,11 +119,11 @@ export function DashboardQrCodesSection() {
                 <SelectItem value="phone">Phone</SelectItem>
               </SelectContent>
             </Select>
-            <div className="relative flex-1 md:min-w-[200px]">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+            <div className="relative w-full sm:w-72 md:w-80">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Search QR codes..."
-                className="pl-8"
+                className="w-full pl-10"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />

@@ -12,4 +12,5 @@ export const fetchTags = {
   recentScans: "recent-scans",
   deviceUsage: "device-usage",
   scanLocations: "scan-locations",
+  qrCodeAnalytics: "qr-code-analytics",
 };
