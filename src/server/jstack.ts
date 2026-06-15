@@ -32,13 +32,17 @@ const authMiddleware = j.middleware(async ({ c, next }) => {
     headers: await headers(),
   });
 
-  if (!session || !session.session) {
+  // Require a resolved user id. Without this guard a missing `user.id` would
+  // flow into Prisma `where: { userId: undefined }` clauses, which Prisma
+  // treats as "no filter" and would leak every user's rows. Failing closed
+  // here keeps all downstream queries scoped to the authenticated user.
+  if (!session || !session.session || !session.user?.id) {
     throw new HTTPException(401, {
       message: "Unauthorized, sign in to continue.",
     });
   }
 
-  return await next({ auth: { session } });
+  return await next({ auth: { session, userId: session.user.id } });
 });
 
 /**

@@ -12,13 +12,23 @@ import {
   YAxis,
 } from "recharts";
 
-export function DashboardScanActivityChart() {
+export type ScanActivityFilter =
+  | "7_DAYS"
+  | "30_DAYS"
+  | "90_DAYS"
+  | "LAST_YEAR";
+
+export function DashboardScanActivityChart({
+  filter = "30_DAYS",
+}: {
+  filter?: ScanActivityFilter;
+}) {
   const { data, isLoading } = useQuery({
-    queryKey: [fetchTags.qrCodeScans, fetchTags.qrCodeStats],
+    queryKey: [fetchTags.qrCodeScans, fetchTags.qrCodeStats, filter],
     queryFn: async () => {
       try {
         const res = await client.qrCode.getQrCodesScans.$get({
-          filter: "LAST_YEAR",
+          filter,
         });
         if (!res.ok) throw new Error("Failed to fetch QR code stats");
         return res.json();
@@ -26,7 +36,7 @@ export function DashboardScanActivityChart() {
         console.error(error);
         return [];
       }
-    },  
+    },
   });
 
   if (!data)
@@ -53,7 +63,9 @@ export function DashboardScanActivityChart() {
             fontSize={12}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(value) => value.split(" ")[1]}
+            tickFormatter={(value) =>
+              value.includes(" ") ? value.split(" ")[1] : value
+            }
           />
           <YAxis
             stroke="#888888"

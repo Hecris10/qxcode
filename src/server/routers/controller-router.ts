@@ -86,19 +86,23 @@ export const controlledRouter = j.router({
   delete: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, c, input }) => {
-      const { db } = ctx;
-      const deletedQrCode = await db.qrCodeController.delete({
+      const { db, auth } = ctx;
+
+      // deleteMany lets us scope by the owning qrCode's userId so a user can
+      // only ever delete their own scan records. count === 0 means the record
+      // either doesn't exist or isn't owned by this user.
+      const deleted = await db.qrCodeController.deleteMany({
         where: {
           id: input.id,
           qrCode: {
-            userId: (input.id, input.id)!,
+            userId: auth.session.user.id,
           },
         },
       });
-      if (!deletedQrCode) {
+      if (deleted.count === 0) {
         throw new Error("QrCode not found");
       }
 
-      return c.superjson(deletedQrCode);
+      return c.superjson({ id: input.id, deleted: deleted.count });
     }),
 });

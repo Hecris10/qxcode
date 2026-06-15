@@ -2,6 +2,12 @@ import { env } from "hono/adapter";
 import uniqolor from "uniqolor";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import {
+  type DeviceType,
+  formatReferrer,
+  localeToCountry,
+  parseUserAgent,
+} from "@/utils/scan-analytics.utils";
 import { updateQrCodeInputSchema } from "../db/qr-code-schema.utils";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 
@@ -253,10 +259,15 @@ export const qrCodeRouter = j.router({
       now.getMonth() - 1,
       now.getDate()
     );
-    const startOfThisWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-    const endOfThisWeek = new Date(
-      now.setDate(now.getDate() - now.getDay() + 6)
-    );
+    // Compute the week bounds on copies so we don't mutate `now` (the original
+    // code called now.setDate(...) twice, shifting `now` into the future and
+    // corrupting every `createdAt < now` comparison below).
+    const startOfThisWeek = new Date(now);
+    startOfThisWeek.setDate(now.getDate() - now.getDay());
+    startOfThisWeek.setHours(0, 0, 0, 0);
+    const endOfThisWeek = new Date(startOfThisWeek);
+    endOfThisWeek.setDate(startOfThisWeek.getDate() + 6);
+    endOfThisWeek.setHours(23, 59, 59, 999);
 
     // Get all stats in a single query using Prisma's aggregation
     const [
@@ -453,5 +464,173 @@ export const qrCodeRouter = j.router({
       );
 
       return c.superjson(formattedScans);
+    }),
+
+  // All of the user's QR codes plus their scan counts, for the dashboard
+  // "Your QR Codes" grid/list.
+  getQrCodesWithScans: privateProcedure.query(async ({ ctx, c }) => {
+    const { db, auth } = ctx;
+    const userId = auth?.session?.user.id!;
+
+    const qrCodes = await db.qRCode.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        uuid: true,
+        name: true,
+        type: true,
+        content: true,
+        link: true,
+        isControlled: true,
+        createdAt: true,
+        _count: {
+          select: {
+            qrCodeControllers: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const result = qrCodes.map((qrCode) => ({
+      id: qrCode.id,
+      uuid: qrCode.uuid,
+      name: qrCode.name,
+      type: qrCode.type,
+      content: qrCode.content,
+      link: qrCode.link,
+      isControlled: qrCode.isControlled,
+      createdAt: qrCode.createdAt,
+      scanCount: qrCode._count.qrCodeControllers,
+    }));
+
+    return c.superjson(result);
+  }),
+
+  // Latest scans across all of the user's QR codes, with device / location /
+  // referrer derived from the captured headers.
+  getRecentScans: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).optional().default(10),
+      })
+    )
+    .query(async ({ ctx, c, input }) => {
+      const { db, auth } = ctx;
+      const userId = auth?.session?.user.id!;
+
+      const scans = await db.qrCodeController.findMany({
+        where: {
+          qrCode: { userId },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: input.limit,
+        select: {
+          id: true,
+          createdAt: true,
+          ip: true,
+          ip2: true,
+          userAgent: true,
+          locale: true,
+          referrer: true,
+          qrCode: {
+            select: { name: true },
+          },
+        },
+      });
+
+      const recentScans = scans.map((scan) => {
+        const { deviceType, os, browser } = parseUserAgent(scan.userAgent);
+        return {
+          id: scan.id,
+          qrCodeName: scan.qrCode?.name ?? "Unknown",
+          timestamp: scan.createdAt,
+          ip: scan.ip || scan.ip2 || "-",
+          location: localeToCountry(scan.locale),
+          device: os !== "Unknown" ? os : deviceType,
+          browser,
+          referrer: formatReferrer(scan.referrer),
+        };
+      });
+
+      return c.superjson(recentScans);
+    }),
+
+  // Scans grouped by device type (Mobile / Desktop / Tablet) for the
+  // "Device Usage" chart.
+  getDeviceUsage: privateProcedure.query(async ({ ctx, c }) => {
+    const { db, auth } = ctx;
+    const userId = auth?.session?.user.id!;
+
+    const scans = await db.qrCodeController.findMany({
+      where: {
+        qrCode: { userId },
+      },
+      select: { userAgent: true },
+    });
+
+    const counts: Record<DeviceType, number> = {
+      Mobile: 0,
+      Desktop: 0,
+      Tablet: 0,
+    };
+    for (const scan of scans) {
+      counts[parseUserAgent(scan.userAgent).deviceType]++;
+    }
+
+    const total = scans.length;
+    const order: DeviceType[] = ["Mobile", "Desktop", "Tablet"];
+    const usage = order.map((name) => ({
+      name,
+      count: counts[name],
+      value: total > 0 ? Math.round((counts[name] / total) * 100) : 0,
+    }));
+
+    return c.superjson({ total, usage });
+  }),
+
+  // Scans grouped by country (derived from the accept-language header) for the
+  // "Scan Locations" panel.
+  getScanLocations: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(50).optional().default(8),
+      })
+    )
+    .query(async ({ ctx, c, input }) => {
+      const { db, auth } = ctx;
+      const userId = auth?.session?.user.id!;
+
+      const scans = await db.qrCodeController.findMany({
+        where: {
+          qrCode: { userId },
+        },
+        select: { locale: true },
+      });
+
+      const counts = new Map<string, number>();
+      for (const scan of scans) {
+        const country = localeToCountry(scan.locale);
+        counts.set(country, (counts.get(country) ?? 0) + 1);
+      }
+
+      const total = scans.length;
+      const locations = Array.from(counts.entries())
+        .map(([location, count]) => ({
+          location,
+          count,
+          percent: total > 0 ? Math.round((count / total) * 100) : 0,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, input.limit);
+
+      return c.superjson({ total, locations });
     }),
 });

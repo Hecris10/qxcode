@@ -8,4 +8,8 @@ export const fetchTags = {
   qrCodeStats: "qr-code-stats",
   topQrCodes: "top-qr-codes",
   qrCodeScans: "qr-code-scans",
+  qrCodesWithScans: "qr-codes-with-scans",
+  recentScans: "recent-scans",
+  deviceUsage: "device-usage",
+  scanLocations: "scan-locations",
 };

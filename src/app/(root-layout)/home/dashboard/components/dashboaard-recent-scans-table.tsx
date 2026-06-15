@@ -9,64 +9,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { fetchTags } from "@/config/tags";
+import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Globe, Smartphone } from "lucide-react";
 
-// Mock data for recent scans
-const recentScans = [
-  {
-    id: 1,
-    qrCodeName: "My Portfolio",
-    timestamp: new Date(2025, 3, 5, 14, 32),
-    ip: "192.168.1.1",
-    location: "New York, US",
-    device: "iPhone 15",
-    browser: "Safari",
-    referrer: "Direct",
-  },
-  {
-    id: 2,
-    qrCodeName: "Company Website",
-    timestamp: new Date(2025, 3, 5, 13, 15),
-    ip: "192.168.1.2",
-    location: "London, UK",
-    device: "Samsung Galaxy S23",
-    browser: "Chrome",
-    referrer: "Google",
-  },
-  {
-    id: 3,
-    qrCodeName: "Product Manual",
-    timestamp: new Date(2025, 3, 5, 12, 45),
-    ip: "192.168.1.3",
-    location: "Tokyo, JP",
-    device: "MacBook Pro",
-    browser: "Firefox",
-    referrer: "Direct",
-  },
-  {
-    id: 4,
-    qrCodeName: "Event Registration",
-    timestamp: new Date(2025, 3, 5, 11, 20),
-    ip: "192.168.1.4",
-    location: "Berlin, DE",
-    device: "iPad Pro",
-    browser: "Safari",
-    referrer: "Twitter",
-  },
-  {
-    id: 5,
-    qrCodeName: "My Portfolio",
-    timestamp: new Date(2025, 3, 5, 10, 5),
-    ip: "192.168.1.5",
-    location: "Sydney, AU",
-    device: "Google Pixel 7",
-    browser: "Chrome",
-    referrer: "LinkedIn",
-  },
-];
-
 export function DashboardScansTable() {
+  const { data, isLoading } = useQuery({
+    queryKey: [fetchTags.recentScans, fetchTags.qrCodeControllers],
+    queryFn: async () => {
+      try {
+        const res = await client.qrCode.getRecentScans.$get({ limit: 10 });
+        if (!res.ok) throw new Error("Failed to fetch recent scans");
+        return res.json();
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+  });
+
+  if (isLoading)
+    return <div className="h-40 w-full animate-pulse rounded-md bg-gray-800" />;
+
   return (
     <div className="rounded-md border border-gray-800">
       <Table>
@@ -80,31 +46,46 @@ export function DashboardScansTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {recentScans.map((scan) => (
-            <TableRow key={scan.id}>
-              <TableCell className="font-medium">{scan.qrCodeName}</TableCell>
-              <TableCell>{format(scan.timestamp, "MMM d, h:mm a")}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1.5">
-                  <Globe className="h-4 w-4 text-gray-400" />
-                  <span>{scan.location}</span>
-                </div>
+          {!data || data.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={5}
+                className="h-24 text-center text-sm text-muted-foreground"
+              >
+                No scans recorded yet
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1.5">
-                  <Smartphone className="h-4 w-4 text-gray-400" />
-                  <span>{scan.device}</span>
-                  <Badge
-                    variant="outline"
-                    className="ml-1 bg-gray-800/50 text-xs"
-                  >
-                    {scan.browser}
-                  </Badge>
-                </div>
-              </TableCell>
-              <TableCell>{scan.referrer}</TableCell>
             </TableRow>
-          ))}
+          ) : (
+            data.map((scan) => (
+              <TableRow key={scan.id}>
+                <TableCell className="font-medium">{scan.qrCodeName}</TableCell>
+                <TableCell>
+                  {format(new Date(scan.timestamp), "MMM d, h:mm a")}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="h-4 w-4 text-gray-400" />
+                    <span>{scan.location}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1.5">
+                    <Smartphone className="h-4 w-4 text-gray-400" />
+                    <span>{scan.device}</span>
+                    {scan.browser !== "Unknown" && (
+                      <Badge
+                        variant="outline"
+                        className="ml-1 bg-gray-800/50 text-xs"
+                      >
+                        {scan.browser}
+                      </Badge>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>{scan.referrer}</TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>
